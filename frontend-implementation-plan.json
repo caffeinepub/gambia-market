@@ -1,319 +1,268 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Gambia Market Interactive Blueprint - Feature Showcase Implementation",
+  "title": "Post-logout redirect, social login, seller profiles, likes/follows, profile pictures, cross-device persistence",
   "requirements": [
     {
-      "id": "REQ-13",
-      "summary": "Add Phone Number Registration with OTP feature showcase card displaying the complete registration flow with phone input, OTP verification, and profile setup steps",
+      "id": "REQ-44",
+      "summary": "Redirect to Home Feed immediately after logout from any page",
       "acceptanceCriteria": [
-        "Registration flow is visually represented with phone input, OTP verification, and profile setup steps",
-        "Each step shows relevant form fields and validation feedback",
-        "Component renders from structured data in the existing TypeScript data files"
+        "Clicking logout on the Profile page navigates the user to the Home Feed ('/') immediately after session is cleared.",
+        "The bottom navigation and header reflect the logged-out state on arrival at the home page.",
+        "No residual authenticated state remains after logout redirect."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/data/features.ts",
+          "path": "frontend/src/pages/Profile.tsx",
           "operation": "modify",
-          "description": "Extend the Phone Number Registration feature object (REQ-13) with a new 'flowSteps' property containing structured data for the three registration steps: (1) phone input with country code selector, (2) OTP verification with 6-digit input, (3) profile setup with name and location fields. Include field types, placeholders, and validation state examples for each step."
+          "description": "Update the logout handler to call navigate({ page: 'home' }) immediately after clearing the identity and query cache. Ensure the navigation happens synchronously after queryClient.clear()."
         },
         {
-          "path": "frontend/src/types/blueprint.ts",
+          "path": "frontend/src/components/AppHeader.tsx",
           "operation": "modify",
-          "description": "Add optional 'flowSteps' property to the Feature interface to support multi-step flow data. Define a FlowStep type with properties: stepNumber, stepTitle, fields array (fieldName, fieldType, placeholder, validationState), and optionally iconName."
-        },
-        {
-          "path": "frontend/src/components/RegistrationFlowCard.tsx",
-          "operation": "create",
-          "description": "Create a new component that renders the phone registration flow steps as a vertical sequence of step cards. Each step card displays step number, title, form fields with appropriate input types (tel, text, number), and validation state indicators (neutral, valid, invalid). Style with warm green accents and gold highlights consistent with the kente pattern theme."
-        },
-        {
-          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
-          "operation": "modify",
-          "description": "Update to conditionally render RegistrationFlowCard when the feature has flowSteps data (for REQ-13), replacing or augmenting the standard FeatureCard for that specific feature."
+          "description": "If AppHeader contains any logout functionality (profile icon menu), add navigation to home after logout. Verify that the header reflects logged-out state on arrival at home."
         }
       ]
     },
     {
-      "id": "REQ-14",
-      "summary": "Add Listing Creation feature showcase displaying the step-by-step flow including photo upload, category selector, price input, condition selector, and location tagging",
+      "id": "REQ-45",
+      "summary": "Replace Internet Identity with Google and Apple ID as the only login methods",
       "acceptanceCriteria": [
-        "Listing creation steps are shown: photo upload, category, price, condition, location",
-        "Visual representation includes relevant field types (file picker, dropdown, number input, etc.)",
-        "Integrates consistently with existing FeatureCard styling and theme"
+        "Login screen shows a 'Continue with Google' button and a 'Continue with Apple' button.",
+        "Internet Identity button and references are removed from all visible UI.",
+        "On first login, the user is prompted for profile setup (name, phone, location).",
+        "On subsequent logins, the user is taken directly to the Home Feed.",
+        "AuthGuard correctly identifies authenticated state from the new providers."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/data/features.ts",
+          "path": "frontend/src/hooks/useInternetIdentity.ts",
           "operation": "modify",
-          "description": "Extend the Listing Creation feature object (REQ-14) with a 'creationSteps' property containing structured data for five steps: (1) photo upload with multi-image indicator, (2) category dropdown with sample categories, (3) price input in GMD, (4) condition selector (new/used/refurbished), (5) location tagging. Include field metadata and UI hints for each step."
+          "description": "Replace the Internet Identity authentication implementation with Google and Apple ID OAuth flows. Update the login() function to accept a provider parameter ('google' or 'apple') and initiate the appropriate OAuth flow. Ensure the identity and principal are correctly extracted from the OAuth response. Keep the same hook interface (login, clear, identity, loginStatus) for compatibility."
         },
         {
-          "path": "frontend/src/types/blueprint.ts",
+          "path": "frontend/src/components/LoginPrompt.tsx",
           "operation": "modify",
-          "description": "Add optional 'creationSteps' property to the Feature interface to support listing creation flow data. Define a CreationStep type with properties: stepNumber, stepTitle, fieldType (upload, dropdown, number, radio, location), options array for selectors, and hint text."
+          "description": "Remove the Internet Identity login button and replace it with two new buttons: 'Continue with Google' and 'Continue with Apple'. Each button should call login('google') or login('apple') respectively. Update the feature benefits text to reference Google/Apple login instead of Internet Identity. Keep both compact and full-page modes functional."
         },
         {
-          "path": "frontend/src/components/ListingCreationCard.tsx",
-          "operation": "create",
-          "description": "Create a component that renders the listing creation workflow as an illustrated step-by-step mini-form. Display each step with appropriate visual mockups: file upload icon grid for photos, styled dropdown for category, GMD-prefixed number input for price, radio buttons for condition, and map pin icon for location. Use the warm green and gold palette with batik texture accents."
+          "path": "frontend/src/components/AuthGuard.tsx",
+          "operation": "modify",
+          "description": "Verify that AuthGuard correctly identifies authenticated state from Google/Apple identities. No changes should be needed if useInternetIdentity hook interface remains the same, but test that the loading and authentication checks work correctly with the new providers."
         },
         {
-          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
+          "path": "frontend/src/components/ProfileSetup.tsx",
           "operation": "modify",
-          "description": "Update to conditionally render ListingCreationCard when the feature has creationSteps data (for REQ-14), integrating it within the feature grid layout."
+          "description": "Ensure the profile setup form is shown on first login for users authenticated via Google/Apple. No structural changes needed, but verify that the form captures name, phone, and location correctly and that the user is redirected to Home Feed after successful profile creation."
         }
       ]
     },
     {
-      "id": "REQ-15",
-      "summary": "Add Home Feed feature showcase displaying a mock listing grid with sample product cards showing images, titles, prices, location badges, and distance indicators",
+      "id": "REQ-46",
+      "summary": "Show full seller profile info to all authenticated users; prompt unauthenticated users to log in",
       "acceptanceCriteria": [
-        "Home feed mockup shows at least 3–4 sample listing cards",
-        "Each listing card includes image placeholder, title, price, and location/distance badge",
-        "Layout demonstrates responsive grid or list arrangement"
+        "Authenticated users viewing a listing detail see the seller's name, location, rating, verified badge, and a link to their full profile.",
+        "The PublicProfile page renders all seller fields for any authenticated visitor.",
+        "Unauthenticated users see a 'Log in to view full seller info' prompt where seller details would appear.",
+        "Phone number is masked (e.g., +220 *** **** 78) for privacy."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/data/features.ts",
+          "path": "frontend/src/pages/ListingDetail.tsx",
           "operation": "modify",
-          "description": "Extend the Home Feed feature object (REQ-15) with a 'sampleListings' property containing an array of 4 mock listing objects. Each listing includes: id, title, price (in GMD), location (Gambian city), distance (in km), category, imagePlaceholder (color or icon reference), and condition. Use realistic Gambian product examples (e.g., 'Samsung Galaxy Phone', 'Office Chair', 'Generator', 'Kids Bicycle')."
+          "description": "For authenticated users, ensure the SellerInfo component displays all seller fields (name, location, verified badge, rating). For unauthenticated users, replace the SellerInfo component with a LoginPrompt in compact mode with text 'Log in to view full seller info'. Add a utility function to mask the phone number (showing only first 4 and last 2 digits) when displaying seller contact info."
         },
         {
-          "path": "frontend/src/types/blueprint.ts",
+          "path": "frontend/src/components/SellerInfo.tsx",
           "operation": "modify",
-          "description": "Add optional 'sampleListings' property to the Feature interface. Define a SampleListing type with properties: id, title, price, location, distance, category, imagePlaceholder, and condition."
+          "description": "Ensure the component displays verified badge, location, and rating for all authenticated viewers. Add a prop to show/hide phone number and apply masking when displayed. The component should remain clickable to navigate to PublicProfile."
         },
         {
-          "path": "frontend/src/components/HomeFeedMockup.tsx",
-          "operation": "create",
-          "description": "Create a component that renders a responsive grid of mock listing cards using the sampleListings data. Each card displays a colored placeholder box with category icon, product title, price in bold green GMD text, location badge with map pin icon, and distance indicator. Use a 2-column mobile / 3-column tablet / 4-column desktop grid layout with hover lift effects and warm color accents."
-        },
-        {
-          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
+          "path": "frontend/src/pages/PublicProfile.tsx",
           "operation": "modify",
-          "description": "Update to conditionally render HomeFeedMockup when the feature has sampleListings data (for REQ-15), displaying it below the feature description."
+          "description": "For unauthenticated users, replace the profile content with a full-page LoginPrompt. For authenticated users, ensure all seller fields are visible: display name, location, verified badge, average rating, followers count, and reviews list. Add phone number display with masking utility."
         }
       ]
     },
     {
-      "id": "REQ-16",
-      "summary": "Add Search & Filters feature showcase displaying an interactive-looking search bar and filter panel with category dropdown, price range inputs, and condition checkboxes",
+      "id": "REQ-47",
+      "summary": "Generate unique shareable profile links for sellers and add a 'Share My Profile' button",
       "acceptanceCriteria": [
-        "Search bar mockup is displayed with placeholder text",
-        "Filter options shown: category, price range, and condition",
-        "Visual demo is styled consistently with the app's African market theme"
+        "Each seller profile has a unique URL based on their principal ID.",
+        "'Share My Profile' / 'Copy Link' button is visible on the seller's own Profile page and on any PublicProfile page.",
+        "Clicking the button copies the full URL to the clipboard and shows a success toast ('Link copied!').",
+        "Opening the link navigates directly to that seller's PublicProfile page.",
+        "Unauthenticated users who open a shared link can view the profile but see a login prompt for interactive actions."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/data/features.ts",
+          "path": "frontend/src/pages/Profile.tsx",
           "operation": "modify",
-          "description": "Extend the Search & Filters feature object (REQ-16) with a 'filterOptions' property containing structured data for: search placeholder text, category options array (Electronics, Vehicles, Fashion, Home & Garden, etc.), price range (min/max GMD values), and condition checkboxes (New, Used, Refurbished). Include sample filter state to illustrate active filters."
+          "description": "Add a 'Share My Profile' button below the profile stats row. On click, construct the shareable URL as `${window.location.origin}#public-profile?id=${userProfile.id.toString()}`, copy it to clipboard using navigator.clipboard.writeText(), and show a success toast 'Link copied!'. Style the button with a share icon from lucide-react."
         },
         {
-          "path": "frontend/src/types/blueprint.ts",
+          "path": "frontend/src/pages/PublicProfile.tsx",
           "operation": "modify",
-          "description": "Add optional 'filterOptions' property to the Feature interface. Define a FilterOptions type with properties: searchPlaceholder, categories array, priceRange (min, max, currency), conditions array, and optional activeFilters example object."
+          "description": "Add a 'Copy Profile Link' button near the top of the profile (next to the report button for non-owners, or prominently for the owner). On click, construct the shareable URL using the viewed user's principal ID, copy to clipboard, and show 'Link copied!' toast. Ensure unauthenticated users who arrive via shared link see a login prompt for interactive actions (follow, report) but can still view the profile info."
         },
         {
-          "path": "frontend/src/components/SearchFilterMockup.tsx",
-          "operation": "create",
-          "description": "Create a component that renders a visual demo of the search and filter UI. Display a prominent search bar with magnifying glass icon and placeholder text at the top, followed by a filter panel showing category dropdown (styled select), price range with min/max number inputs and GMD label, and condition checkboxes with green checkmarks. Use card-based layout with subtle batik background texture and warm color palette."
-        },
-        {
-          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
+          "path": "frontend/src/utils/urlParams.ts",
           "operation": "modify",
-          "description": "Update to conditionally render SearchFilterMockup when the feature has filterOptions data (for REQ-16), placing it as a visual demo card within the feature section."
+          "description": "Add a utility function `getPrincipalFromUrl()` that extracts the 'id' query parameter and returns it as a string. This will be used by PublicProfile to read the principal ID from shared links."
         }
       ]
     },
     {
-      "id": "REQ-17",
-      "summary": "Add In-App Chat feature showcase displaying a mock chat interface with message bubbles, listing context header, timestamps, and message input bar",
+      "id": "REQ-48",
+      "summary": "Implement Like and Follow system with frontend UI and query hooks",
       "acceptanceCriteria": [
-        "Chat mockup shows at least 3 sample messages alternating between buyer and seller",
-        "Listing context header is shown at top of chat",
-        "Message input bar with send button is displayed",
-        "Styled consistently with the warm African market theme"
+        "A heart/like button appears on each listing card and listing detail page; toggling it increments/decrements the like count stored in the backend.",
+        "A 'Follow' button appears on every seller's PublicProfile page; authenticated users can follow/unfollow.",
+        "The Profile page has a 'Following' tab listing all sellers the current user follows.",
+        "Seller profiles display a follower count.",
+        "Listing cards and detail pages display a like count.",
+        "Backend stores follow relationships and like records persistently in stable maps.",
+        "Unauthenticated users who try to like or follow are shown the login prompt."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/data/features.ts",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Extend the In-App Chat feature object (REQ-17) with a 'chatDemo' property containing: listingContext (thumbnail placeholder, title, price), sampleMessages array with at least 3 messages alternating between buyer and seller roles (each with sender, text, timestamp), and inputPlaceholder text. Use realistic Gambian marketplace conversation examples."
+          "description": "Add query hooks: useGetFollowing() to fetch the list of seller principals the current user follows, useGetFollowers(sellerId) to fetch a seller's follower list, and useGetLikedListings() to fetch the listing IDs the current user has liked. Add mutation hooks: useLikeListing(listingId) to toggle a like (calling likeListing or likeListingAnon based on auth state), useFollowSeller(sellerId) to follow a seller, and useUnfollowSeller(sellerId) to unfollow. Ensure mutations invalidate relevant query keys on success."
         },
         {
-          "path": "frontend/src/types/blueprint.ts",
+          "path": "frontend/src/components/ListingCard.tsx",
           "operation": "modify",
-          "description": "Add optional 'chatDemo' property to the Feature interface. Define ChatDemo type with listingContext object, sampleMessages array (each message has: id, sender, role, text, timestamp), and inputPlaceholder string. Define ChatMessage type with required message properties."
+          "description": "Add a heart icon button (from lucide-react) in the top-right corner of the card. Show the like count next to the heart. Use the useGetLikedListings hook to determine if the current listing is liked (filled heart) or not (outline heart). On click, call useLikeListing mutation; if unauthenticated, show LoginPrompt in a dialog/modal. Apply optimistic updates to the heart state."
         },
         {
-          "path": "frontend/src/components/ChatMockup.tsx",
-          "operation": "create",
-          "description": "Create a component that renders a realistic chat interface mockup. Display listing context header at top with thumbnail placeholder and product details. Render message bubbles alternating left (buyer) and right (seller) with different background colors (buyer: light gray, seller: warm green). Show timestamps in small gray text below each message. Include a sticky bottom input bar with text placeholder and send button icon. Style with rounded corners and consistent warm color palette."
+          "path": "frontend/src/pages/ListingDetail.tsx",
+          "operation": "modify",
+          "description": "Add a like button below the photo carousel or next to the share/report buttons. Display the total like count. Use useGetLikedListings to check if the current user has liked this listing. On click, call useLikeListing mutation; if unauthenticated, show a login prompt. Update the UI optimistically."
         },
         {
-          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
+          "path": "frontend/src/pages/PublicProfile.tsx",
           "operation": "modify",
-          "description": "Update to conditionally render ChatMockup when the feature has chatDemo data (for REQ-17), displaying it as a mobile-sized chat window within the feature card."
+          "description": "Add a 'Follow' / 'Following' toggle button below the seller's name and stats. Use useGetFollowing to check if the current user follows this seller. Display the follower count (fetched via useGetFollowers) next to the button. On click, call useFollowSeller or useUnfollowSeller mutation based on current state. If unauthenticated, show login prompt. Update button state optimistically."
+        },
+        {
+          "path": "frontend/src/components/ProfileTabs.tsx",
+          "operation": "modify",
+          "description": "Add a 'Following' tab (fourth tab after Listings, Reviews, Activity). When the Following tab is active, fetch the list of followed sellers using useGetFollowing, then for each principal fetch their profile using useGetUserProfile. Display each followed seller as a clickable card with their avatar, name, location, and rating. On click, navigate to their PublicProfile. Show a skeleton loader while fetching."
+        },
+        {
+          "path": "frontend/src/pages/Profile.tsx",
+          "operation": "modify",
+          "description": "Ensure the ProfileTabs component (which now includes a Following tab) is rendered. No other changes needed unless tabs need to be passed as props."
         }
       ]
     },
     {
-      "id": "REQ-18",
-      "summary": "Add Verified Seller Badge feature showcase displaying the verification process steps and a sample verified seller profile card",
+      "id": "REQ-49",
+      "summary": "Allow users to upload and display a profile picture",
       "acceptanceCriteria": [
-        "Verification steps (upload ID, review, badge awarded) are shown",
-        "Sample seller profile card with verified badge is displayed",
-        "Badge uses a visually distinct gold or green checkmark icon consistent with the theme"
+        "Backend UserProfile type includes an optional `profilePicUrl` field.",
+        "The `updateProfilePic` backend function updates the caller's profilePicUrl.",
+        "The Profile page shows the current profile picture or initials avatar with an upload button.",
+        "Selecting a new photo updates the displayed avatar immediately (optimistic update) and persists to the backend.",
+        "Profile pictures appear in SellerInfo, ConversationItem, and PublicProfile components.",
+        "File size is validated client-side (max 2 MB) before conversion to base64."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/data/features.ts",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Extend the Verified Seller Badge feature object (REQ-18) with a 'verificationProcess' property containing three steps (upload ID, under review, badge awarded) and a 'sampleProfile' object with seller name, verified status, star rating, transaction count, and member since date. Reference the generated verified badge image at frontend/public/assets/generated/verified-badge.dim_256x256.png."
+          "description": "Add a mutation hook useUpdateProfilePic() that accepts a base64 image string, calls actor.updateProfilePic(base64String), and invalidates the 'currentUserProfile' query key on success. Add client-side file size validation (max 2 MB) before converting the file to base64."
         },
         {
-          "path": "frontend/src/types/blueprint.ts",
+          "path": "frontend/src/pages/Profile.tsx",
           "operation": "modify",
-          "description": "Add optional 'verificationProcess' and 'sampleProfile' properties to the Feature interface. Define VerificationStep type (stepNumber, status, description) and SellerProfile type (name, verified, rating, transactionCount, memberSince, badgeImage)."
+          "description": "Display the current profile picture in a circular avatar at the top of the page. If userProfile.profilePicUrl is present, render it as an <img> with object-fit cover. Otherwise, show the animated initials avatar. Add a camera icon button overlaying the avatar. On click, open a file input to select an image (accept='image/*'). Validate file size (max 2 MB), convert to base64, call useUpdateProfilePic mutation, and optimistically update the displayed avatar. Show a toast on success or error."
         },
         {
-          "path": "frontend/src/components/VerifiedBadgeMockup.tsx",
-          "operation": "create",
-          "description": "Create a component that displays two elements: (1) verification process as a horizontal or vertical stepper showing the three stages with status indicators (pending, in-progress, complete), and (2) a seller profile card showing profile avatar placeholder, name, the verified badge image from frontend/public/assets/generated/verified-badge.dim_256x256.png positioned next to the name, 5-star rating display, and transaction count. Use warm gold color for the verified badge and green accents for ratings."
+          "path": "frontend/src/components/SellerInfo.tsx",
+          "operation": "modify",
+          "description": "Update the avatar display to show the seller's profilePicUrl if available. Fetch the seller's profile and check for profilePicUrl. If present, render the image; otherwise, fall back to the initials avatar."
         },
         {
-          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
+          "path": "frontend/src/components/ConversationItem.tsx",
           "operation": "modify",
-          "description": "Update to conditionally render VerifiedBadgeMockup when the feature has verificationProcess data (for REQ-18), displaying both the process flow and sample profile card."
+          "description": "Fetch the other user's profile and display their profilePicUrl if available in the avatar circle. Fall back to initials avatar if no profilePicUrl."
+        },
+        {
+          "path": "frontend/src/pages/PublicProfile.tsx",
+          "operation": "modify",
+          "description": "Display the viewed user's profilePicUrl at the top of the profile if available. Fall back to initials avatar otherwise."
+        },
+        {
+          "path": "frontend/src/components/BottomNav.tsx",
+          "operation": "modify",
+          "description": "In the Profile tab icon, if the user is authenticated and has a profilePicUrl, display a small circular avatar image instead of the default user icon. Fetch the current user profile and check for profilePicUrl."
+        },
+        {
+          "path": "frontend/src/components/AppHeader.tsx",
+          "operation": "modify",
+          "description": "If the header includes a profile icon or avatar, display the current user's profilePicUrl if available. Fall back to a default user icon otherwise."
         }
       ]
     },
     {
-      "id": "REQ-19",
-      "summary": "Add Delivery & Meet-Up feature showcase displaying side-by-side comparison of delivery and meet-up options with icons and descriptions",
+      "id": "REQ-50",
+      "summary": "Ensure all user data is fetched from backend on every session start (no localStorage dependency)",
       "acceptanceCriteria": [
-        "Both delivery and meet-up options are shown side by side",
-        "Each option includes an icon, title, and description",
-        "Visual layout is consistent with existing FeatureCard components"
+        "Logging in on a second device shows the same profile, listings, and conversations as the first device.",
+        "Profile data (name, location, profilePicUrl, listings) is fetched from the backend on app load, not from localStorage.",
+        "No critical user state is siloed to a single device's local storage.",
+        "Session tokens from Google/Apple resolve to the same principal ID across devices."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/data/features.ts",
+          "path": "frontend/src/hooks/useGetCallerUserProfile.ts",
           "operation": "modify",
-          "description": "Extend the Delivery & Meet-Up feature object (REQ-19) with a 'fulfillmentOptions' property containing two option objects: (1) Delivery with icon name, title, description (address input, estimated cost, delivery partner selection), and sample fields, (2) Meet-Up with icon name, title, description (proposed location and time), and sample fields. Include realistic Gambian location examples."
+          "description": "Ensure the useGetCallerUserProfile hook always fetches from the backend actor on every session start. Remove any caching logic that persists profile data to localStorage. Set staleTime to 0 and cacheTime to a low value to ensure fresh fetches. The hook should refetch the profile whenever the actor changes (new identity)."
         },
         {
-          "path": "frontend/src/types/blueprint.ts",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Add optional 'fulfillmentOptions' property to the Feature interface. Define FulfillmentOption type with properties: type, iconName, title, description, and sampleFields array (each field has label and placeholder)."
+          "description": "Review all query hooks (useGetMyListings, useGetMyConversations, etc.) and ensure they do not rely on localStorage for persisting data. All queries should use the backend actor as the source of truth. Remove any localStorage read/write logic for user data. Keep only UI-specific localStorage (e.g., recent searches, last-viewed message timestamps) and clearly comment them as UI-only state."
         },
         {
-          "path": "frontend/src/components/FulfillmentOptionsCard.tsx",
-          "operation": "create",
-          "description": "Create a component that renders the two fulfillment options in a responsive side-by-side layout (2 columns on desktop, stacked on mobile). Each option displays as a card with a large icon at top, option title, descriptive text, and sample form fields as visual mockups. Use truck/delivery icon for delivery option and handshake/map icon for meet-up. Style with consistent green and gold accent colors and subtle card borders."
+          "path": "frontend/src/pages/Profile.tsx",
+          "operation": "modify",
+          "description": "Ensure the profile page refetches user data on mount via useGetCallerUserProfile. Do not read profile fields from localStorage. If the query is loading, show a skeleton loader. Once data is fetched, display the profile."
         },
         {
-          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
+          "path": "frontend/src/components/AuthGuard.tsx",
           "operation": "modify",
-          "description": "Update to conditionally render FulfillmentOptionsCard when the feature has fulfillmentOptions data (for REQ-19), displaying it as a comparison card within the feature section."
+          "description": "Ensure AuthGuard refetches the caller's profile on every authentication state change. Do not use cached profile data from localStorage. The profile query should be enabled only when the actor is ready and the user is authenticated."
         }
       ]
     },
     {
-      "id": "REQ-20",
-      "summary": "Add Mobile Money Payments feature showcase displaying payment method selection UI with Afrimoney, QMoney, and Cash on Delivery options, plus transaction status badges",
+      "id": "REQ-51",
+      "summary": "Ensure listings persist indefinitely and display status badges in My Listings",
       "acceptanceCriteria": [
-        "All three payment methods (Afrimoney, QMoney, Cash on Delivery) are displayed",
-        "Payment selection UI mockup is shown",
-        "Transaction status badges (pending, completed) are included",
-        "Styled with the app's warm green and gold theme"
+        "Listings are never automatically deleted or expired by the backend.",
+        "Only the listing owner can delete a listing via the `deleteListing` function, which checks the caller's principal.",
+        "The owner's 'My Listings' tab shows all listings including sold/paused ones with status badges.",
+        "The Home Feed only shows listings with 'active' status, while all others are still stored and visible to the owner.",
+        "No scheduled or automatic cleanup code exists in the backend."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/data/features.ts",
+          "path": "frontend/src/components/MyListingCard.tsx",
           "operation": "modify",
-          "description": "Extend the Mobile Money Payments feature object (REQ-20) with a 'paymentMethods' property containing three method objects (Afrimoney, QMoney, Cash on Delivery), each with iconName, methodName, description, and availability status. Add a 'transactionStates' property with sample status badges (pending, completed, failed) with colors. Reference the payment methods illustration image at frontend/public/assets/generated/payment-methods-illustration.dim_600x400.png."
+          "description": "Add a status badge to the top-left corner of each listing card. The badge should display the listing's status (Active, Sold, Paused, etc.) with color-coded styling (green for Active, gray for Paused, blue for Sold). Fetch the listing status from the listing object and render a badge component (similar to condition badge). Ensure the delete, edit, and boost actions are still accessible."
         },
         {
-          "path": "frontend/src/types/blueprint.ts",
+          "path": "frontend/src/components/ProfileTabs.tsx",
           "operation": "modify",
-          "description": "Add optional 'paymentMethods' and 'transactionStates' properties to the Feature interface. Define PaymentMethod type (iconName, methodName, description, available) and TransactionState type (status, label, color)."
+          "description": "In the Listings tab, ensure that all of the user's listings are displayed regardless of status. Use useGetMyListings to fetch all listings. Do not filter by status. Display each listing using MyListingCard, which now shows status badges."
         },
         {
-          "path": "frontend/src/components/PaymentMethodsMockup.tsx",
-          "operation": "create",
-          "description": "Create a component that renders: (1) the payment methods illustration image from frontend/public/assets/generated/payment-methods-illustration.dim_600x400.png at the top, (2) payment selection UI showing three payment method cards with radio button selectors, method names styled as badges (Afrimoney in green, QMoney in gold, Cash on Delivery in neutral), and brief descriptions, (3) transaction status indicators showing pending (yellow), completed (green), and failed (red) badges with labels. Use card-based layout with warm color palette and clear visual hierarchy."
-        },
-        {
-          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
+          "path": "frontend/src/pages/HomeFeed.tsx",
           "operation": "modify",
-          "description": "Update to conditionally render PaymentMethodsMockup when the feature has paymentMethods data (for REQ-20), displaying the payment flow UI within the feature section."
-        }
-      ]
-    },
-    {
-      "id": "REQ-21",
-      "summary": "Add Trust & Safety System feature showcase displaying four trust mechanisms: star ratings, written reviews, report system, and block user functionality in a responsive grid",
-      "acceptanceCriteria": [
-        "All four trust mechanisms are visually represented",
-        "Star rating component shows interactive-style stars",
-        "Report and block actions show confirmation UI mockups",
-        "Layout is responsive and consistent with the existing theme"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/data/features.ts",
-          "operation": "modify",
-          "description": "Extend the Trust & Safety System feature object (REQ-21) with a 'trustMechanisms' property containing four mechanism objects: (1) Star Ratings with 5-star selector mockup, (2) Written Reviews with sample review text and reviewer info, (3) Report System with reason dropdown options (spam, fraud, inappropriate, etc.), (4) Block User with confirmation dialog text. Include visual hints and sample states for each mechanism."
-        },
-        {
-          "path": "frontend/src/types/blueprint.ts",
-          "operation": "modify",
-          "description": "Add optional 'trustMechanisms' property to the Feature interface. Define TrustMechanism type with properties: mechanismType, title, description, and type-specific data (e.g., ratingValue for stars, sampleReview for reviews, reportReasons array for reports, confirmationText for blocking)."
-        },
-        {
-          "path": "frontend/src/components/TrustSafetyMockup.tsx",
-          "operation": "create",
-          "description": "Create a component that renders the four trust mechanisms in a responsive 2x2 grid layout. Each mechanism is a mini-card showing: (1) Star rating with 5 gold stars and rating value, (2) Review card with sample text and reviewer name, (3) Report UI with dropdown mockup showing reason options, (4) Block user confirmation dialog mockup with warning icon and action buttons. Style with consistent warm colors, clear icons, and proper spacing."
-        },
-        {
-          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
-          "operation": "modify",
-          "description": "Update to conditionally render TrustSafetyMockup when the feature has trustMechanisms data (for REQ-21), displaying the 2x2 grid of trust features within the feature section."
-        }
-      ]
-    },
-    {
-      "id": "REQ-22",
-      "summary": "Add Boosted & Promoted Listings feature showcase to the Monetization section with standard vs boosted comparison, pricing tiers, and primary revenue driver emphasis",
-      "acceptanceCriteria": [
-        "Side-by-side comparison of standard vs boosted listing is shown",
-        "Boosted listing has a 'Sponsored' badge and highlighted styling",
-        "Pricing tiers for boosting are displayed with example GMD amounts",
-        "Section is marked as the primary monetization driver with visual emphasis"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/data/monetization.ts",
-          "operation": "modify",
-          "description": "Extend the Boosted & Promoted Listings revenue stream object (primary: true) with a 'comparisonDemo' property containing two listing objects (standard and boosted) showing visual differences, and a 'pricingTiers' property with three boost options: 3-day (150 GMD), 7-day (300 GMD), and 30-day (1000 GMD) with expected reach/impressions for each tier. Add visual indicators like border colors and badge data."
-        },
-        {
-          "path": "frontend/src/types/blueprint.ts",
-          "operation": "modify",
-          "description": "Add optional 'comparisonDemo' and 'pricingTiers' properties to the RevenueStream interface. Define ListingComparison type (standard and boosted objects with styling hints) and BoostTier type (duration, price, currency, expectedReach, features array)."
-        },
-        {
-          "path": "frontend/src/components/BoostedListingMockup.tsx",
-          "operation": "create",
-          "description": "Create a component that renders: (1) side-by-side comparison showing a standard listing card (plain border, no badge) next to a boosted listing card (highlighted gold border, 'Sponsored' badge at top, elevated positioning indicator), (2) pricing tier cards in a horizontal row showing 3-day, 7-day, and 30-day boost options with prices in GMD and feature bullets. Add a prominent 'Primary Revenue Driver' label or banner above the section. Use warm gold and green colors to emphasize the boosted listing advantages."
-        },
-        {
-          "path": "frontend/src/components/MonetizationSection.tsx",
-          "operation": "modify",
-          "description": "Update to render BoostedListingMockup for the primary revenue stream (Boosted & Promoted Listings) instead of or in addition to the standard RevenueCard, providing expanded visual detail and emphasis for this critical monetization feature."
+          "description": "Ensure the home feed only displays listings with status 'active'. Filter the listings array returned by useGetAllListings to include only listings where listing.status === 'active' or 'Active' (case-insensitive). Inactive/sold/paused listings should not appear in the public feed."
         }
       ]
     }

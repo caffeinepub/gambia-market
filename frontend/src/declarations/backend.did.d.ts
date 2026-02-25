@@ -10,6 +10,85 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface AnonMessage {
+  'id' : MessageId,
+  'content' : string,
+  'listingId' : ListingId,
+  'receiverId' : Principal,
+  'timestamp' : Time,
+  'senderName' : string,
+  'senderId' : [] | [Principal],
+}
+export interface BoostOption { 'durationDays' : bigint, 'priceGMD' : bigint }
+export type ExternalBlob = Uint8Array;
+export type ListingId = bigint;
+export interface Message {
+  'id' : MessageId,
+  'content' : string,
+  'listingId' : ListingId,
+  'receiverId' : Principal,
+  'timestamp' : Time,
+  'senderId' : Principal,
+}
+export type MessageId = bigint;
+export interface PublicListing {
+  'id' : ListingId,
+  'status' : string,
+  'title' : string,
+  'createdAt' : Time,
+  'description' : string,
+  'isBoosted' : boolean,
+  'category' : string,
+  'boostExpiry' : [] | [Time],
+  'sellerId' : Principal,
+  'price' : bigint,
+  'location' : string,
+  'photos' : Array<ExternalBlob>,
+  'condition' : string,
+}
+export interface Report {
+  'id' : ReportId,
+  'status' : string,
+  'reportedId' : Principal,
+  'reporterId' : Principal,
+  'reason' : string,
+}
+export type ReportId = bigint;
+export interface Review {
+  'id' : ReviewId,
+  'listingId' : ListingId,
+  'createdAt' : Time,
+  'revieweeId' : Principal,
+  'reviewerId' : Principal,
+  'comment' : string,
+  'stars' : bigint,
+}
+export type ReviewId = bigint;
+export type Time = bigint;
+export interface Transaction {
+  'id' : TransactionId,
+  'status' : string,
+  'paymentMethod' : string,
+  'listingId' : ListingId,
+  'buyerId' : Principal,
+  'sellerId' : Principal,
+  'amount' : bigint,
+}
+export type TransactionId = bigint;
+export interface UserProfile {
+  'id' : Principal,
+  'profilePicUrl' : [] | [string],
+  'verified' : boolean,
+  'name' : string,
+  'createdAt' : Time,
+  'phone' : string,
+  'followers' : bigint,
+  'location' : string,
+  'highestRating' : bigint,
+}
+export type UserRole = { 'admin' : null } |
+  { 'user' : null } |
+  { 'guest' : null };
 export interface _CaffeineStorageCreateCertificateResult {
   'method' : string,
   'blob_hash' : string,
@@ -37,6 +116,75 @@ export interface _SERVICE {
     _CaffeineStorageRefillResult
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
+  '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addAllowedCategory' : ActorMethod<[string], undefined>,
+  'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'createListing' : ActorMethod<
+    [string, string, string, bigint, string, Array<ExternalBlob>, string],
+    ListingId
+  >,
+  'createOrUpdateUserProfile' : ActorMethod<[string, string], undefined>,
+  'createReport' : ActorMethod<[Principal, string], ReportId>,
+  'createReview' : ActorMethod<
+    [Principal, ListingId, bigint, string],
+    ReviewId
+  >,
+  'createTransaction' : ActorMethod<
+    [ListingId, Principal, string, bigint],
+    TransactionId
+  >,
+  'deleteListing' : ActorMethod<[ListingId], undefined>,
+  'followSeller' : ActorMethod<[Principal], undefined>,
+  'getAllCategories' : ActorMethod<[], Array<string>>,
+  'getAllListings' : ActorMethod<[], Array<PublicListing>>,
+  'getAllReports' : ActorMethod<[], Array<Report>>,
+  'getAnonymousMessageById' : ActorMethod<[MessageId], [] | [AnonMessage]>,
+  'getBoostOptions' : ActorMethod<[], Array<BoostOption>>,
+  'getBoostedListings' : ActorMethod<[], Array<PublicListing>>,
+  'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
+  'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getFollowers' : ActorMethod<[Principal], Array<Principal>>,
+  'getFollowing' : ActorMethod<[], Array<Principal>>,
+  'getLikedListings' : ActorMethod<[], Array<ListingId>>,
+  'getListing' : ActorMethod<[ListingId], [] | [PublicListing]>,
+  'getListingsByCategory' : ActorMethod<[string], Array<PublicListing>>,
+  'getMessagesForListing' : ActorMethod<[ListingId], Array<Message>>,
+  'getMyConversations' : ActorMethod<[], Array<Message>>,
+  'getMyListings' : ActorMethod<[], Array<PublicListing>>,
+  'getReviewsForUser' : ActorMethod<[Principal], Array<Review>>,
+  'getTransaction' : ActorMethod<[TransactionId], [] | [Transaction]>,
+  'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'isCallerAdmin' : ActorMethod<[], boolean>,
+  'likeListing' : ActorMethod<[ListingId], boolean>,
+  'likeListingAnon' : ActorMethod<[ListingId], boolean>,
+  'removeAllowedCategory' : ActorMethod<[string], undefined>,
+  'saveCallerUserProfile' : ActorMethod<[string, string, string], undefined>,
+  'searchListings' : ActorMethod<[string], Array<PublicListing>>,
+  'sendMessage' : ActorMethod<[ListingId, Principal, string], MessageId>,
+  'sendMessageAnon' : ActorMethod<
+    [string, string, ListingId, Principal],
+    MessageId
+  >,
+  'setListingBoosted' : ActorMethod<[ListingId, boolean, bigint], undefined>,
+  'unfollowSeller' : ActorMethod<[Principal], undefined>,
+  'updateAllUserProfilesWithHighestRating' : ActorMethod<[], undefined>,
+  'updateListing' : ActorMethod<
+    [
+      ListingId,
+      string,
+      string,
+      string,
+      bigint,
+      string,
+      Array<ExternalBlob>,
+      string,
+    ],
+    undefined
+  >,
+  'updateListingStatus' : ActorMethod<[ListingId, string], undefined>,
+  'updateProfilePic' : ActorMethod<[string], undefined>,
+  'updateReportStatus' : ActorMethod<[ReportId, string], undefined>,
+  'updateTransactionStatus' : ActorMethod<[TransactionId, string], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

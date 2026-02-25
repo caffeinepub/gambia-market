@@ -1,211 +1,185 @@
 {
   "kind": "build_request",
-  "title": "Build full Gambia Market interactive blueprint app",
+  "title": "Post-logout redirect, social login, seller profiles, likes/follows, profile pictures, cross-device persistence",
   "projectName": "Gambia Market",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-13",
-      "text": "Implement a Phone Number Registration with OTP feature section: display a realistic UI mockup or detailed description card showing the registration flow — enter phone number, receive OTP via SMS, verify code, and complete profile setup. Include the step-by-step flow with form fields (phone input, OTP input, name, location) and validation states.",
+      "id": "REQ-44",
+      "text": "After a user logs out from any page, immediately redirect them to the main Home Feed page. The logout action in Profile.tsx and any other location that calls the logout function must navigate to the home route after the identity session is cleared.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "Phone number registration with OTP via SMS"
+          "make sure anytime time a user logout let his it be redirected to the main home page"
         ]
       },
       "acceptanceCriteria": [
-        "Registration flow is visually represented with phone input, OTP verification, and profile setup steps",
-        "Each step shows relevant form fields and validation feedback",
-        "Component renders from structured data in the existing TypeScript data files"
+        "Clicking logout on the Profile page navigates the user to the Home Feed ('/') immediately after session is cleared.",
+        "The bottom navigation and header reflect the logged-out state on arrival at the home page.",
+        "No residual authenticated state remains after logout redirect."
       ]
     },
     {
-      "id": "REQ-14",
-      "text": "Implement a Listing Creation feature showcase card: display a detailed walkthrough of the listing creation flow including photo upload (multi-image), category selector, price input, condition selector (new/used/refurbished), and location tagging. Show this as an illustrated step-by-step card or mini-form mockup within the Feature Breakdown section.",
-      "target": "frontend",
+      "id": "REQ-45",
+      "text": "Replace the current Internet Identity authentication with Google and Apple ID as the only two supported login methods. Display both options as prominent buttons on the login screen. On successful authentication, associate the user's identity with a backend profile (creating one on first login). The existing LoginPrompt, ProfileSetup, and AuthGuard components must be updated to reflect the new providers. Internet Identity references should be removed from all UI-facing components.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "Listing creation with photos, category, price, condition, and location tagging"
+          "allow users to login using only apple id and google"
         ]
       },
       "acceptanceCriteria": [
-        "Listing creation steps are shown: photo upload, category, price, condition, location",
-        "Visual representation includes relevant field types (file picker, dropdown, number input, etc.)",
-        "Integrates consistently with existing FeatureCard styling and theme"
+        "Login screen shows a 'Continue with Google' button and a 'Continue with Apple' button.",
+        "Internet Identity button and references are removed from all visible UI.",
+        "On first login, the user is prompted for profile setup (name, phone, location).",
+        "On subsequent logins, the user is taken directly to the Home Feed.",
+        "AuthGuard correctly identifies authenticated state from the new providers."
       ]
     },
     {
-      "id": "REQ-15",
-      "text": "Implement a Home Feed feature showcase: display a visual representation of the home feed showing nearby listings sorted by distance or region. Include a mock listing grid/list with sample listing cards (image, title, price, location badge, distance indicator) that illustrates the feed experience for Gambian users.",
+      "id": "REQ-46",
+      "text": "Allow any logged-in user (regardless of role) to view the full seller profile when browsing — including the seller's display name, masked phone number, location, verified badge status, average star rating, listed products, and reviews. The seller info on the Listing Detail page and the PublicProfile page must show all these fields to any authenticated viewer. Unauthenticated visitors should see a prompt to log in to view full seller info.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "Home feed with nearby listings sorted by distance or region"
+          "let anyone that that login to see all the info from the sellers to brouse and see"
         ]
       },
       "acceptanceCriteria": [
-        "Home feed mockup shows at least 3–4 sample listing cards",
-        "Each listing card includes image placeholder, title, price, and location/distance badge",
-        "Layout demonstrates responsive grid or list arrangement"
+        "Authenticated users viewing a listing detail see the seller's name, location, rating, verified badge, and a link to their full profile.",
+        "The PublicProfile page renders all seller fields for any authenticated visitor.",
+        "Unauthenticated users see a 'Log in to view full seller info' prompt where seller details would appear.",
+        "Phone number is masked (e.g., +220 *** **** 78) for privacy."
       ]
     },
     {
-      "id": "REQ-16",
-      "text": "Implement a Search & Filters feature showcase: display an interactive-looking search bar mockup and filter panel showing category dropdown, price range slider/inputs, and condition checkboxes. Present this as a visual demo card within the Feature Breakdown section, illustrating how users would search and narrow down listings.",
+      "id": "REQ-47",
+      "text": "Generate a unique shareable profile link for every seller. The link should use the seller's principal ID as a URL parameter (e.g., /public-profile?id=<principalId>). On the seller's Profile page and PublicProfile page, display a 'Share My Profile' button that copies this link to the clipboard and shows a confirmation toast. The link should be stable and accessible to anyone — even unauthenticated users can open it but will be prompted to log in to interact.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "Search bar and category, price, and condition filters"
+          "all sellers can send links to their customers to find them easily"
         ]
       },
       "acceptanceCriteria": [
-        "Search bar mockup is displayed with placeholder text",
-        "Filter options shown: category, price range, and condition",
-        "Visual demo is styled consistently with the app's African market theme"
+        "Each seller profile has a unique URL based on their principal ID.",
+        "'Share My Profile' / 'Copy Link' button is visible on the seller's own Profile page and on any PublicProfile page.",
+        "Clicking the button copies the full URL to the clipboard and shows a success toast ('Link copied!').",
+        "Opening the link navigates directly to that seller's PublicProfile page.",
+        "Unauthenticated users who open a shared link can view the profile but see a login prompt for interactive actions."
       ]
     },
     {
-      "id": "REQ-17",
-      "text": "Implement an In-App Chat feature showcase: display a visual mockup of the real-time chat interface between buyer and seller, showing a conversation thread with message bubbles, listing context (thumbnail and title at top), timestamp display, and a message input bar. Include sample messages illustrating a buyer inquiry and seller response.",
-      "target": "frontend",
+      "id": "REQ-48",
+      "text": "Implement a Like and Follow system for sellers. Users can 'Like' individual listings (heart icon on each listing card and detail page) and 'Follow' a seller from their PublicProfile or Listing Detail page. In the backend, add a `followSeller` function that records follower/following relationships (followerId → sellerId) and an `unfollowSeller` function to remove the relationship. Add a `likeListingAnon` / `likeListing` function to toggle a like on a listing, storing the liker's principal and the listing ID. Expose query functions `getFollowing`, `getFollowers`, and `getLikedListings`. In the Profile page, add a 'Following' tab showing followed sellers. Display follower counts on seller profiles and like counts on listing cards.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "In-app real-time chat between buyer and seller"
+          "users can like and follow sellers for more products"
         ]
       },
       "acceptanceCriteria": [
-        "Chat mockup shows at least 3 sample messages alternating between buyer and seller",
-        "Listing context header is shown at top of chat",
-        "Message input bar with send button is displayed",
-        "Styled consistently with the warm African market theme"
+        "A heart/like button appears on each listing card and listing detail page; toggling it increments/decrements the like count stored in the backend.",
+        "A 'Follow' button appears on every seller's PublicProfile page; authenticated users can follow/unfollow.",
+        "The Profile page has a 'Following' tab listing all sellers the current user follows.",
+        "Seller profiles display a follower count.",
+        "Listing cards and detail pages display a like count.",
+        "Backend stores follow relationships and like records persistently in stable maps.",
+        "Unauthenticated users who try to like or follow are shown the login prompt."
       ]
     },
     {
-      "id": "REQ-18",
-      "text": "Implement a Verified Seller Badge feature showcase: display a detailed explanation card showing the badge verification process — ID upload step, review period, badge awarded state — alongside a visual example of a seller profile card showing the verified badge, star rating, and number of completed transactions.",
-      "target": "frontend",
+      "id": "REQ-49",
+      "text": "Allow users to upload and display a profile picture. Add a `profilePicUrl` field (Text, optional) to the UserProfile type in the backend. Add an `updateProfilePic` function that accepts a base64-encoded image string or URL and stores it on the caller's profile. On the Profile page and PublicProfile page, display the profile picture if available, or fall back to the animated initials avatar. Add a camera/upload icon button on the Profile page that opens a file picker to select a photo, converts it to base64, and calls `updateProfilePic`. Display the profile picture in the avatar circle of the BottomNav, AppHeader profile icon, SellerInfo component, and ConversationItem.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "Verified seller badge system with ID upload"
+          "users can add their profile pics for more security"
         ]
       },
       "acceptanceCriteria": [
-        "Verification steps (upload ID, review, badge awarded) are shown",
-        "Sample seller profile card with verified badge is displayed",
-        "Badge uses a visually distinct gold or green checkmark icon consistent with the theme"
+        "Backend UserProfile type includes an optional `profilePicUrl` field.",
+        "The `updateProfilePic` backend function updates the caller's profilePicUrl.",
+        "The Profile page shows the current profile picture or initials avatar with an upload button.",
+        "Selecting a new photo updates the displayed avatar immediately (optimistic update) and persists to the backend.",
+        "Profile pictures appear in SellerInfo, ConversationItem, and PublicProfile components.",
+        "File size is validated client-side (max 2 MB) before conversion to base64."
       ]
     },
     {
-      "id": "REQ-19",
-      "text": "Implement a Delivery & Meet-Up feature showcase: display a card illustrating the two fulfillment options — (1) Delivery Request with address input, estimated cost, and delivery partner selection, and (2) Meet-Up arrangement with proposed location and time. Show these as a side-by-side comparison card with icons and brief descriptions for each option.",
+      "id": "REQ-50",
+      "text": "Ensure all user account data, sessions, and listed products are accessible from any device. Since the platform uses principal-based identity (Google/Apple), the same identity resolves to the same principal across devices, so data is inherently cross-device. Update the frontend to not rely on device-local state (localStorage/sessionStorage) for authenticated user data — all profile data, listings, conversations, and follows must be fetched from the backend on every session start. Add a `useGetCallerUserProfile` query that runs on app load for authenticated users to re-hydrate their profile from the backend rather than from local cache.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "Delivery request and meet-up arrangement options"
+          "all users can log in their account in any devices"
         ]
       },
       "acceptanceCriteria": [
-        "Both delivery and meet-up options are shown side by side",
-        "Each option includes an icon, title, and description",
-        "Visual layout is consistent with existing FeatureCard components"
+        "Logging in on a second device shows the same profile, listings, and conversations as the first device.",
+        "Profile data (name, location, profilePicUrl, listings) is fetched from the backend on app load, not from localStorage.",
+        "No critical user state is siloed to a single device's local storage.",
+        "Session tokens from Google/Apple resolve to the same principal ID across devices."
       ]
     },
     {
-      "id": "REQ-20",
-      "text": "Implement a Mobile Money Payments feature showcase: display a payment flow card showing the three payment methods — Afrimoney, QMoney, and Cash on Delivery. Include a mock payment selection screen with radio buttons or payment method cards, a confirmation step, and status badges (pending, completed). Show the Afrimoney and QMoney logos as styled text badges.",
-      "target": "frontend",
+      "id": "REQ-51",
+      "text": "Ensure that all listed products persist in the backend indefinitely and are never automatically removed. Listings may only be deleted when the owner explicitly calls the `deleteListing` function from their own 'My Listings' section. Remove any TTL, expiry, or automatic cleanup logic from the backend if present. Inactive/sold listings should remain visible to the owner in their 'My Listings' tab with a status badge (Active / Sold / Paused) even after they are no longer shown in the public Home Feed.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "Mobile money payments via Afrimoney and QMoney plus cash on delivery"
+          "let all listed products remain unless deleted by the owner in their account"
         ]
       },
       "acceptanceCriteria": [
-        "All three payment methods (Afrimoney, QMoney, Cash on Delivery) are displayed",
-        "Payment selection UI mockup is shown",
-        "Transaction status badges (pending, completed) are included",
-        "Styled with the app's warm green and gold theme"
-      ]
-    },
-    {
-      "id": "REQ-21",
-      "text": "Implement a Trust & Safety System feature showcase: display a card illustrating the four trust mechanisms — (1) star ratings with a visual 5-star selector, (2) written review with sample text, (3) report system with a reason dropdown mockup, and (4) block user confirmation dialog. Present these as a 2×2 grid of mini-cards within the feature section.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "Star ratings, written reviews, report system, and block user for trust and safety"
-        ]
-      },
-      "acceptanceCriteria": [
-        "All four trust mechanisms are visually represented",
-        "Star rating component shows interactive-style stars",
-        "Report and block actions show confirmation UI mockups",
-        "Layout is responsive and consistent with the existing theme"
-      ]
-    },
-    {
-      "id": "REQ-22",
-      "text": "Implement a Boosted & Promoted Listings feature showcase within the Monetization section: display a visual comparison card showing a standard listing versus a boosted listing (highlighted border, 'Sponsored' badge, top-of-feed position indicator). Include a pricing tier card showing boosting options (e.g., 3-day, 7-day, 30-day boost with example prices in GMD). Mark this as the primary revenue driver with a distinct highlight.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "Boosted and promoted listings as primary monetization feature"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Side-by-side comparison of standard vs boosted listing is shown",
-        "Boosted listing has a 'Sponsored' badge and highlighted styling",
-        "Pricing tiers for boosting are displayed with example GMD amounts",
-        "Section is marked as the primary monetization driver with visual emphasis"
+        "Listings are never automatically deleted or expired by the backend.",
+        "Only the listing owner can delete a listing via the `deleteListing` function, which checks the caller's principal.",
+        "The owner's 'My Listings' tab shows all listings including sold/paused ones with status badges.",
+        "The Home Feed only shows listings with 'active' status, while all others are still stored and visible to the owner.",
+        "No scheduled or automatic cleanup code exists in the backend."
       ]
     }
   ],
   "constraints": [
-    "Do not modify any files under frontend/src/hooks/ or frontend/src/components/ui/",
-    "All new feature showcase content must be stored as structured TypeScript data in frontend/src/data/ files and rendered dynamically",
-    "Maintain the existing West African textile-inspired color palette and kente/batik motif styling",
-    "All new components must be consistent with existing component patterns (SectionContainer, FeatureCard, etc.)"
+    "Do not use Internet Identity as an authentication method — it must be fully replaced by Google and Apple ID.",
+    "Do not break existing listing, messaging, review, and reporting functionality.",
+    "Profile pictures must be stored as base64 or URLs in the backend, not as binary blobs requiring separate storage services.",
+    "All backend logic must remain in the single Motoko actor (backend/main.mo).",
+    "Do not edit files listed in frontend.immutablePaths."
   ],
   "nonGoals": [
-    "Do not implement actual backend logic for registration, chat, payments, or any functional app features",
-    "Do not add a real database or authentication system",
-    "Do not change the backend Motoko actor",
-    "Do not implement real-time functionality — all content is static/presentational"
+    "Real-time push notifications for new followers or likes.",
+    "Email or SMS notifications for follow/like events.",
+    "A dedicated 'followers feed' or activity timeline beyond the Following tab.",
+    "Video profile pictures or animated avatars.",
+    "Third-party delivery or payment integrations in this iteration."
   ],
   "imageRequirements": {
-    "required": [
-      "Gambia Market mobile app screen mockup showing a home feed with colorful product listing cards in a warm green and gold UI on a smartphone frame (app-screen-mockup.dim_800x600.png)",
-      "Mobile money payment screen illustration showing Afrimoney and QMoney logos with a payment confirmation UI in warm earthy tones (payment-methods-illustration.dim_600x400.png)"
-    ],
+    "required": [],
     "edits": []
   }
 }

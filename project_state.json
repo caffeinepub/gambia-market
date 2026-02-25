@@ -1,16 +1,18 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 5,
-  "summary": "Gambia Market is a local marketplace mobile app for The Gambia, designed to replace unorganized selling on WhatsApp/Facebook. It allows users to buy and sell products and services locally with features including phone-number registration, location-based listings, in-app chat, mobile money payments, and a trust/safety system. Targeted at everyday Gambians, small business owners, market sellers, and youth entrepreneurs. The app prioritizes simple UI for low-end Android devices, low data usage, and fast loading on slow connections.",
+  "projectStateVersion": 13,
+  "summary": "Gambia Market is a local marketplace mobile app for The Gambia, designed to replace unorganized selling on WhatsApp/Facebook. The project has progressed from a blueprint/planning document phase to active development of the functional app. It allows users to buy and sell products and services locally with features including phone-number registration, location-based listings, in-app chat, mobile money payments, and a trust/safety system. Targeted at everyday Gambians, small business owners, market sellers, and youth entrepreneurs. The app prioritizes simple UI for low-end Android devices, low data usage, and fast loading on slow connections.",
   "architectural_notes": [
     "Tech stack: React Native (Expo) with NativeWind for mobile, Node.js/Express backend, PostgreSQL plus Redis, Socket.io for chat, Cloudinary for image storage",
     "Performance: Image compression to max 300kb, lazy loading, paginated API responses of 20 items, offline caching with WatermelonDB",
-    "Auth: JWT tokens plus SMS OTP via AfricasTalking with no email dependency",
-    "MVP scope: Phone OTP, listing CRUD with 3 photos, regional feed, basic search, text-only chat, cash payments, report button, Android only"
+    "MVP scope: Phone OTP, listing CRUD with 3 photos, regional feed, basic search, text-only chat, cash payments, report button, Android only",
+    "Development phase: Moving from blueprint/planning document to functional app with real listings, user accounts, search, chat, and payments",
+    "Auth: Replace Internet Identity with Apple ID and Google OAuth as the only login methods; JWT sessions must be cross-device compatible"
   ],
-  "known_issues": [],
+  "known_issues": [
+    "Message button on Listing Detail page is not functioning"
+  ],
   "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Gambia Market mobile app screen mockup showing a home feed with colorful product listing cards in a warm green and gold UI on a smartphone frame (app-screen-mockup.dim_800x600.png)\n- Mobile money payment screen illustration showing Afrimoney and QMoney logos with a payment confirmation UI in warm earthy tones (payment-methods-illustration.dim_600x400.png)",
   "existing_features": [
     {
       "id": "feature-create-a-visually-rich-interactive-single-page-web-application-that-presents-the-full-gambia-market-product-blueprint-the-app-should-have-a-tabbed-or-sectioned-navigation-allowing-users-to-browse-1-feature-breakdown-2-user-flows-3-database-structure-4-tech-stack-5-mvp-plan-6-future-features-7-monetization-strategy-and-8-development-roadmap-each-section-should-be-readable-well-organized-and-easy-to-share",
@@ -187,6 +189,182 @@
         "REQ-22"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-redesign-the-app-tsx-root-component-to-transition-from-the-blueprint-spa-into-a-functional-marketplace-app-with-a-proper-page-router-supporting-home-feed-listings-create-listing-listing-detail-chat-profile-and-login-pages-replace-the-current-tabbed-blueprint-navigation-with-a-bottom-navigation-bar-mobile-first-and-a-top-header-with-the-gambia-market-logo-search-icon-and-profile-icon",
+      "title": "Redesign the App.tsx root component to transition from the blueprint SPA into a functional marketplace app with a proper page router supporting: Home Feed, Listings, Create Listing, Listing Detail, Chat, Profile, and Login pages. Replace the current tabbed blueprint navigation with a bottom navigation bar (mobile-first) and a top header with the Gambia Market logo, search icon, and profile icon.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-internet-identity-authentication-so-users-can-log-in-and-create-a-session-on-login-associate-the-user-s-principal-with-a-user-profile-stored-in-the-backend-show-a-login-prompt-page-for-unauthenticated-users-trying-to-access-protected-actions-create-listing-chat-profile",
+      "title": "Implement Internet Identity authentication so users can log in and create a session. On login, associate the user's principal with a user profile stored in the backend. Show a login prompt/page for unauthenticated users trying to access protected actions (create listing, chat, profile).",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-home-feed-page-that-fetches-all-active-listings-from-the-backend-and-displays-them-as-a-responsive-grid-of-listing-cards-each-card-shows-a-photo-or-category-icon-placeholder-title-price-in-gmd-dalasi-location-condition-badge-and-a-boosted-badge-for-promoted-listings-include-a-category-filter-row-at-the-top-all-electronics-clothing-food-vehicles-services-etc-and-a-search-bar-that-filters-listings-by-title",
+      "title": "Build a Home Feed page that fetches all active listings from the backend and displays them as a responsive grid of listing cards. Each card shows: a photo (or category icon placeholder), title, price in GMD (Dalasi), location, condition badge, and a 'Boosted' badge for promoted listings. Include a category filter row at the top (All, Electronics, Clothing, Food, Vehicles, Services, etc.) and a search bar that filters listings by title.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-listing-detail-page-that-displays-full-information-for-a-selected-listing-all-photos-in-a-carousel-title-price-condition-description-seller-info-name-verified-badge-rating-location-and-two-action-buttons-message-seller-and-make-offer-navigating-to-this-page-from-a-listing-card-passes-the-listing-id-and-fetches-details-from-the-backend",
+      "title": "Build a Listing Detail page that displays full information for a selected listing: all photos in a carousel, title, price, condition, description, seller info (name, verified badge, rating), location, and two action buttons — 'Message Seller' and 'Make Offer'. Navigating to this page from a listing card passes the listing ID and fetches details from the backend.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-create-listing-page-accessible-via-the-sell-tab-where-authenticated-users-can-create-a-new-listing-the-form-must-include-photo-upload-up-to-5-images-stored-as-base64-or-urls-title-input-category-selector-price-input-gmd-condition-selector-new-used-refurbished-description-textarea-and-location-input-on-submit-call-the-backend-createlisting-function-and-navigate-to-the-new-listing-s-detail-page",
+      "title": "Build a Create Listing page (accessible via the 'Sell' tab) where authenticated users can create a new listing. The form must include: photo upload (up to 5 images stored as base64 or URLs), title input, category selector, price input (GMD), condition selector (New / Used / Refurbished), description textarea, and location input. On submit, call the backend createListing function and navigate to the new listing's detail page.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-chat-page-that-allows-authenticated-buyers-and-sellers-to-exchange-messages-about-a-listing-display-a-list-of-active-conversations-in-the-chat-tab-each-showing-the-other-user-s-name-last-message-preview-and-timestamp-tapping-a-conversation-opens-a-full-message-thread-view-with-message-bubbles-sent-received-the-listing-context-shown-at-the-top-and-a-text-input-bar-to-send-new-messages-messages-are-stored-in-and-retrieved-from-the-backend",
+      "title": "Build a Chat page that allows authenticated buyers and sellers to exchange messages about a listing. Display a list of active conversations in the Chat tab (each showing the other user's name, last message preview, and timestamp). Tapping a conversation opens a full message thread view with message bubbles (sent/received), the listing context shown at the top, and a text input bar to send new messages. Messages are stored in and retrieved from the backend.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-profile-page-for-authenticated-users-displaying-their-name-phone-number-masked-location-verified-badge-status-average-star-rating-number-of-listings-and-a-list-of-their-active-listings-include-an-edit-profile-button-that-opens-an-inline-form-to-update-name-and-location-include-a-my-listings-section-showing-the-user-s-own-listings-with-options-to-edit-or-delete-each-listing",
+      "title": "Build a Profile page for authenticated users displaying their name, phone number (masked), location, verified badge status, average star rating, number of listings, and a list of their active listings. Include an Edit Profile button that opens an inline form to update name and location. Include a 'My Listings' section showing the user's own listings with options to edit or delete each listing.",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-review-ratings-system-after-a-transaction-is-marked-complete-allow-the-buyer-to-leave-a-star-rating-1-5-and-written-review-for-the-seller-display-aggregated-star-ratings-and-individual-reviews-on-the-seller-s-profile-page-ratings-and-reviews-are-stored-in-the-backend-reviews-entity",
+      "title": "Implement a Review & Ratings system. After a transaction is marked complete, allow the buyer to leave a star rating (1–5) and written review for the seller. Display aggregated star ratings and individual reviews on the seller's Profile page. Ratings and reviews are stored in the backend Reviews entity.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-report-user-feature-accessible-from-any-listing-detail-page-or-user-profile-display-a-report-button-that-opens-a-modal-with-a-dropdown-of-report-reasons-spam-fraud-inappropriate-content-fake-listing-other-and-a-submit-button-on-submit-call-the-backend-createreport-function-and-show-a-confirmation-message",
+      "title": "Implement a Report User feature accessible from any listing detail page or user profile. Display a 'Report' button that opens a modal with a dropdown of report reasons (Spam, Fraud, Inappropriate Content, Fake Listing, Other) and a submit button. On submit, call the backend createReport function and show a confirmation message.",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-boosted-listings-system-in-the-create-listing-or-my-listings-flow-allow-sellers-to-boost-a-listing-for-a-set-duration-3-day-7-day-30-day-with-prices-shown-in-gmd-toggling-boost-on-a-listing-sets-isboosted-to-true-in-the-backend-boosted-listings-appear-at-the-top-of-the-home-feed-with-a-sponsored-badge-and-a-highlighted-card-border",
+      "title": "Implement a Boosted Listings system. In the Create Listing or My Listings flow, allow sellers to boost a listing for a set duration (3-day, 7-day, 30-day) with prices shown in GMD. Toggling boost on a listing sets isBoosted to true in the backend. Boosted listings appear at the top of the Home Feed with a 'Sponsored' badge and a highlighted card border.",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-react-query-hooks-file-frontend-src-hooks-usequeries-ts-with-typed-custom-hooks-for-all-backend-interactions-uselistings-uselisting-usecreatelisting-useupdatelisting-usedeletelisting-useuser-useupdateuser-usemessages-usesendmessage-usecreatereview-usereviews-usecreatereport-and-useboostlisting-all-mutations-should-invalidate-relevant-query-caches-on-success",
+      "title": "Create a React Query hooks file (frontend/src/hooks/useQueries.ts) with typed custom hooks for all backend interactions: useListings, useListing, useCreateListing, useUpdateListing, useDeleteListing, useUser, useUpdateUser, useMessages, useSendMessage, useCreateReview, useReviews, useCreateReport, and useBoostListing. All mutations should invalidate relevant query caches on success.",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-message-seller-button-on-the-listing-detail-page-so-that-clicking-it-navigates-the-authenticated-user-to-the-message-thread-page-for-that-listing-and-seller-if-the-user-is-not-authenticated-show-the-login-prompt-instead-the-button-should-pass-the-correct-listingid-and-sellerid-receiverid-when-opening-or-creating-the-conversation-thread",
+      "title": "Fix the 'Message Seller' button on the Listing Detail page so that clicking it navigates the authenticated user to the Message Thread page for that listing and seller. If the user is not authenticated, show the login prompt instead. The button should pass the correct listingId and sellerId (receiverId) when opening or creating the conversation thread.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-simplify-and-streamline-the-internet-identity-login-flow-replace-the-current-login-prompt-with-a-sleek-minimal-one-tap-login-screen-that-shows-the-gambia-market-logo-a-short-benefit-statement-buy-sell-locally-join-in-seconds-and-a-single-prominent-login-with-internet-identity-button-reduce-the-number-of-steps-visible-to-the-user-add-a-loading-spinner-with-friendly-copy-logging-you-in-and-ensure-the-profile-setup-form-name-phone-location-is-presented-inline-on-the-same-screen-after-identity-confirmation-rather-than-as-a-separate-page-redirect-the-flow-should-feel-fast-and-frictionless",
+      "title": "Simplify and streamline the Internet Identity login flow. Replace the current login prompt with a sleek, minimal one-tap login screen that shows the Gambia Market logo, a short benefit statement ('Buy & Sell Locally — Join in seconds'), and a single prominent 'Login with Internet Identity' button. Reduce the number of steps visible to the user, add a loading spinner with friendly copy ('Logging you in…'), and ensure the profile setup form (name, phone, location) is presented inline on the same screen after identity confirmation rather than as a separate page redirect. The flow should feel fast and frictionless.",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-authentication-requirement-for-sending-messages-allow-any-user-authenticated-or-unauthenticated-to-open-a-conversation-thread-and-send-messages-about-a-listing-in-the-backend-add-a-public-sendmessageanon-function-that-accepts-a-display-name-or-guest-for-unauthenticated-senders-alongside-the-message-content-listingid-and-receiverid-storing-the-message-with-a-nullable-senderid-update-the-frontend-messagethread-page-and-message-seller-button-to-allow-unauthenticated-users-to-send-messages-by-prompting-for-a-display-name-once-per-session-stored-in-sessionstorage-rather-than-requiring-a-full-login",
+      "title": "Remove the authentication requirement for sending messages. Allow any user (authenticated or unauthenticated) to open a conversation thread and send messages about a listing. In the backend, add a public `sendMessageAnon` function that accepts a display name (or 'Guest') for unauthenticated senders alongside the message content, listingId, and receiverId, storing the message with a nullable senderId. Update the frontend MessageThread page and 'Message Seller' button to allow unauthenticated users to send messages by prompting for a display name once per session (stored in sessionStorage) rather than requiring a full login.",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-home-feed-page-more-interactive-add-animated-skeleton-loaders-while-listings-load-add-a-horizontal-featured-spotlight-row-at-the-top-showcasing-boosted-listings-as-larger-cards-add-a-pull-to-refresh-gesture-indicator-button-on-desktop-add-subtle-hover-press-animations-to-listing-cards-scale-up-shadow-lift-show-an-item-count-badge-on-the-category-filter-e-g-electronics-12-and-display-a-floating-sell-now-action-button-in-the-bottom-right-corner-for-quick-access-to-create-listing",
+      "title": "Make the Home Feed page more interactive. Add animated skeleton loaders while listings load, add a horizontal 'Featured' spotlight row at the top showcasing boosted listings as larger cards, add a pull-to-refresh gesture indicator (button on desktop), add subtle hover/press animations to listing cards (scale up, shadow lift), show an item count badge on the category filter (e.g., 'Electronics (12)'), and display a floating 'Sell Now' action button in the bottom-right corner for quick access to Create Listing.",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-search-page-more-interactive-convert-the-search-experience-into-a-dedicated-full-screen-search-page-navigable-from-the-search-tab-with-an-auto-focused-search-bar-live-search-results-updating-as-the-user-types-debounced-recently-searched-terms-stored-in-localstorage-and-shown-as-chips-below-the-search-bar-and-animated-filter-toggles-that-slide-open-closed-show-a-no-results-illustration-with-suggested-categories-when-a-search-returns-zero-results",
+      "title": "Make the Search page more interactive. Convert the search experience into a dedicated full-screen search page (navigable from the Search tab) with an auto-focused search bar, live search results updating as the user types (debounced), recently searched terms stored in localStorage and shown as chips below the search bar, and animated filter toggles that slide open/closed. Show a 'No results' illustration with suggested categories when a search returns zero results.",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-chat-page-more-interactive-for-all-users-show-an-unread-message-count-badge-on-the-chat-tab-in-the-bottom-navigation-in-the-conversation-list-add-a-visual-online-indicator-dot-based-on-recency-last-active-5-min-in-the-message-thread-view-add-a-typing-indicator-animation-when-a-new-message-is-being-composed-smooth-scroll-to-latest-message-on-new-message-arrival-and-a-send-button-that-activates-only-when-the-input-is-non-empty-for-unauthenticated-users-show-the-conversation-list-as-a-blurred-preview-with-an-overlay-cta-to-log-in-to-see-full-history",
+      "title": "Make the Chat page more interactive for all users. Show an unread message count badge on the Chat tab in the bottom navigation. In the conversation list, add a visual 'Online' indicator dot (based on recency — last active < 5 min). In the message thread view, add a typing indicator animation ('...') when a new message is being composed, smooth scroll-to-latest-message on new message arrival, and a 'Send' button that activates only when the input is non-empty. For unauthenticated users, show the conversation list as a blurred preview with an overlay CTA to log in to see full history.",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-profile-page-more-interactive-add-a-tabbed-layout-within-the-profile-page-with-tabs-my-listings-reviews-and-activity-show-an-animated-avatar-initials-circle-with-the-user-s-name-initial-add-a-stats-row-with-animated-count-up-numbers-for-total-listings-average-rating-and-total-reviews-allow-inline-editing-of-name-and-location-with-a-pencil-icon-that-toggles-the-field-into-edit-mode-without-opening-a-separate-form-show-a-share-profile-button-that-copies-a-shareable-profile-link-for-unauthenticated-visitors-viewing-a-public-profile-show-a-message-this-seller-cta-prominently",
+      "title": "Make the Profile page more interactive. Add a tabbed layout within the profile page with tabs: 'My Listings', 'Reviews', and 'Activity'. Show an animated avatar/initials circle with the user's name initial. Add a stats row with animated count-up numbers for total listings, average rating, and total reviews. Allow inline editing of name and location with a pencil icon that toggles the field into edit mode without opening a separate form. Show a 'Share Profile' button that copies a shareable profile link. For unauthenticated visitors viewing a public profile, show a 'Message This Seller' CTA prominently.",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-like-and-follow-system-for-sellers-users-can-like-individual-listings-heart-icon-on-each-listing-card-and-detail-page-and-follow-a-seller-from-their-publicprofile-or-listing-detail-page-in-the-backend-add-a-followseller-function-that-records-follower-following-relationships-followerid-sellerid-and-an-unfollowseller-function-to-remove-the-relationship-add-a-likelistinganon-likelisting-function-to-toggle-a-like-on-a-listing-storing-the-liker-s-principal-and-the-listing-id-expose-query-functions-getfollowing-getfollowers-and-getlikedlistings-in-the-profile-page-add-a-following-tab-showing-followed-sellers-display-follower-counts-on-seller-profiles-and-like-counts-on-listing-cards",
+      "title": "Implement a Like and Follow system for sellers. Users can 'Like' individual listings (heart icon on each listing card and detail page) and 'Follow' a seller from their PublicProfile or Listing Detail page. In the backend, add a `followSeller` function that records follower/following relationships (followerId → sellerId) and an `unfollowSeller` function to remove the relationship. Add a `likeListingAnon` / `likeListing` function to toggle a like on a listing, storing the liker's principal and the listing ID. Expose query functions `getFollowing`, `getFollowers`, and `getLikedListings`. In the Profile page, add a 'Following' tab showing followed sellers. Display follower counts on seller profiles and like counts on listing cards.",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-allow-users-to-upload-and-display-a-profile-picture-add-a-profilepicurl-field-text-optional-to-the-userprofile-type-in-the-backend-add-an-updateprofilepic-function-that-accepts-a-base64-encoded-image-string-or-url-and-stores-it-on-the-caller-s-profile-on-the-profile-page-and-publicprofile-page-display-the-profile-picture-if-available-or-fall-back-to-the-animated-initials-avatar-add-a-camera-upload-icon-button-on-the-profile-page-that-opens-a-file-picker-to-select-a-photo-converts-it-to-base64-and-calls-updateprofilepic-display-the-profile-picture-in-the-avatar-circle-of-the-bottomnav-appheader-profile-icon-sellerinfo-component-and-conversationitem",
+      "title": "Allow users to upload and display a profile picture. Add a `profilePicUrl` field (Text, optional) to the UserProfile type in the backend. Add an `updateProfilePic` function that accepts a base64-encoded image string or URL and stores it on the caller's profile. On the Profile page and PublicProfile page, display the profile picture if available, or fall back to the animated initials avatar. Add a camera/upload icon button on the Profile page that opens a file picker to select a photo, converts it to base64, and calls `updateProfilePic`. Display the profile picture in the avatar circle of the BottomNav, AppHeader profile icon, SellerInfo component, and ConversationItem.",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-all-user-account-data-sessions-and-listed-products-are-accessible-from-any-device-since-the-platform-uses-principal-based-identity-google-apple-the-same-identity-resolves-to-the-same-principal-across-devices-so-data-is-inherently-cross-device-update-the-frontend-to-not-rely-on-device-local-state-localstorage-sessionstorage-for-authenticated-user-data-all-profile-data-listings-conversations-and-follows-must-be-fetched-from-the-backend-on-every-session-start-add-a-usegetcalleruserprofile-query-that-runs-on-app-load-for-authenticated-users-to-re-hydrate-their-profile-from-the-backend-rather-than-from-local-cache",
+      "title": "Ensure all user account data, sessions, and listed products are accessible from any device. Since the platform uses principal-based identity (Google/Apple), the same identity resolves to the same principal across devices, so data is inherently cross-device. Update the frontend to not rely on device-local state (localStorage/sessionStorage) for authenticated user data — all profile data, listings, conversations, and follows must be fetched from the backend on every session start. Add a `useGetCallerUserProfile` query that runs on app load for authenticated users to re-hydrate their profile from the backend rather than from local cache.",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-that-all-listed-products-persist-in-the-backend-indefinitely-and-are-never-automatically-removed-listings-may-only-be-deleted-when-the-owner-explicitly-calls-the-deletelisting-function-from-their-own-my-listings-section-remove-any-ttl-expiry-or-automatic-cleanup-logic-from-the-backend-if-present-inactive-sold-listings-should-remain-visible-to-the-owner-in-their-my-listings-tab-with-a-status-badge-active-sold-paused-even-after-they-are-no-longer-shown-in-the-public-home-feed",
+      "title": "Ensure that all listed products persist in the backend indefinitely and are never automatically removed. Listings may only be deleted when the owner explicitly calls the `deleteListing` function from their own 'My Listings' section. Remove any TTL, expiry, or automatic cleanup logic from the backend if present. Inactive/sold listings should remain visible to the owner in their 'My Listings' tab with a status badge (Active / Sold / Paused) even after they are no longer shown in the public Home Feed.",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -248,6 +426,128 @@
       "id": "AR-10",
       "summary": "Boosted and promoted listings as primary monetization feature",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Implement a backend Motoko actor with a complete data model and CRUD operations for: Users (principal, phone, name, location, verifiedBadge, rating, createdAt), Listings (id, sellerId, title, description, category, price, condition, photos as blob/URL array, location, status, isBoosted, createdAt), Messages (id, listingId, senderId, receiverId, content, timestamp), Transactions (id, listingId, buyerId, sellerId, paymentMethod, amount, status), Reviews (id, reviewerId, revieweeId, listingId, stars, comment, createdAt), and Reports (id, reporterId, reportedId, reason, status). Replace the current minimal backend with this full schema.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Apply the existing West African-inspired visual theme (warm greens, deep golds/amber, terracotta accents, kente pattern dividers) consistently across all new functional pages and components: Home Feed, Listing Detail, Create Listing form, Chat, and Profile. Ensure mobile-first responsive layouts, large tap targets (min 44px), and readable font sizes suitable for low-end Android devices.",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Simplify and streamline the login flow to be faster and more user-friendly",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-25",
+      "summary": "Allow all users (including unauthenticated) to message each other without barriers",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Make Profile, Chat, Sell, Search, and Home pages more interactive and engaging for all users",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Make the Sell (Create Listing) page more interactive and user-friendly. Add a live preview card on the right side (desktop) or as a collapsible preview panel (mobile) that updates in real time as the user fills in the form fields, showing exactly how the listing card will look in the feed. Add step progress indicators (Step 1 of 4: Photos → Details → Pricing → Review) to guide the user through the form. Show input validation feedback inline (green checkmark on valid, red error on invalid) as fields are completed. Add a 'Save Draft' option that persists form state to localStorage.",
+      "reqIds": [
+        "REQ-42"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-33",
+      "summary": "Redirect users to the main home page upon logout",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "Replace Internet Identity with Apple ID and Google login as the only authentication methods",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-35",
+      "summary": "Allow any logged-in user to view full seller info (name, phone, location, listings, reviews) when browsing",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-36",
+      "summary": "Sellers can share a unique shareable profile link to send to customers for easy discovery",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-37",
+      "summary": "Users can like and follow sellers to receive updates on new product listings",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-38",
+      "summary": "Users can upload a profile picture for identity and security purposes",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-39",
+      "summary": "User accounts and sessions are accessible across any device (cross-device login support)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-40",
+      "summary": "Listed products persist indefinitely unless explicitly deleted by the owner from their account",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-41",
+      "summary": "After a user logs out from any page, immediately redirect them to the main Home Feed page. The logout action in Profile.tsx and any other location that calls the logout function must navigate to the home route after the identity session is cleared.",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-42",
+      "summary": "Replace the current Internet Identity authentication with Google and Apple ID as the only two supported login methods. Display both options as prominent buttons on the login screen. On successful authentication, associate the user's identity with a backend profile (creating one on first login). The existing LoginPrompt, ProfileSetup, and AuthGuard components must be updated to reflect the new providers. Internet Identity references should be removed from all UI-facing components.",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-43",
+      "summary": "Allow any logged-in user (regardless of role) to view the full seller profile when browsing — including the seller's display name, masked phone number, location, verified badge status, average star rating, listed products, and reviews. The seller info on the Listing Detail page and the PublicProfile page must show all these fields to any authenticated viewer. Unauthenticated visitors should see a prompt to log in to view full seller info.",
+      "reqIds": [
+        "REQ-46"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-44",
+      "summary": "Generate a unique shareable profile link for every seller. The link should use the seller's principal ID as a URL parameter (e.g., /public-profile?id=<principalId>). On the seller's Profile page and PublicProfile page, display a 'Share My Profile' button that copies this link to the clipboard and shows a confirmation toast. The link should be stable and accessible to anyone — even unauthenticated users can open it but will be prompted to log in to interact.",
+      "reqIds": [
+        "REQ-47"
+      ],
       "status": "pending"
     }
   ],

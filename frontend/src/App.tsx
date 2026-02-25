@@ -1,92 +1,156 @@
 import { useState } from 'react';
-import NavigationTabs, { TabId } from './components/NavigationTabs';
-import HeroSection from './components/HeroSection';
-import PatternDivider from './components/PatternDivider';
-import FeatureBreakdownSection from './components/FeatureBreakdownSection';
-import UserFlowsSection from './components/UserFlowsSection';
-import DatabaseStructureSection from './components/DatabaseStructureSection';
-import TechStackSection from './components/TechStackSection';
-import MVPPlanSection from './components/MVPPlanSection';
-import FutureFeaturesSection from './components/FutureFeaturesSection';
-import MonetizationSection from './components/MonetizationSection';
-import RoadmapSection from './components/RoadmapSection';
-import { Heart } from 'lucide-react';
+import { useInternetIdentity } from './hooks/useInternetIdentity';
+import { useQueryClient } from '@tanstack/react-query';
+import AppHeader from './components/AppHeader';
+import BottomNav from './components/BottomNav';
+import HomeFeed from './pages/HomeFeed';
+import CreateListing from './pages/CreateListing';
+import Chat from './pages/Chat';
+import Profile from './pages/Profile';
+import ListingDetail from './pages/ListingDetail';
+import MessageThread from './pages/MessageThread';
+import PublicProfile from './pages/PublicProfile';
+import EditListing from './pages/EditListing';
+import { Toaster } from './components/ui/sonner';
+import type { ListingId } from './backend';
+import type { Principal } from '@icp-sdk/core/principal';
+
+export type AppPage =
+  | { name: 'home' }
+  | { name: 'search' }
+  | { name: 'sell' }
+  | { name: 'chat' }
+  | { name: 'profile' }
+  | { name: 'listing-detail'; listingId: ListingId }
+  | { name: 'message-thread'; listingId: ListingId; otherUserId: Principal; otherUserName: string }
+  | { name: 'public-profile'; userId: Principal }
+  | { name: 'edit-listing'; listingId: ListingId };
+
+export type NavTab = 'home' | 'search' | 'sell' | 'chat' | 'profile';
 
 function App() {
-  const [activeTab, setActiveTab] = useState<TabId>('features');
+  const [currentPage, setCurrentPage] = useState<AppPage>({ name: 'home' });
+  const [activeTab, setActiveTab] = useState<NavTab>('home');
+  const { identity, clear } = useInternetIdentity();
+  const queryClient = useQueryClient();
 
-  const renderSection = () => {
-    switch (activeTab) {
-      case 'features':
-        return <FeatureBreakdownSection />;
-      case 'userflows':
-        return <UserFlowsSection />;
-      case 'database':
-        return <DatabaseStructureSection />;
-      case 'techstack':
-        return <TechStackSection />;
-      case 'mvp':
-        return <MVPPlanSection />;
-      case 'future':
-        return <FutureFeaturesSection />;
-      case 'monetization':
-        return <MonetizationSection />;
-      case 'roadmap':
-        return <RoadmapSection />;
+  const navigate = (page: AppPage) => {
+    setCurrentPage(page);
+    if (page.name === 'home' || page.name === 'search') setActiveTab('home');
+    else if (page.name === 'sell' || page.name === 'edit-listing') setActiveTab('sell');
+    else if (page.name === 'chat' || page.name === 'message-thread') setActiveTab('chat');
+    else if (page.name === 'profile' || page.name === 'public-profile') setActiveTab('profile');
+  };
+
+  const handleTabChange = (tab: NavTab) => {
+    setActiveTab(tab);
+    if (tab === 'home') setCurrentPage({ name: 'home' });
+    else if (tab === 'search') setCurrentPage({ name: 'home' });
+    else if (tab === 'sell') setCurrentPage({ name: 'sell' });
+    else if (tab === 'chat') setCurrentPage({ name: 'chat' });
+    else if (tab === 'profile') setCurrentPage({ name: 'profile' });
+  };
+
+  const handleLogout = async () => {
+    await clear();
+    queryClient.clear();
+    setCurrentPage({ name: 'home' });
+    setActiveTab('home');
+  };
+
+  const renderPage = () => {
+    switch (currentPage.name) {
+      case 'home':
+      case 'search':
+        return (
+          <HomeFeed
+            onListingClick={(id) => navigate({ name: 'listing-detail', listingId: id })}
+            initialSearchFocus={currentPage.name === 'search'}
+          />
+        );
+      case 'sell':
+        return (
+          <CreateListing
+            onSuccess={(id) => navigate({ name: 'listing-detail', listingId: id })}
+            onCancel={() => navigate({ name: 'home' })}
+          />
+        );
+      case 'chat':
+        return (
+          <Chat
+            onConversationClick={(listingId, otherUserId, otherUserName) =>
+              navigate({ name: 'message-thread', listingId, otherUserId, otherUserName })
+            }
+          />
+        );
+      case 'profile':
+        return (
+          <Profile
+            onLogout={handleLogout}
+            onListingClick={(id) => navigate({ name: 'listing-detail', listingId: id })}
+            onEditListing={(id) => navigate({ name: 'edit-listing', listingId: id })}
+          />
+        );
+      case 'listing-detail':
+        return (
+          <ListingDetail
+            listingId={currentPage.listingId}
+            onBack={() => navigate({ name: 'home' })}
+            onMessageSeller={(listingId, sellerId, sellerName) =>
+              navigate({ name: 'message-thread', listingId, otherUserId: sellerId, otherUserName: sellerName })
+            }
+            onSellerClick={(userId) => navigate({ name: 'public-profile', userId })}
+          />
+        );
+      case 'message-thread':
+        return (
+          <MessageThread
+            listingId={currentPage.listingId}
+            otherUserId={currentPage.otherUserId}
+            otherUserName={currentPage.otherUserName}
+            onBack={() => navigate({ name: 'chat' })}
+          />
+        );
+      case 'public-profile':
+        return (
+          <PublicProfile
+            userId={currentPage.userId}
+            onBack={() => navigate({ name: 'home' })}
+          />
+        );
+      case 'edit-listing':
+        return (
+          <EditListing
+            listingId={currentPage.listingId}
+            onSuccess={(id) => navigate({ name: 'listing-detail', listingId: id })}
+            onCancel={() => navigate({ name: 'profile' })}
+          />
+        );
       default:
-        return <FeatureBreakdownSection />;
+        return <HomeFeed onListingClick={(id) => navigate({ name: 'listing-detail', listingId: id })} />;
     }
   };
 
+  const showBottomNav = !['message-thread'].includes(currentPage.name);
+
   return (
-    <div className="min-h-screen flex flex-col batik-bg">
-      {/* Hero */}
-      <HeroSection />
+    <div className="min-h-screen flex flex-col bg-background">
+      <AppHeader
+        onLogoClick={() => navigate({ name: 'home' })}
+        onSearchClick={() => handleTabChange('search')}
+        onProfileClick={() => handleTabChange('profile')}
+        isAuthenticated={!!identity}
+      />
 
-      {/* Kente divider */}
-      <PatternDivider />
-
-      {/* Navigation */}
-      <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />
-
-      {/* Main content */}
-      <main className="flex-1">
-        {renderSection()}
+      <main className="flex-1 overflow-y-auto pb-20">
+        {renderPage()}
       </main>
 
-      {/* Kente divider before footer */}
-      <PatternDivider />
+      {showBottomNav && (
+        <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
+      )}
 
-      {/* Footer */}
-      <footer className="bg-card border-t border-border py-6 px-4">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-heading font-black text-sm">G</span>
-            </div>
-            <span className="font-heading font-bold text-foreground">Gambia Market</span>
-            <span className="text-muted-foreground text-sm font-body">— Product Blueprint</span>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center gap-2 text-sm text-muted-foreground font-body">
-            <span>© {new Date().getFullYear()} Gambia Market Blueprint</span>
-            <span className="hidden sm:inline">·</span>
-            <span className="flex items-center gap-1">
-              Built with{' '}
-              <Heart className="w-3.5 h-3.5 text-secondary fill-secondary inline" />{' '}
-              using{' '}
-              <a
-                href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(typeof window !== 'undefined' ? window.location.hostname : 'gambia-market')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline font-semibold"
-              >
-                caffeine.ai
-              </a>
-            </span>
-          </div>
-        </div>
-      </footer>
+      <Toaster richColors position="top-center" />
     </div>
   );
 }

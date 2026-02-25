@@ -1,28 +1,91 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-25T19:28:19.505Z",
-  "summary": "The diff implements all 10 requested feature showcases (REQ-13 through REQ-22) as new React components rendered from structured TypeScript data files. New components include RegistrationFlowCard, ListingCreationCard, HomeFeedMockup, SearchFilterMockup, ChatMockup, VerifiedBadgeMockup, FulfillmentOptionsCard, PaymentMethodsMockup, TrustSafetyMockup, and BoostedListingMockup. All are wired into FeatureBreakdownSection and MonetizationSection, and data is stored in frontend/src/data/features.ts and frontend/src/data/monetization.ts. The implementation appears comprehensive across all requirements.",
-  "missing_requirements": [],
-  "hallucinated_features": [],
-  "confidence": 0.91,
+  "generatedAt": "2026-02-25T23:15:32.387Z",
+  "summary": "The diff implements significant portions of the requirements (REQ-44 through REQ-51), including backend changes to UserProfile (profilePicUrl, followers), follow/like infrastructure, migration module, and frontend hooks/components. However, several key requirements are either missing or only partially implemented based on the available diff evidence.",
+  "missing_requirements": [
+    {
+      "id": "REQ-44",
+      "requirement": "After logout, immediately redirect to the Home Feed ('/'). Profile.tsx and any other logout call must navigate to home after session is cleared.",
+      "reason": "No changes to Profile.tsx or any logout handler are visible in the diff. There is no evidence of post-logout navigation logic being added.",
+      "evidence": []
+    },
+    {
+      "id": "REQ-45",
+      "requirement": "Replace Internet Identity with Google and Apple ID login. Update LoginPrompt, ProfileSetup, and AuthGuard components. Remove Internet Identity from all UI-facing components.",
+      "reason": "No changes to LoginPrompt, ProfileSetup, AuthGuard, or any authentication flow components are present in the diff. No Google/Apple login buttons or provider integration code is visible.",
+      "evidence": []
+    },
+    {
+      "id": "REQ-46",
+      "requirement": "Any logged-in user can view full seller profile (name, masked phone, location, verified badge, rating, products, reviews). Unauthenticated visitors see a login prompt. Phone number must be masked.",
+      "reason": "No changes to ListingDetail, PublicProfile, or SellerInfo components are present in the diff. No masked phone number logic is visible. No login prompt for unauthenticated users viewing seller info is implemented.",
+      "evidence": []
+    },
+    {
+      "id": "REQ-47",
+      "requirement": "Generate shareable profile link using principal ID (/public-profile?id=<principalId>). 'Share My Profile' button on Profile and PublicProfile pages copies link to clipboard and shows toast.",
+      "reason": "No changes to Profile page or PublicProfile page showing a Share button or clipboard copy logic are visible in the diff.",
+      "evidence": []
+    },
+    {
+      "id": "REQ-48",
+      "requirement": "Like button on listing cards and detail page; Follow button on PublicProfile and listing detail; Following tab in Profile; follower/like counts displayed; backend stable maps for follows/likes; login prompt for unauthenticated like/follow.",
+      "reason": "While backend follow/like infrastructure appears partially present and ProfileTabs has a FollowingTab, no heart/like button is visible on ListingCard.tsx. No Follow button is added to PublicProfile or ListingDetail. Like counts are not shown on ListingCard. Full backend functions are not confirmed in the truncated diff. Login prompt for unauthenticated users is not evidenced.",
+      "evidence": [
+        "frontend/src/components/ListingCard.tsx",
+        "frontend/src/components/ProfileTabs.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-49",
+      "requirement": "Profile picture upload button on Profile page; camera icon opens file picker; converts to base64; calls updateProfilePic; optimistic update; profile picture shown in BottomNav, AppHeader, SellerInfo, ConversationItem; 2MB file size validation.",
+      "reason": "While backend profilePicUrl field and migration are present, no changes to Profile page upload UI, BottomNav, AppHeader, SellerInfo, or ConversationItem are visible in the diff. The updateProfilePic backend function is not confirmed in the truncated backend. No file picker or base64 conversion logic is shown.",
+      "evidence": [
+        "backend/main.mo",
+        "backend/migration.mo"
+      ]
+    },
+    {
+      "id": "REQ-50",
+      "requirement": "useGetCallerUserProfile runs on app load for authenticated users to re-hydrate profile. No critical user state in localStorage/sessionStorage. All data fetched from backend on session start.",
+      "reason": "useGetCallerUserProfile hook exists in useQueries.ts but there is no evidence it is wired into the app entry point to run on every app load. No removal of localStorage usage is shown.",
+      "evidence": [
+        "frontend/src/hooks/useQueries.ts"
+      ]
+    },
+    {
+      "id": "REQ-51",
+      "requirement": "No TTL/expiry/auto-cleanup in backend. Only owner can delete via deleteListing. My Listings tab shows all listings with status badges. Home Feed only shows active listings.",
+      "reason": "MyListingCard.tsx shows status badges and delete functionality. However, backend TTL/auto-cleanup removal is not confirmed in the truncated backend diff. Home Feed filtering to active-only status is not evidenced in the diff.",
+      "evidence": [
+        "frontend/src/components/MyListingCard.tsx",
+        "backend/main.mo"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "A migration module (backend/migration.mo) was added that includes a full data migration framework with OldActor/NewActor type transformations.",
+      "reason": "The build request does not specify a migration module or migration framework. This is an implementation detail not requested in any REQ.",
+      "evidence": [
+        "backend/migration.mo"
+      ]
+    }
+  ],
+  "confidence": 0.55,
   "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/components/BoostedListingMockup.tsx",
-    "frontend/src/components/ChatMockup.tsx",
-    "frontend/src/components/FeatureBreakdownSection.tsx",
-    "frontend/src/components/FulfillmentOptionsCard.tsx",
-    "frontend/src/components/HomeFeedMockup.tsx",
-    "frontend/src/components/ListingCreationCard.tsx",
-    "frontend/src/components/MonetizationSection.tsx",
-    "frontend/src/components/PaymentMethodsMockup.tsx",
-    "frontend/src/components/RegistrationFlowCard.tsx",
-    "frontend/src/components/SearchFilterMockup.tsx",
-    "frontend/src/components/TrustSafetyMockup.tsx",
-    "frontend/src/components/VerifiedBadgeMockup.tsx",
-    "frontend/src/data/features.ts",
-    "frontend/src/data/monetization.ts",
-    "frontend/src/types/blueprint.ts",
+    "frontend/src/components/CategoryFilter.tsx",
+    "frontend/src/components/FeaturedListingsRow.tsx",
+    "frontend/src/components/ListingCard.tsx",
+    "frontend/src/components/MyListingCard.tsx",
+    "frontend/src/components/ProfileTabs.tsx",
+    "frontend/src/hooks/useQueries.ts",
     "project_state.json"
   ]
 }

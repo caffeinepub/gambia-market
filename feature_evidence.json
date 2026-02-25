@@ -2,13 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-implement-a-phone-number-registration-with-otp-feature-section-display-a-realistic-ui-mockup-or-detailed-description-card-showing-the-registration-flow-enter-phone-number-receive-otp-via-sms-verify-code-and-complete-profile-setup-include-the-step-by-step-flow-with-form-fields-phone-input-otp-input-name-location-and-validation-states",
-      "featureTitle": "Implement a Phone Number Registration with OTP feature section: display a realistic UI mockup or detailed description card showing the registration flow — enter phone number, receive OTP via SMS, verify code, and complete profile setup. Include the step-by-step flow with form fields (phone input, OTP input, name, location) and validation states.",
+      "featureId": "feature-implement-a-like-and-follow-system-for-sellers-users-can-like-individual-listings-heart-icon-on-each-listing-card-and-detail-page-and-follow-a-seller-from-their-publicprofile-or-listing-detail-page-in-the-backend-add-a-followseller-function-that-records-follower-following-relationships-followerid-sellerid-and-an-unfollowseller-function-to-remove-the-relationship-add-a-likelistinganon-likelisting-function-to-toggle-a-like-on-a-listing-storing-the-liker-s-principal-and-the-listing-id-expose-query-functions-getfollowing-getfollowers-and-getlikedlistings-in-the-profile-page-add-a-following-tab-showing-followed-sellers-display-follower-counts-on-seller-profiles-and-like-counts-on-listing-cards",
+      "featureTitle": "Implement a Like and Follow system for sellers. Users can 'Like' individual listings (heart icon on each listing card and detail page) and 'Follow' a seller from their PublicProfile or Listing Detail page. In the backend, add a `followSeller` function that records follower/following relationships (followerId → sellerId) and an `unfollowSeller` function to remove the relationship. Add a `likeListingAnon` / `likeListing` function to toggle a like on a listing, storing the liker's principal and the listing ID. Expose query functions `getFollowing`, `getFollowers`, and `getLikedListings`. In the Profile page, add a 'Following' tab showing followed sellers. Display follower counts on seller profiles and like counts on listing cards.",
       "files": [
-        "frontend/src/components/FeatureBreakdownSection.tsx",
-        "frontend/src/components/RegistrationFlowCard.tsx",
-        "frontend/src/data/features.ts",
-        "frontend/src/types/blueprint.ts"
+        "frontend/src/components/ListingCard.tsx",
+        "frontend/src/components/ProfileTabs.tsx",
+        "frontend/src/hooks/useQueries.ts"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -16,21 +15,19 @@
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-13"
+        "REQ-48"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-a-listing-creation-feature-showcase-card-display-a-detailed-walkthrough-of-the-listing-creation-flow-including-photo-upload-multi-image-category-selector-price-input-condition-selector-new-used-refurbished-and-location-tagging-show-this-as-an-illustrated-step-by-step-card-or-mini-form-mockup-within-the-feature-breakdown-section",
-      "featureTitle": "Implement a Listing Creation feature showcase card: display a detailed walkthrough of the listing creation flow including photo upload (multi-image), category selector, price input, condition selector (new/used/refurbished), and location tagging. Show this as an illustrated step-by-step card or mini-form mockup within the Feature Breakdown section.",
+      "featureId": "feature-allow-users-to-upload-and-display-a-profile-picture-add-a-profilepicurl-field-text-optional-to-the-userprofile-type-in-the-backend-add-an-updateprofilepic-function-that-accepts-a-base64-encoded-image-string-or-url-and-stores-it-on-the-caller-s-profile-on-the-profile-page-and-publicprofile-page-display-the-profile-picture-if-available-or-fall-back-to-the-animated-initials-avatar-add-a-camera-upload-icon-button-on-the-profile-page-that-opens-a-file-picker-to-select-a-photo-converts-it-to-base64-and-calls-updateprofilepic-display-the-profile-picture-in-the-avatar-circle-of-the-bottomnav-appheader-profile-icon-sellerinfo-component-and-conversationitem",
+      "featureTitle": "Allow users to upload and display a profile picture. Add a `profilePicUrl` field (Text, optional) to the UserProfile type in the backend. Add an `updateProfilePic` function that accepts a base64-encoded image string or URL and stores it on the caller's profile. On the Profile page and PublicProfile page, display the profile picture if available, or fall back to the animated initials avatar. Add a camera/upload icon button on the Profile page that opens a file picker to select a photo, converts it to base64, and calls `updateProfilePic`. Display the profile picture in the avatar circle of the BottomNav, AppHeader profile icon, SellerInfo component, and ConversationItem.",
       "files": [
-        "frontend/src/components/FeatureBreakdownSection.tsx",
-        "frontend/src/components/ListingCreationCard.tsx",
-        "frontend/src/data/features.ts",
-        "frontend/src/types/blueprint.ts"
+        "frontend/src/hooks/useQueries.ts"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -38,21 +35,19 @@
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-14"
+        "REQ-49"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-a-home-feed-feature-showcase-display-a-visual-representation-of-the-home-feed-showing-nearby-listings-sorted-by-distance-or-region-include-a-mock-listing-grid-list-with-sample-listing-cards-image-title-price-location-badge-distance-indicator-that-illustrates-the-feed-experience-for-gambian-users",
-      "featureTitle": "Implement a Home Feed feature showcase: display a visual representation of the home feed showing nearby listings sorted by distance or region. Include a mock listing grid/list with sample listing cards (image, title, price, location badge, distance indicator) that illustrates the feed experience for Gambian users.",
+      "featureId": "feature-ensure-all-user-account-data-sessions-and-listed-products-are-accessible-from-any-device-since-the-platform-uses-principal-based-identity-google-apple-the-same-identity-resolves-to-the-same-principal-across-devices-so-data-is-inherently-cross-device-update-the-frontend-to-not-rely-on-device-local-state-localstorage-sessionstorage-for-authenticated-user-data-all-profile-data-listings-conversations-and-follows-must-be-fetched-from-the-backend-on-every-session-start-add-a-usegetcalleruserprofile-query-that-runs-on-app-load-for-authenticated-users-to-re-hydrate-their-profile-from-the-backend-rather-than-from-local-cache",
+      "featureTitle": "Ensure all user account data, sessions, and listed products are accessible from any device. Since the platform uses principal-based identity (Google/Apple), the same identity resolves to the same principal across devices, so data is inherently cross-device. Update the frontend to not rely on device-local state (localStorage/sessionStorage) for authenticated user data — all profile data, listings, conversations, and follows must be fetched from the backend on every session start. Add a `useGetCallerUserProfile` query that runs on app load for authenticated users to re-hydrate their profile from the backend rather than from local cache.",
       "files": [
-        "frontend/src/components/FeatureBreakdownSection.tsx",
-        "frontend/src/components/HomeFeedMockup.tsx",
-        "frontend/src/data/features.ts",
-        "frontend/src/types/blueprint.ts"
+        "frontend/src/hooks/useQueries.ts"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -60,21 +55,20 @@
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-15"
+        "REQ-50"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-a-search-filters-feature-showcase-display-an-interactive-looking-search-bar-mockup-and-filter-panel-showing-category-dropdown-price-range-slider-inputs-and-condition-checkboxes-present-this-as-a-visual-demo-card-within-the-feature-breakdown-section-illustrating-how-users-would-search-and-narrow-down-listings",
-      "featureTitle": "Implement a Search & Filters feature showcase: display an interactive-looking search bar mockup and filter panel showing category dropdown, price range slider/inputs, and condition checkboxes. Present this as a visual demo card within the Feature Breakdown section, illustrating how users would search and narrow down listings.",
+      "featureId": "feature-ensure-that-all-listed-products-persist-in-the-backend-indefinitely-and-are-never-automatically-removed-listings-may-only-be-deleted-when-the-owner-explicitly-calls-the-deletelisting-function-from-their-own-my-listings-section-remove-any-ttl-expiry-or-automatic-cleanup-logic-from-the-backend-if-present-inactive-sold-listings-should-remain-visible-to-the-owner-in-their-my-listings-tab-with-a-status-badge-active-sold-paused-even-after-they-are-no-longer-shown-in-the-public-home-feed",
+      "featureTitle": "Ensure that all listed products persist in the backend indefinitely and are never automatically removed. Listings may only be deleted when the owner explicitly calls the `deleteListing` function from their own 'My Listings' section. Remove any TTL, expiry, or automatic cleanup logic from the backend if present. Inactive/sold listings should remain visible to the owner in their 'My Listings' tab with a status badge (Active / Sold / Paused) even after they are no longer shown in the public Home Feed.",
       "files": [
-        "frontend/src/components/FeatureBreakdownSection.tsx",
-        "frontend/src/components/SearchFilterMockup.tsx",
-        "frontend/src/data/features.ts",
-        "frontend/src/types/blueprint.ts"
+        "frontend/src/components/MyListingCard.tsx",
+        "frontend/src/components/ProfileTabs.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -82,142 +76,11 @@
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-16"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-an-in-app-chat-feature-showcase-display-a-visual-mockup-of-the-real-time-chat-interface-between-buyer-and-seller-showing-a-conversation-thread-with-message-bubbles-listing-context-thumbnail-and-title-at-top-timestamp-display-and-a-message-input-bar-include-sample-messages-illustrating-a-buyer-inquiry-and-seller-response",
-      "featureTitle": "Implement an In-App Chat feature showcase: display a visual mockup of the real-time chat interface between buyer and seller, showing a conversation thread with message bubbles, listing context (thumbnail and title at top), timestamp display, and a message input bar. Include sample messages illustrating a buyer inquiry and seller response.",
-      "files": [
-        "frontend/src/components/ChatMockup.tsx",
-        "frontend/src/components/FeatureBreakdownSection.tsx",
-        "frontend/src/data/features.ts",
-        "frontend/src/types/blueprint.ts"
-      ],
-      "components": [
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-17"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-a-verified-seller-badge-feature-showcase-display-a-detailed-explanation-card-showing-the-badge-verification-process-id-upload-step-review-period-badge-awarded-state-alongside-a-visual-example-of-a-seller-profile-card-showing-the-verified-badge-star-rating-and-number-of-completed-transactions",
-      "featureTitle": "Implement a Verified Seller Badge feature showcase: display a detailed explanation card showing the badge verification process — ID upload step, review period, badge awarded state — alongside a visual example of a seller profile card showing the verified badge, star rating, and number of completed transactions.",
-      "files": [
-        "frontend/src/components/FeatureBreakdownSection.tsx",
-        "frontend/src/components/VerifiedBadgeMockup.tsx",
-        "frontend/src/data/features.ts",
-        "frontend/src/types/blueprint.ts"
-      ],
-      "components": [
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-18"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-a-delivery-meet-up-feature-showcase-display-a-card-illustrating-the-two-fulfillment-options-1-delivery-request-with-address-input-estimated-cost-and-delivery-partner-selection-and-2-meet-up-arrangement-with-proposed-location-and-time-show-these-as-a-side-by-side-comparison-card-with-icons-and-brief-descriptions-for-each-option",
-      "featureTitle": "Implement a Delivery & Meet-Up feature showcase: display a card illustrating the two fulfillment options — (1) Delivery Request with address input, estimated cost, and delivery partner selection, and (2) Meet-Up arrangement with proposed location and time. Show these as a side-by-side comparison card with icons and brief descriptions for each option.",
-      "files": [
-        "frontend/src/components/FeatureBreakdownSection.tsx",
-        "frontend/src/components/FulfillmentOptionsCard.tsx",
-        "frontend/src/data/features.ts",
-        "frontend/src/types/blueprint.ts"
-      ],
-      "components": [
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-19"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-a-mobile-money-payments-feature-showcase-display-a-payment-flow-card-showing-the-three-payment-methods-afrimoney-qmoney-and-cash-on-delivery-include-a-mock-payment-selection-screen-with-radio-buttons-or-payment-method-cards-a-confirmation-step-and-status-badges-pending-completed-show-the-afrimoney-and-qmoney-logos-as-styled-text-badges",
-      "featureTitle": "Implement a Mobile Money Payments feature showcase: display a payment flow card showing the three payment methods — Afrimoney, QMoney, and Cash on Delivery. Include a mock payment selection screen with radio buttons or payment method cards, a confirmation step, and status badges (pending, completed). Show the Afrimoney and QMoney logos as styled text badges.",
-      "files": [
-        "frontend/src/components/FeatureBreakdownSection.tsx",
-        "frontend/src/components/PaymentMethodsMockup.tsx",
-        "frontend/src/data/features.ts",
-        "frontend/src/types/blueprint.ts"
-      ],
-      "components": [
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-20"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-a-trust-safety-system-feature-showcase-display-a-card-illustrating-the-four-trust-mechanisms-1-star-ratings-with-a-visual-5-star-selector-2-written-review-with-sample-text-3-report-system-with-a-reason-dropdown-mockup-and-4-block-user-confirmation-dialog-present-these-as-a-2-2-grid-of-mini-cards-within-the-feature-section",
-      "featureTitle": "Implement a Trust & Safety System feature showcase: display a card illustrating the four trust mechanisms — (1) star ratings with a visual 5-star selector, (2) written review with sample text, (3) report system with a reason dropdown mockup, and (4) block user confirmation dialog. Present these as a 2×2 grid of mini-cards within the feature section.",
-      "files": [
-        "frontend/src/components/FeatureBreakdownSection.tsx",
-        "frontend/src/components/TrustSafetyMockup.tsx",
-        "frontend/src/data/features.ts",
-        "frontend/src/types/blueprint.ts"
-      ],
-      "components": [
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-21"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-a-boosted-promoted-listings-feature-showcase-within-the-monetization-section-display-a-visual-comparison-card-showing-a-standard-listing-versus-a-boosted-listing-highlighted-border-sponsored-badge-top-of-feed-position-indicator-include-a-pricing-tier-card-showing-boosting-options-e-g-3-day-7-day-30-day-boost-with-example-prices-in-gmd-mark-this-as-the-primary-revenue-driver-with-a-distinct-highlight",
-      "featureTitle": "Implement a Boosted & Promoted Listings feature showcase within the Monetization section: display a visual comparison card showing a standard listing versus a boosted listing (highlighted border, 'Sponsored' badge, top-of-feed position indicator). Include a pricing tier card showing boosting options (e.g., 3-day, 7-day, 30-day boost with example prices in GMD). Mark this as the primary revenue driver with a distinct highlight.",
-      "files": [
-        "frontend/src/components/BoostedListingMockup.tsx",
-        "frontend/src/components/MonetizationSection.tsx",
-        "frontend/src/data/monetization.ts",
-        "frontend/src/types/blueprint.ts"
-      ],
-      "components": [
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-22"
+        "REQ-51"
       ],
       "confidence": "high"
     }

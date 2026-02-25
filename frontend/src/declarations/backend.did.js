@@ -19,6 +19,90 @@ export const _CaffeineStorageRefillResult = IDL.Record({
   'success' : IDL.Opt(IDL.Bool),
   'topped_up_amount' : IDL.Opt(IDL.Nat),
 });
+export const UserRole = IDL.Variant({
+  'admin' : IDL.Null,
+  'user' : IDL.Null,
+  'guest' : IDL.Null,
+});
+export const ExternalBlob = IDL.Vec(IDL.Nat8);
+export const ListingId = IDL.Nat;
+export const ReportId = IDL.Nat;
+export const ReviewId = IDL.Nat;
+export const TransactionId = IDL.Nat;
+export const Time = IDL.Int;
+export const PublicListing = IDL.Record({
+  'id' : ListingId,
+  'status' : IDL.Text,
+  'title' : IDL.Text,
+  'createdAt' : Time,
+  'description' : IDL.Text,
+  'isBoosted' : IDL.Bool,
+  'category' : IDL.Text,
+  'boostExpiry' : IDL.Opt(Time),
+  'sellerId' : IDL.Principal,
+  'price' : IDL.Nat,
+  'location' : IDL.Text,
+  'photos' : IDL.Vec(ExternalBlob),
+  'condition' : IDL.Text,
+});
+export const Report = IDL.Record({
+  'id' : ReportId,
+  'status' : IDL.Text,
+  'reportedId' : IDL.Principal,
+  'reporterId' : IDL.Principal,
+  'reason' : IDL.Text,
+});
+export const MessageId = IDL.Nat;
+export const AnonMessage = IDL.Record({
+  'id' : MessageId,
+  'content' : IDL.Text,
+  'listingId' : ListingId,
+  'receiverId' : IDL.Principal,
+  'timestamp' : Time,
+  'senderName' : IDL.Text,
+  'senderId' : IDL.Opt(IDL.Principal),
+});
+export const BoostOption = IDL.Record({
+  'durationDays' : IDL.Nat,
+  'priceGMD' : IDL.Nat,
+});
+export const UserProfile = IDL.Record({
+  'id' : IDL.Principal,
+  'profilePicUrl' : IDL.Opt(IDL.Text),
+  'verified' : IDL.Bool,
+  'name' : IDL.Text,
+  'createdAt' : Time,
+  'phone' : IDL.Text,
+  'followers' : IDL.Nat,
+  'location' : IDL.Text,
+  'highestRating' : IDL.Nat,
+});
+export const Message = IDL.Record({
+  'id' : MessageId,
+  'content' : IDL.Text,
+  'listingId' : ListingId,
+  'receiverId' : IDL.Principal,
+  'timestamp' : Time,
+  'senderId' : IDL.Principal,
+});
+export const Review = IDL.Record({
+  'id' : ReviewId,
+  'listingId' : ListingId,
+  'createdAt' : Time,
+  'revieweeId' : IDL.Principal,
+  'reviewerId' : IDL.Principal,
+  'comment' : IDL.Text,
+  'stars' : IDL.Nat,
+});
+export const Transaction = IDL.Record({
+  'id' : TransactionId,
+  'status' : IDL.Text,
+  'paymentMethod' : IDL.Text,
+  'listingId' : ListingId,
+  'buyerId' : IDL.Principal,
+  'sellerId' : IDL.Principal,
+  'amount' : IDL.Nat,
+});
 
 export const idlService = IDL.Service({
   '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -47,6 +131,116 @@ export const idlService = IDL.Service({
       [],
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
+  '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addAllowedCategory' : IDL.Func([IDL.Text], [], []),
+  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'createListing' : IDL.Func(
+      [
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Nat,
+        IDL.Text,
+        IDL.Vec(ExternalBlob),
+        IDL.Text,
+      ],
+      [ListingId],
+      [],
+    ),
+  'createOrUpdateUserProfile' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'createReport' : IDL.Func([IDL.Principal, IDL.Text], [ReportId], []),
+  'createReview' : IDL.Func(
+      [IDL.Principal, ListingId, IDL.Nat, IDL.Text],
+      [ReviewId],
+      [],
+    ),
+  'createTransaction' : IDL.Func(
+      [ListingId, IDL.Principal, IDL.Text, IDL.Nat],
+      [TransactionId],
+      [],
+    ),
+  'deleteListing' : IDL.Func([ListingId], [], []),
+  'followSeller' : IDL.Func([IDL.Principal], [], []),
+  'getAllCategories' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
+  'getAllListings' : IDL.Func([], [IDL.Vec(PublicListing)], ['query']),
+  'getAllReports' : IDL.Func([], [IDL.Vec(Report)], ['query']),
+  'getAnonymousMessageById' : IDL.Func(
+      [MessageId],
+      [IDL.Opt(AnonMessage)],
+      ['query'],
+    ),
+  'getBoostOptions' : IDL.Func([], [IDL.Vec(BoostOption)], ['query']),
+  'getBoostedListings' : IDL.Func([], [IDL.Vec(PublicListing)], ['query']),
+  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getFollowers' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Vec(IDL.Principal)],
+      ['query'],
+    ),
+  'getFollowing' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
+  'getLikedListings' : IDL.Func([], [IDL.Vec(ListingId)], ['query']),
+  'getListing' : IDL.Func([ListingId], [IDL.Opt(PublicListing)], ['query']),
+  'getListingsByCategory' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(PublicListing)],
+      ['query'],
+    ),
+  'getMessagesForListing' : IDL.Func(
+      [ListingId],
+      [IDL.Vec(Message)],
+      ['query'],
+    ),
+  'getMyConversations' : IDL.Func([], [IDL.Vec(Message)], ['query']),
+  'getMyListings' : IDL.Func([], [IDL.Vec(PublicListing)], ['query']),
+  'getReviewsForUser' : IDL.Func([IDL.Principal], [IDL.Vec(Review)], ['query']),
+  'getTransaction' : IDL.Func(
+      [TransactionId],
+      [IDL.Opt(Transaction)],
+      ['query'],
+    ),
+  'getUserProfile' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Opt(UserProfile)],
+      ['query'],
+    ),
+  'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'likeListing' : IDL.Func([ListingId], [IDL.Bool], []),
+  'likeListingAnon' : IDL.Func([ListingId], [IDL.Bool], []),
+  'removeAllowedCategory' : IDL.Func([IDL.Text], [], []),
+  'saveCallerUserProfile' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+  'searchListings' : IDL.Func([IDL.Text], [IDL.Vec(PublicListing)], ['query']),
+  'sendMessage' : IDL.Func(
+      [ListingId, IDL.Principal, IDL.Text],
+      [MessageId],
+      [],
+    ),
+  'sendMessageAnon' : IDL.Func(
+      [IDL.Text, IDL.Text, ListingId, IDL.Principal],
+      [MessageId],
+      [],
+    ),
+  'setListingBoosted' : IDL.Func([ListingId, IDL.Bool, IDL.Nat], [], []),
+  'unfollowSeller' : IDL.Func([IDL.Principal], [], []),
+  'updateAllUserProfilesWithHighestRating' : IDL.Func([], [], []),
+  'updateListing' : IDL.Func(
+      [
+        ListingId,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Nat,
+        IDL.Text,
+        IDL.Vec(ExternalBlob),
+        IDL.Text,
+      ],
+      [],
+      [],
+    ),
+  'updateListingStatus' : IDL.Func([ListingId, IDL.Text], [], []),
+  'updateProfilePic' : IDL.Func([IDL.Text], [], []),
+  'updateReportStatus' : IDL.Func([ReportId, IDL.Text], [], []),
+  'updateTransactionStatus' : IDL.Func([TransactionId, IDL.Text], [], []),
 });
 
 export const idlInitArgs = [];
@@ -62,6 +256,90 @@ export const idlFactory = ({ IDL }) => {
   const _CaffeineStorageRefillResult = IDL.Record({
     'success' : IDL.Opt(IDL.Bool),
     'topped_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const UserRole = IDL.Variant({
+    'admin' : IDL.Null,
+    'user' : IDL.Null,
+    'guest' : IDL.Null,
+  });
+  const ExternalBlob = IDL.Vec(IDL.Nat8);
+  const ListingId = IDL.Nat;
+  const ReportId = IDL.Nat;
+  const ReviewId = IDL.Nat;
+  const TransactionId = IDL.Nat;
+  const Time = IDL.Int;
+  const PublicListing = IDL.Record({
+    'id' : ListingId,
+    'status' : IDL.Text,
+    'title' : IDL.Text,
+    'createdAt' : Time,
+    'description' : IDL.Text,
+    'isBoosted' : IDL.Bool,
+    'category' : IDL.Text,
+    'boostExpiry' : IDL.Opt(Time),
+    'sellerId' : IDL.Principal,
+    'price' : IDL.Nat,
+    'location' : IDL.Text,
+    'photos' : IDL.Vec(ExternalBlob),
+    'condition' : IDL.Text,
+  });
+  const Report = IDL.Record({
+    'id' : ReportId,
+    'status' : IDL.Text,
+    'reportedId' : IDL.Principal,
+    'reporterId' : IDL.Principal,
+    'reason' : IDL.Text,
+  });
+  const MessageId = IDL.Nat;
+  const AnonMessage = IDL.Record({
+    'id' : MessageId,
+    'content' : IDL.Text,
+    'listingId' : ListingId,
+    'receiverId' : IDL.Principal,
+    'timestamp' : Time,
+    'senderName' : IDL.Text,
+    'senderId' : IDL.Opt(IDL.Principal),
+  });
+  const BoostOption = IDL.Record({
+    'durationDays' : IDL.Nat,
+    'priceGMD' : IDL.Nat,
+  });
+  const UserProfile = IDL.Record({
+    'id' : IDL.Principal,
+    'profilePicUrl' : IDL.Opt(IDL.Text),
+    'verified' : IDL.Bool,
+    'name' : IDL.Text,
+    'createdAt' : Time,
+    'phone' : IDL.Text,
+    'followers' : IDL.Nat,
+    'location' : IDL.Text,
+    'highestRating' : IDL.Nat,
+  });
+  const Message = IDL.Record({
+    'id' : MessageId,
+    'content' : IDL.Text,
+    'listingId' : ListingId,
+    'receiverId' : IDL.Principal,
+    'timestamp' : Time,
+    'senderId' : IDL.Principal,
+  });
+  const Review = IDL.Record({
+    'id' : ReviewId,
+    'listingId' : ListingId,
+    'createdAt' : Time,
+    'revieweeId' : IDL.Principal,
+    'reviewerId' : IDL.Principal,
+    'comment' : IDL.Text,
+    'stars' : IDL.Nat,
+  });
+  const Transaction = IDL.Record({
+    'id' : TransactionId,
+    'status' : IDL.Text,
+    'paymentMethod' : IDL.Text,
+    'listingId' : ListingId,
+    'buyerId' : IDL.Principal,
+    'sellerId' : IDL.Principal,
+    'amount' : IDL.Nat,
   });
   
   return IDL.Service({
@@ -91,6 +369,124 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
+    '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addAllowedCategory' : IDL.Func([IDL.Text], [], []),
+    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'createListing' : IDL.Func(
+        [
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Nat,
+          IDL.Text,
+          IDL.Vec(ExternalBlob),
+          IDL.Text,
+        ],
+        [ListingId],
+        [],
+      ),
+    'createOrUpdateUserProfile' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'createReport' : IDL.Func([IDL.Principal, IDL.Text], [ReportId], []),
+    'createReview' : IDL.Func(
+        [IDL.Principal, ListingId, IDL.Nat, IDL.Text],
+        [ReviewId],
+        [],
+      ),
+    'createTransaction' : IDL.Func(
+        [ListingId, IDL.Principal, IDL.Text, IDL.Nat],
+        [TransactionId],
+        [],
+      ),
+    'deleteListing' : IDL.Func([ListingId], [], []),
+    'followSeller' : IDL.Func([IDL.Principal], [], []),
+    'getAllCategories' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
+    'getAllListings' : IDL.Func([], [IDL.Vec(PublicListing)], ['query']),
+    'getAllReports' : IDL.Func([], [IDL.Vec(Report)], ['query']),
+    'getAnonymousMessageById' : IDL.Func(
+        [MessageId],
+        [IDL.Opt(AnonMessage)],
+        ['query'],
+      ),
+    'getBoostOptions' : IDL.Func([], [IDL.Vec(BoostOption)], ['query']),
+    'getBoostedListings' : IDL.Func([], [IDL.Vec(PublicListing)], ['query']),
+    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getFollowers' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Vec(IDL.Principal)],
+        ['query'],
+      ),
+    'getFollowing' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
+    'getLikedListings' : IDL.Func([], [IDL.Vec(ListingId)], ['query']),
+    'getListing' : IDL.Func([ListingId], [IDL.Opt(PublicListing)], ['query']),
+    'getListingsByCategory' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(PublicListing)],
+        ['query'],
+      ),
+    'getMessagesForListing' : IDL.Func(
+        [ListingId],
+        [IDL.Vec(Message)],
+        ['query'],
+      ),
+    'getMyConversations' : IDL.Func([], [IDL.Vec(Message)], ['query']),
+    'getMyListings' : IDL.Func([], [IDL.Vec(PublicListing)], ['query']),
+    'getReviewsForUser' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Vec(Review)],
+        ['query'],
+      ),
+    'getTransaction' : IDL.Func(
+        [TransactionId],
+        [IDL.Opt(Transaction)],
+        ['query'],
+      ),
+    'getUserProfile' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Opt(UserProfile)],
+        ['query'],
+      ),
+    'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'likeListing' : IDL.Func([ListingId], [IDL.Bool], []),
+    'likeListingAnon' : IDL.Func([ListingId], [IDL.Bool], []),
+    'removeAllowedCategory' : IDL.Func([IDL.Text], [], []),
+    'saveCallerUserProfile' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+    'searchListings' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(PublicListing)],
+        ['query'],
+      ),
+    'sendMessage' : IDL.Func(
+        [ListingId, IDL.Principal, IDL.Text],
+        [MessageId],
+        [],
+      ),
+    'sendMessageAnon' : IDL.Func(
+        [IDL.Text, IDL.Text, ListingId, IDL.Principal],
+        [MessageId],
+        [],
+      ),
+    'setListingBoosted' : IDL.Func([ListingId, IDL.Bool, IDL.Nat], [], []),
+    'unfollowSeller' : IDL.Func([IDL.Principal], [], []),
+    'updateAllUserProfilesWithHighestRating' : IDL.Func([], [], []),
+    'updateListing' : IDL.Func(
+        [
+          ListingId,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Nat,
+          IDL.Text,
+          IDL.Vec(ExternalBlob),
+          IDL.Text,
+        ],
+        [],
+        [],
+      ),
+    'updateListingStatus' : IDL.Func([ListingId, IDL.Text], [], []),
+    'updateProfilePic' : IDL.Func([IDL.Text], [], []),
+    'updateReportStatus' : IDL.Func([ReportId, IDL.Text], [], []),
+    'updateTransactionStatus' : IDL.Func([TransactionId, IDL.Text], [], []),
   });
 };
 
