@@ -1,268 +1,74 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Post-logout redirect, social login, seller profiles, likes/follows, profile pictures, cross-device persistence",
+  "title": "Add PWA Install App Banner for Mobile Home Screen Prompting",
   "requirements": [
     {
-      "id": "REQ-44",
-      "summary": "Redirect to Home Feed immediately after logout from any page",
+      "id": "REQ-52",
+      "summary": "Add PWA web app manifest and service worker registration to enable the browser's native 'Add to Home Screen' install prompt on iOS Safari and Android Chrome",
       "acceptanceCriteria": [
-        "Clicking logout on the Profile page navigates the user to the Home Feed ('/') immediately after session is cleared.",
-        "The bottom navigation and header reflect the logged-out state on arrival at the home page.",
-        "No residual authenticated state remains after logout redirect."
+        "A valid `manifest.json` is served from the frontend public directory with correct name, short_name, start_url, display: standalone, theme_color, background_color, and icons fields.",
+        "The manifest is linked via a <link rel='manifest'> tag in index.html.",
+        "A service worker (`sw.js`) is registered in the app and caches the app shell so the install criteria are met.",
+        "On Android Chrome, the browser's native install banner/prompt is triggerable after the PWA install criteria are satisfied.",
+        "On iOS Safari, the app is installable via the Share → Add to Home Screen flow with the correct name and icon."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/Profile.tsx",
-          "operation": "modify",
-          "description": "Update the logout handler to call navigate({ page: 'home' }) immediately after clearing the identity and query cache. Ensure the navigation happens synchronously after queryClient.clear()."
+          "path": "frontend/public/manifest.json",
+          "operation": "create",
+          "description": "Create a web app manifest with name 'Gambia Market', short_name 'GambiaMarket', start_url '/', display 'standalone', theme_color matching the app's primary brand green (#10b981 or similar from the West African theme), background_color matching the app background, and icons array referencing the generated app icons at /assets/generated/app-icon.dim_512x512.png (512x512) and /assets/generated/app-icon-192.dim_192x192.png (192x192) with type 'image/png' and purpose 'any maskable'."
         },
         {
-          "path": "frontend/src/components/AppHeader.tsx",
+          "path": "frontend/public/sw.js",
+          "operation": "create",
+          "description": "Create a minimal service worker that listens for the 'install' event and caches the app shell (index.html, main JavaScript bundle, and core assets) using the Cache API. On 'fetch' events, implement a cache-first strategy for cached resources and network-first for others. Keep the implementation minimal to satisfy PWA installability criteria without complex offline strategies."
+        },
+        {
+          "path": "frontend/index.html",
           "operation": "modify",
-          "description": "If AppHeader contains any logout functionality (profile icon menu), add navigation to home after logout. Verify that the header reflects logged-out state on arrival at home."
+          "description": "Add a <link rel='manifest' href='/manifest.json'> tag in the <head> section. Add <meta name='theme-color' content='#10b981'> (or the exact brand green from the theme). Add <meta name='apple-mobile-web-app-capable' content='yes'> and <meta name='apple-mobile-web-app-status-bar-style' content='default'> for iOS support. Add <link rel='apple-touch-icon' href='/assets/generated/app-icon.dim_512x512.png'> for iOS home screen icon."
+        },
+        {
+          "path": "frontend/src/main.tsx",
+          "operation": "modify",
+          "description": "Register the service worker by adding navigator.serviceWorker.register('/sw.js') inside a conditional check for service worker support (if ('serviceWorker' in navigator)). Wrap the registration in a window 'load' event listener to avoid blocking the initial page render. Handle registration success and errors with console logging."
         }
       ]
     },
     {
-      "id": "REQ-45",
-      "summary": "Replace Internet Identity with Google and Apple ID as the only login methods",
+      "id": "REQ-53",
+      "summary": "Create a reusable InstallBanner React component that listens for the beforeinstallprompt event on Android/Chrome and displays platform-specific install prompts with dismissal and persistence",
       "acceptanceCriteria": [
-        "Login screen shows a 'Continue with Google' button and a 'Continue with Apple' button.",
-        "Internet Identity button and references are removed from all visible UI.",
-        "On first login, the user is prompted for profile setup (name, phone, location).",
-        "On subsequent logins, the user is taken directly to the Home Feed.",
-        "AuthGuard correctly identifies authenticated state from the new providers."
+        "The InstallBanner component renders a bottom-fixed banner on mobile viewports (max-width 768px) only.",
+        "On Android/Chrome, clicking 'Install' triggers the deferred `beforeinstallprompt` event and initiates the native install dialog.",
+        "On iOS Safari, a static instructional banner with share icon and 'Add to Home Screen' instructions is shown instead.",
+        "Clicking the dismiss ('X') button hides the banner and stores a 'installBannerDismissed' key in localStorage to suppress future appearances.",
+        "The banner does not appear on desktop browsers.",
+        "The banner does not appear if the app is already running in standalone mode (i.e., already installed).",
+        "The banner is styled consistently with the app's West African-inspired theme (green/gold palette)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useInternetIdentity.ts",
-          "operation": "modify",
-          "description": "Replace the Internet Identity authentication implementation with Google and Apple ID OAuth flows. Update the login() function to accept a provider parameter ('google' or 'apple') and initiate the appropriate OAuth flow. Ensure the identity and principal are correctly extracted from the OAuth response. Keep the same hook interface (login, clear, identity, loginStatus) for compatibility."
-        },
-        {
-          "path": "frontend/src/components/LoginPrompt.tsx",
-          "operation": "modify",
-          "description": "Remove the Internet Identity login button and replace it with two new buttons: 'Continue with Google' and 'Continue with Apple'. Each button should call login('google') or login('apple') respectively. Update the feature benefits text to reference Google/Apple login instead of Internet Identity. Keep both compact and full-page modes functional."
-        },
-        {
-          "path": "frontend/src/components/AuthGuard.tsx",
-          "operation": "modify",
-          "description": "Verify that AuthGuard correctly identifies authenticated state from Google/Apple identities. No changes should be needed if useInternetIdentity hook interface remains the same, but test that the loading and authentication checks work correctly with the new providers."
-        },
-        {
-          "path": "frontend/src/components/ProfileSetup.tsx",
-          "operation": "modify",
-          "description": "Ensure the profile setup form is shown on first login for users authenticated via Google/Apple. No structural changes needed, but verify that the form captures name, phone, and location correctly and that the user is redirected to Home Feed after successful profile creation."
+          "path": "frontend/src/components/InstallBanner.tsx",
+          "operation": "create",
+          "description": "Create a React component that: (1) uses useState to track the deferred beforeinstallprompt event, banner visibility, and installation state; (2) uses useEffect to listen for the 'beforeinstallprompt' event and store the event object, check if the app is already in standalone mode (window.matchMedia('(display-mode: standalone)').matches or window.navigator.standalone), and check localStorage for 'installBannerDismissed'; (3) detects iOS Safari via user agent string (Safari && !CriOS && !FxiOS); (4) renders a bottom-fixed banner (fixed bottom-0 left-0 right-0 z-50) only on mobile (hidden md:hidden) and only if not dismissed, not installed, and either the deferredPrompt exists (Android) or isIOS is true; (5) for Android, display the Gambia Market logo/name (use a small logo or app name text), the text 'Add to Home Screen for a faster experience', an 'Install' button that calls deferredPrompt.prompt() and listens for the user's choice, and an 'X' dismiss button; (6) for iOS, display a share icon (from lucide-react: Share) and the text 'Tap the Share button then \"Add to Home Screen\" to install'; (7) on dismiss, set localStorage 'installBannerDismissed' to 'true' and hide the banner; (8) style the banner with a brand green background (bg-[#10b981] or bg-green-600), gold/amber accent text (text-amber-400), padding, rounded corners on top (rounded-t-xl), shadow-lg, and appropriate button styles (Install button: bg-white text-green-700 font-semibold, X button: text-white hover:text-amber-400)."
         }
       ]
     },
     {
-      "id": "REQ-46",
-      "summary": "Show full seller profile info to all authenticated users; prompt unauthenticated users to log in",
+      "id": "REQ-54",
+      "summary": "Integrate the InstallBanner component into App.tsx at the root level so it appears on all pages for eligible mobile users",
       "acceptanceCriteria": [
-        "Authenticated users viewing a listing detail see the seller's name, location, rating, verified badge, and a link to their full profile.",
-        "The PublicProfile page renders all seller fields for any authenticated visitor.",
-        "Unauthenticated users see a 'Log in to view full seller info' prompt where seller details would appear.",
-        "Phone number is masked (e.g., +220 *** **** 78) for privacy."
+        "The InstallBanner is rendered in App.tsx at the root level and is visible on every page (Home Feed, Listing Detail, Chat, Profile, etc.).",
+        "The banner does not interfere with the BottomNav or AppHeader layout — it should appear above the BottomNav on mobile.",
+        "The banner only appears when the install conditions are met and has not been previously dismissed."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/ListingDetail.tsx",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "For authenticated users, ensure the SellerInfo component displays all seller fields (name, location, verified badge, rating). For unauthenticated users, replace the SellerInfo component with a LoginPrompt in compact mode with text 'Log in to view full seller info'. Add a utility function to mask the phone number (showing only first 4 and last 2 digits) when displaying seller contact info."
-        },
-        {
-          "path": "frontend/src/components/SellerInfo.tsx",
-          "operation": "modify",
-          "description": "Ensure the component displays verified badge, location, and rating for all authenticated viewers. Add a prop to show/hide phone number and apply masking when displayed. The component should remain clickable to navigate to PublicProfile."
-        },
-        {
-          "path": "frontend/src/pages/PublicProfile.tsx",
-          "operation": "modify",
-          "description": "For unauthenticated users, replace the profile content with a full-page LoginPrompt. For authenticated users, ensure all seller fields are visible: display name, location, verified badge, average rating, followers count, and reviews list. Add phone number display with masking utility."
-        }
-      ]
-    },
-    {
-      "id": "REQ-47",
-      "summary": "Generate unique shareable profile links for sellers and add a 'Share My Profile' button",
-      "acceptanceCriteria": [
-        "Each seller profile has a unique URL based on their principal ID.",
-        "'Share My Profile' / 'Copy Link' button is visible on the seller's own Profile page and on any PublicProfile page.",
-        "Clicking the button copies the full URL to the clipboard and shows a success toast ('Link copied!').",
-        "Opening the link navigates directly to that seller's PublicProfile page.",
-        "Unauthenticated users who open a shared link can view the profile but see a login prompt for interactive actions."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/Profile.tsx",
-          "operation": "modify",
-          "description": "Add a 'Share My Profile' button below the profile stats row. On click, construct the shareable URL as `${window.location.origin}#public-profile?id=${userProfile.id.toString()}`, copy it to clipboard using navigator.clipboard.writeText(), and show a success toast 'Link copied!'. Style the button with a share icon from lucide-react."
-        },
-        {
-          "path": "frontend/src/pages/PublicProfile.tsx",
-          "operation": "modify",
-          "description": "Add a 'Copy Profile Link' button near the top of the profile (next to the report button for non-owners, or prominently for the owner). On click, construct the shareable URL using the viewed user's principal ID, copy to clipboard, and show 'Link copied!' toast. Ensure unauthenticated users who arrive via shared link see a login prompt for interactive actions (follow, report) but can still view the profile info."
-        },
-        {
-          "path": "frontend/src/utils/urlParams.ts",
-          "operation": "modify",
-          "description": "Add a utility function `getPrincipalFromUrl()` that extracts the 'id' query parameter and returns it as a string. This will be used by PublicProfile to read the principal ID from shared links."
-        }
-      ]
-    },
-    {
-      "id": "REQ-48",
-      "summary": "Implement Like and Follow system with frontend UI and query hooks",
-      "acceptanceCriteria": [
-        "A heart/like button appears on each listing card and listing detail page; toggling it increments/decrements the like count stored in the backend.",
-        "A 'Follow' button appears on every seller's PublicProfile page; authenticated users can follow/unfollow.",
-        "The Profile page has a 'Following' tab listing all sellers the current user follows.",
-        "Seller profiles display a follower count.",
-        "Listing cards and detail pages display a like count.",
-        "Backend stores follow relationships and like records persistently in stable maps.",
-        "Unauthenticated users who try to like or follow are shown the login prompt."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add query hooks: useGetFollowing() to fetch the list of seller principals the current user follows, useGetFollowers(sellerId) to fetch a seller's follower list, and useGetLikedListings() to fetch the listing IDs the current user has liked. Add mutation hooks: useLikeListing(listingId) to toggle a like (calling likeListing or likeListingAnon based on auth state), useFollowSeller(sellerId) to follow a seller, and useUnfollowSeller(sellerId) to unfollow. Ensure mutations invalidate relevant query keys on success."
-        },
-        {
-          "path": "frontend/src/components/ListingCard.tsx",
-          "operation": "modify",
-          "description": "Add a heart icon button (from lucide-react) in the top-right corner of the card. Show the like count next to the heart. Use the useGetLikedListings hook to determine if the current listing is liked (filled heart) or not (outline heart). On click, call useLikeListing mutation; if unauthenticated, show LoginPrompt in a dialog/modal. Apply optimistic updates to the heart state."
-        },
-        {
-          "path": "frontend/src/pages/ListingDetail.tsx",
-          "operation": "modify",
-          "description": "Add a like button below the photo carousel or next to the share/report buttons. Display the total like count. Use useGetLikedListings to check if the current user has liked this listing. On click, call useLikeListing mutation; if unauthenticated, show a login prompt. Update the UI optimistically."
-        },
-        {
-          "path": "frontend/src/pages/PublicProfile.tsx",
-          "operation": "modify",
-          "description": "Add a 'Follow' / 'Following' toggle button below the seller's name and stats. Use useGetFollowing to check if the current user follows this seller. Display the follower count (fetched via useGetFollowers) next to the button. On click, call useFollowSeller or useUnfollowSeller mutation based on current state. If unauthenticated, show login prompt. Update button state optimistically."
-        },
-        {
-          "path": "frontend/src/components/ProfileTabs.tsx",
-          "operation": "modify",
-          "description": "Add a 'Following' tab (fourth tab after Listings, Reviews, Activity). When the Following tab is active, fetch the list of followed sellers using useGetFollowing, then for each principal fetch their profile using useGetUserProfile. Display each followed seller as a clickable card with their avatar, name, location, and rating. On click, navigate to their PublicProfile. Show a skeleton loader while fetching."
-        },
-        {
-          "path": "frontend/src/pages/Profile.tsx",
-          "operation": "modify",
-          "description": "Ensure the ProfileTabs component (which now includes a Following tab) is rendered. No other changes needed unless tabs need to be passed as props."
-        }
-      ]
-    },
-    {
-      "id": "REQ-49",
-      "summary": "Allow users to upload and display a profile picture",
-      "acceptanceCriteria": [
-        "Backend UserProfile type includes an optional `profilePicUrl` field.",
-        "The `updateProfilePic` backend function updates the caller's profilePicUrl.",
-        "The Profile page shows the current profile picture or initials avatar with an upload button.",
-        "Selecting a new photo updates the displayed avatar immediately (optimistic update) and persists to the backend.",
-        "Profile pictures appear in SellerInfo, ConversationItem, and PublicProfile components.",
-        "File size is validated client-side (max 2 MB) before conversion to base64."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add a mutation hook useUpdateProfilePic() that accepts a base64 image string, calls actor.updateProfilePic(base64String), and invalidates the 'currentUserProfile' query key on success. Add client-side file size validation (max 2 MB) before converting the file to base64."
-        },
-        {
-          "path": "frontend/src/pages/Profile.tsx",
-          "operation": "modify",
-          "description": "Display the current profile picture in a circular avatar at the top of the page. If userProfile.profilePicUrl is present, render it as an <img> with object-fit cover. Otherwise, show the animated initials avatar. Add a camera icon button overlaying the avatar. On click, open a file input to select an image (accept='image/*'). Validate file size (max 2 MB), convert to base64, call useUpdateProfilePic mutation, and optimistically update the displayed avatar. Show a toast on success or error."
-        },
-        {
-          "path": "frontend/src/components/SellerInfo.tsx",
-          "operation": "modify",
-          "description": "Update the avatar display to show the seller's profilePicUrl if available. Fetch the seller's profile and check for profilePicUrl. If present, render the image; otherwise, fall back to the initials avatar."
-        },
-        {
-          "path": "frontend/src/components/ConversationItem.tsx",
-          "operation": "modify",
-          "description": "Fetch the other user's profile and display their profilePicUrl if available in the avatar circle. Fall back to initials avatar if no profilePicUrl."
-        },
-        {
-          "path": "frontend/src/pages/PublicProfile.tsx",
-          "operation": "modify",
-          "description": "Display the viewed user's profilePicUrl at the top of the profile if available. Fall back to initials avatar otherwise."
-        },
-        {
-          "path": "frontend/src/components/BottomNav.tsx",
-          "operation": "modify",
-          "description": "In the Profile tab icon, if the user is authenticated and has a profilePicUrl, display a small circular avatar image instead of the default user icon. Fetch the current user profile and check for profilePicUrl."
-        },
-        {
-          "path": "frontend/src/components/AppHeader.tsx",
-          "operation": "modify",
-          "description": "If the header includes a profile icon or avatar, display the current user's profilePicUrl if available. Fall back to a default user icon otherwise."
-        }
-      ]
-    },
-    {
-      "id": "REQ-50",
-      "summary": "Ensure all user data is fetched from backend on every session start (no localStorage dependency)",
-      "acceptanceCriteria": [
-        "Logging in on a second device shows the same profile, listings, and conversations as the first device.",
-        "Profile data (name, location, profilePicUrl, listings) is fetched from the backend on app load, not from localStorage.",
-        "No critical user state is siloed to a single device's local storage.",
-        "Session tokens from Google/Apple resolve to the same principal ID across devices."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useGetCallerUserProfile.ts",
-          "operation": "modify",
-          "description": "Ensure the useGetCallerUserProfile hook always fetches from the backend actor on every session start. Remove any caching logic that persists profile data to localStorage. Set staleTime to 0 and cacheTime to a low value to ensure fresh fetches. The hook should refetch the profile whenever the actor changes (new identity)."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Review all query hooks (useGetMyListings, useGetMyConversations, etc.) and ensure they do not rely on localStorage for persisting data. All queries should use the backend actor as the source of truth. Remove any localStorage read/write logic for user data. Keep only UI-specific localStorage (e.g., recent searches, last-viewed message timestamps) and clearly comment them as UI-only state."
-        },
-        {
-          "path": "frontend/src/pages/Profile.tsx",
-          "operation": "modify",
-          "description": "Ensure the profile page refetches user data on mount via useGetCallerUserProfile. Do not read profile fields from localStorage. If the query is loading, show a skeleton loader. Once data is fetched, display the profile."
-        },
-        {
-          "path": "frontend/src/components/AuthGuard.tsx",
-          "operation": "modify",
-          "description": "Ensure AuthGuard refetches the caller's profile on every authentication state change. Do not use cached profile data from localStorage. The profile query should be enabled only when the actor is ready and the user is authenticated."
-        }
-      ]
-    },
-    {
-      "id": "REQ-51",
-      "summary": "Ensure listings persist indefinitely and display status badges in My Listings",
-      "acceptanceCriteria": [
-        "Listings are never automatically deleted or expired by the backend.",
-        "Only the listing owner can delete a listing via the `deleteListing` function, which checks the caller's principal.",
-        "The owner's 'My Listings' tab shows all listings including sold/paused ones with status badges.",
-        "The Home Feed only shows listings with 'active' status, while all others are still stored and visible to the owner.",
-        "No scheduled or automatic cleanup code exists in the backend."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/MyListingCard.tsx",
-          "operation": "modify",
-          "description": "Add a status badge to the top-left corner of each listing card. The badge should display the listing's status (Active, Sold, Paused, etc.) with color-coded styling (green for Active, gray for Paused, blue for Sold). Fetch the listing status from the listing object and render a badge component (similar to condition badge). Ensure the delete, edit, and boost actions are still accessible."
-        },
-        {
-          "path": "frontend/src/components/ProfileTabs.tsx",
-          "operation": "modify",
-          "description": "In the Listings tab, ensure that all of the user's listings are displayed regardless of status. Use useGetMyListings to fetch all listings. Do not filter by status. Display each listing using MyListingCard, which now shows status badges."
-        },
-        {
-          "path": "frontend/src/pages/HomeFeed.tsx",
-          "operation": "modify",
-          "description": "Ensure the home feed only displays listings with status 'active'. Filter the listings array returned by useGetAllListings to include only listings where listing.status === 'active' or 'Active' (case-insensitive). Inactive/sold/paused listings should not appear in the public feed."
+          "description": "Import the InstallBanner component and render it at the root level of the App component's return JSX, after the main page content area and outside the routing conditional logic. Position it before the closing fragment/div so it renders on all pages. Ensure it appears above the BottomNav by placing it after the page content but before the BottomNav in the DOM order (or use z-index if needed, which is already handled in the InstallBanner component with z-50). The banner will automatically handle its own visibility logic based on mobile viewport, install state, and dismissal."
         }
       ]
     }

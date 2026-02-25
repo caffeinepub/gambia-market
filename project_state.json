@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 13,
+  "projectStateVersion": 15,
   "summary": "Gambia Market is a local marketplace mobile app for The Gambia, designed to replace unorganized selling on WhatsApp/Facebook. The project has progressed from a blueprint/planning document phase to active development of the functional app. It allows users to buy and sell products and services locally with features including phone-number registration, location-based listings, in-app chat, mobile money payments, and a trust/safety system. Targeted at everyday Gambians, small business owners, market sellers, and youth entrepreneurs. The app prioritizes simple UI for low-end Android devices, low data usage, and fast loading on slow connections.",
   "architectural_notes": [
     "Tech stack: React Native (Expo) with NativeWind for mobile, Node.js/Express backend, PostgreSQL plus Redis, Socket.io for chat, Cloudinary for image storage",
@@ -13,6 +13,7 @@
     "Message button on Listing Detail page is not functioning"
   ],
   "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Gambia Market app icon — warm green background with a bold white stylized market stall / basket logo mark, square format with rounded corners (app-icon.dim_512x512.png)\n- Gambia Market app icon smaller variant — same design as the 512px icon (app-icon-192.dim_192x192.png)",
   "existing_features": [
     {
       "id": "feature-create-a-visually-rich-interactive-single-page-web-application-that-presents-the-full-gambia-market-product-blueprint-the-app-should-have-a-tabbed-or-sectioned-navigation-allowing-users-to-browse-1-feature-breakdown-2-user-flows-3-database-structure-4-tech-stack-5-mvp-plan-6-future-features-7-monetization-strategy-and-8-development-roadmap-each-section-should-be-readable-well-organized-and-easy-to-share",
@@ -365,6 +366,30 @@
         "REQ-51"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-add-pwa-web-app-manifest-and-service-worker-registration-to-enable-the-browser-s-native-add-to-home-screen-install-prompt-on-both-ios-safari-and-android-chrome-create-a-frontend-public-manifest-json-with-the-app-name-gambia-market-short-name-gambiamarket-start-url-display-mode-standalone-theme-color-matching-the-app-s-primary-brand-green-background-color-and-icon-entries-referencing-appropriately-sized-app-icons-192-192-and-512-512-register-a-minimal-service-worker-in-frontend-public-sw-js-that-caches-the-app-shell-reference-the-manifest-and-service-worker-registration-in-frontend-index-html",
+      "title": "Add PWA web app manifest and service worker registration to enable the browser's native 'Add to Home Screen' / install prompt on both iOS Safari and Android Chrome. Create a `frontend/public/manifest.json` with the app name ('Gambia Market'), short name ('GambiaMarket'), start URL, display mode ('standalone'), theme color (matching the app's primary brand green), background color, and icon entries referencing appropriately sized app icons (192×192 and 512×512). Register a minimal service worker in `frontend/public/sw.js` that caches the app shell. Reference the manifest and service worker registration in `frontend/index.html`.",
+      "reqIds": [
+        "REQ-52"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-reusable-installbanner-react-component-in-frontend-src-components-installbanner-tsx-that-listens-for-the-browser-s-beforeinstallprompt-event-android-chrome-and-displays-a-dismissible-bottom-banner-prompting-the-user-to-install-the-app-the-banner-should-show-the-gambia-market-logo-name-the-text-add-to-home-screen-for-a-faster-experience-an-install-button-that-triggers-the-deferred-prompt-and-an-x-dismiss-button-once-dismissed-or-installed-hide-the-banner-and-persist-the-dismissal-in-localstorage-so-it-does-not-reappear-in-the-same-session-for-ios-detected-via-user-agent-show-a-separate-instructional-banner-with-the-text-tap-the-share-button-then-add-to-home-screen-to-install-with-a-share-icon-illustration-style-the-banner-using-the-app-s-west-african-inspired-color-theme-brand-green-background-gold-amber-accent-text",
+      "title": "Create a reusable `InstallBanner` React component in `frontend/src/components/InstallBanner.tsx` that listens for the browser's `beforeinstallprompt` event (Android/Chrome) and displays a dismissible bottom banner prompting the user to install the app. The banner should show the Gambia Market logo/name, the text 'Add to Home Screen for a faster experience', an 'Install' button that triggers the deferred prompt, and an 'X' dismiss button. Once dismissed or installed, hide the banner and persist the dismissal in localStorage so it does not reappear in the same session. For iOS (detected via user agent), show a separate instructional banner with the text 'Tap the Share button then \"Add to Home Screen\" to install' with a share icon illustration. Style the banner using the app's West African-inspired color theme (brand green background, gold/amber accent text).",
+      "reqIds": [
+        "REQ-53"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-integrate-the-installbanner-component-into-frontend-src-app-tsx-by-rendering-it-persistently-at-the-root-level-outside-the-main-page-content-area-so-it-appears-on-all-pages-of-the-app-for-eligible-mobile-users",
+      "title": "Integrate the `InstallBanner` component into `frontend/src/App.tsx` by rendering it persistently at the root level, outside the main page content area, so it appears on all pages of the app for eligible mobile users.",
+      "reqIds": [
+        "REQ-54"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -548,6 +573,12 @@
       "reqIds": [
         "REQ-47"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-45",
+      "summary": "Add an 'Install App' banner inside Gambia Market that automatically prompts mobile users (iOS and Android) to add the app to their home screen via the browser's Add to Home Screen mechanism (PWA install prompt)",
+      "reqIds": [],
       "status": "pending"
     }
   ],

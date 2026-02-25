@@ -2,12 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-implement-a-like-and-follow-system-for-sellers-users-can-like-individual-listings-heart-icon-on-each-listing-card-and-detail-page-and-follow-a-seller-from-their-publicprofile-or-listing-detail-page-in-the-backend-add-a-followseller-function-that-records-follower-following-relationships-followerid-sellerid-and-an-unfollowseller-function-to-remove-the-relationship-add-a-likelistinganon-likelisting-function-to-toggle-a-like-on-a-listing-storing-the-liker-s-principal-and-the-listing-id-expose-query-functions-getfollowing-getfollowers-and-getlikedlistings-in-the-profile-page-add-a-following-tab-showing-followed-sellers-display-follower-counts-on-seller-profiles-and-like-counts-on-listing-cards",
-      "featureTitle": "Implement a Like and Follow system for sellers. Users can 'Like' individual listings (heart icon on each listing card and detail page) and 'Follow' a seller from their PublicProfile or Listing Detail page. In the backend, add a `followSeller` function that records follower/following relationships (followerId → sellerId) and an `unfollowSeller` function to remove the relationship. Add a `likeListingAnon` / `likeListing` function to toggle a like on a listing, storing the liker's principal and the listing ID. Expose query functions `getFollowing`, `getFollowers`, and `getLikedListings`. In the Profile page, add a 'Following' tab showing followed sellers. Display follower counts on seller profiles and like counts on listing cards.",
+      "featureId": "feature-add-pwa-web-app-manifest-and-service-worker-registration-to-enable-the-browser-s-native-add-to-home-screen-install-prompt-on-both-ios-safari-and-android-chrome-create-a-frontend-public-manifest-json-with-the-app-name-gambia-market-short-name-gambiamarket-start-url-display-mode-standalone-theme-color-matching-the-app-s-primary-brand-green-background-color-and-icon-entries-referencing-appropriately-sized-app-icons-192-192-and-512-512-register-a-minimal-service-worker-in-frontend-public-sw-js-that-caches-the-app-shell-reference-the-manifest-and-service-worker-registration-in-frontend-index-html",
+      "featureTitle": "Add PWA web app manifest and service worker registration to enable the browser's native 'Add to Home Screen' / install prompt on both iOS Safari and Android Chrome. Create a `frontend/public/manifest.json` with the app name ('Gambia Market'), short name ('GambiaMarket'), start URL, display mode ('standalone'), theme color (matching the app's primary brand green), background color, and icon entries referencing appropriately sized app icons (192×192 and 512×512). Register a minimal service worker in `frontend/public/sw.js` that caches the app shell. Reference the manifest and service worker registration in `frontend/index.html`.",
       "files": [
-        "frontend/src/components/ListingCard.tsx",
-        "frontend/src/components/ProfileTabs.tsx",
-        "frontend/src/hooks/useQueries.ts"
+        "frontend/index.html",
+        "frontend/public/manifest.json",
+        "frontend/public/sw.js"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -19,15 +19,15 @@
         "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-48"
+        "REQ-52"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-allow-users-to-upload-and-display-a-profile-picture-add-a-profilepicurl-field-text-optional-to-the-userprofile-type-in-the-backend-add-an-updateprofilepic-function-that-accepts-a-base64-encoded-image-string-or-url-and-stores-it-on-the-caller-s-profile-on-the-profile-page-and-publicprofile-page-display-the-profile-picture-if-available-or-fall-back-to-the-animated-initials-avatar-add-a-camera-upload-icon-button-on-the-profile-page-that-opens-a-file-picker-to-select-a-photo-converts-it-to-base64-and-calls-updateprofilepic-display-the-profile-picture-in-the-avatar-circle-of-the-bottomnav-appheader-profile-icon-sellerinfo-component-and-conversationitem",
-      "featureTitle": "Allow users to upload and display a profile picture. Add a `profilePicUrl` field (Text, optional) to the UserProfile type in the backend. Add an `updateProfilePic` function that accepts a base64-encoded image string or URL and stores it on the caller's profile. On the Profile page and PublicProfile page, display the profile picture if available, or fall back to the animated initials avatar. Add a camera/upload icon button on the Profile page that opens a file picker to select a photo, converts it to base64, and calls `updateProfilePic`. Display the profile picture in the avatar circle of the BottomNav, AppHeader profile icon, SellerInfo component, and ConversationItem.",
+      "featureId": "feature-create-a-reusable-installbanner-react-component-in-frontend-src-components-installbanner-tsx-that-listens-for-the-browser-s-beforeinstallprompt-event-android-chrome-and-displays-a-dismissible-bottom-banner-prompting-the-user-to-install-the-app-the-banner-should-show-the-gambia-market-logo-name-the-text-add-to-home-screen-for-a-faster-experience-an-install-button-that-triggers-the-deferred-prompt-and-an-x-dismiss-button-once-dismissed-or-installed-hide-the-banner-and-persist-the-dismissal-in-localstorage-so-it-does-not-reappear-in-the-same-session-for-ios-detected-via-user-agent-show-a-separate-instructional-banner-with-the-text-tap-the-share-button-then-add-to-home-screen-to-install-with-a-share-icon-illustration-style-the-banner-using-the-app-s-west-african-inspired-color-theme-brand-green-background-gold-amber-accent-text",
+      "featureTitle": "Create a reusable `InstallBanner` React component in `frontend/src/components/InstallBanner.tsx` that listens for the browser's `beforeinstallprompt` event (Android/Chrome) and displays a dismissible bottom banner prompting the user to install the app. The banner should show the Gambia Market logo/name, the text 'Add to Home Screen for a faster experience', an 'Install' button that triggers the deferred prompt, and an 'X' dismiss button. Once dismissed or installed, hide the banner and persist the dismissal in localStorage so it does not reappear in the same session. For iOS (detected via user agent), show a separate instructional banner with the text 'Tap the Share button then \"Add to Home Screen\" to install' with a share icon illustration. Style the banner using the app's West African-inspired color theme (brand green background, gold/amber accent text).",
       "files": [
-        "frontend/src/hooks/useQueries.ts"
+        "frontend/src/components/InstallBanner.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -39,15 +39,15 @@
         "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-49"
+        "REQ-53"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-all-user-account-data-sessions-and-listed-products-are-accessible-from-any-device-since-the-platform-uses-principal-based-identity-google-apple-the-same-identity-resolves-to-the-same-principal-across-devices-so-data-is-inherently-cross-device-update-the-frontend-to-not-rely-on-device-local-state-localstorage-sessionstorage-for-authenticated-user-data-all-profile-data-listings-conversations-and-follows-must-be-fetched-from-the-backend-on-every-session-start-add-a-usegetcalleruserprofile-query-that-runs-on-app-load-for-authenticated-users-to-re-hydrate-their-profile-from-the-backend-rather-than-from-local-cache",
-      "featureTitle": "Ensure all user account data, sessions, and listed products are accessible from any device. Since the platform uses principal-based identity (Google/Apple), the same identity resolves to the same principal across devices, so data is inherently cross-device. Update the frontend to not rely on device-local state (localStorage/sessionStorage) for authenticated user data — all profile data, listings, conversations, and follows must be fetched from the backend on every session start. Add a `useGetCallerUserProfile` query that runs on app load for authenticated users to re-hydrate their profile from the backend rather than from local cache.",
+      "featureId": "feature-integrate-the-installbanner-component-into-frontend-src-app-tsx-by-rendering-it-persistently-at-the-root-level-outside-the-main-page-content-area-so-it-appears-on-all-pages-of-the-app-for-eligible-mobile-users",
+      "featureTitle": "Integrate the `InstallBanner` component into `frontend/src/App.tsx` by rendering it persistently at the root level, outside the main page content area, so it appears on all pages of the app for eligible mobile users.",
       "files": [
-        "frontend/src/hooks/useQueries.ts"
+        "frontend/src/App.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -59,28 +59,7 @@
         "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-50"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-ensure-that-all-listed-products-persist-in-the-backend-indefinitely-and-are-never-automatically-removed-listings-may-only-be-deleted-when-the-owner-explicitly-calls-the-deletelisting-function-from-their-own-my-listings-section-remove-any-ttl-expiry-or-automatic-cleanup-logic-from-the-backend-if-present-inactive-sold-listings-should-remain-visible-to-the-owner-in-their-my-listings-tab-with-a-status-badge-active-sold-paused-even-after-they-are-no-longer-shown-in-the-public-home-feed",
-      "featureTitle": "Ensure that all listed products persist in the backend indefinitely and are never automatically removed. Listings may only be deleted when the owner explicitly calls the `deleteListing` function from their own 'My Listings' section. Remove any TTL, expiry, or automatic cleanup logic from the backend if present. Inactive/sold listings should remain visible to the owner in their 'My Listings' tab with a status badge (Active / Sold / Paused) even after they are no longer shown in the public Home Feed.",
-      "files": [
-        "frontend/src/components/MyListingCard.tsx",
-        "frontend/src/components/ProfileTabs.tsx"
-      ],
-      "components": [
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-51"
+        "REQ-54"
       ],
       "confidence": "high"
     }

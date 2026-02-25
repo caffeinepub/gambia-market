@@ -11,6 +11,7 @@ import ListingDetail from './pages/ListingDetail';
 import MessageThread from './pages/MessageThread';
 import PublicProfile from './pages/PublicProfile';
 import EditListing from './pages/EditListing';
+import InstallBanner from './components/InstallBanner';
 import { Toaster } from './components/ui/sonner';
 import type { ListingId } from './backend';
 import type { Principal } from '@icp-sdk/core/principal';
@@ -149,6 +150,9 @@ function App() {
       {showBottomNav && (
         <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
       )}
+
+      {/* PWA Install Banner — renders above BottomNav via z-50 */}
+      <InstallBanner />
 
       <Toaster richColors position="top-center" />
     </div>

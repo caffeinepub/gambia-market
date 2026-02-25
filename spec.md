@@ -1,22 +1,17 @@
 # Specification
 
 ## Summary
-**Goal:** Enhance Gambia Market with social login, seller profiles, likes/follows, profile pictures, cross-device persistence, and listing persistence improvements.
+**Goal:** Add PWA support to Gambia Market so mobile users are prompted to install the app to their home screen.
 
 **Planned changes:**
-- Redirect users to the Home Feed (`/`) immediately after logout from any page
-- Replace Internet Identity authentication with Google and Apple ID login buttons; remove all Internet Identity UI references
-- On first login, prompt new users for profile setup (name, phone, location); return existing users directly to Home Feed
-- Show full seller profile info (name, masked phone, location, verified badge, rating, listings, reviews) to authenticated users on Listing Detail and PublicProfile pages; show login prompt to unauthenticated visitors
-- Add a "Share My Profile" button on seller Profile and PublicProfile pages that copies a unique shareable URL (`/public-profile?id=<principalId>`) to the clipboard and shows a confirmation toast
-- Add a Like (heart) button on listing cards and detail pages with a like count, stored in the backend
-- Add a Follow/Unfollow button on seller PublicProfile and Listing Detail pages with a follower count displayed on seller profiles
-- Add a "Following" tab on the Profile page listing all sellers the current user follows
-- Backend: add `followSeller`, `unfollowSeller`, `likeListing`, `getFollowing`, `getFollowers`, `getLikedListings` functions with stable storage
-- Allow users to upload a profile picture (file picker, base64 conversion, max 2 MB client-side validation); add `profilePicUrl` field to `UserProfile` and `updateProfilePic` backend function
-- Display profile picture (or initials fallback) in Profile page, PublicProfile, SellerInfo, ConversationItem, BottomNav, and AppHeader
-- On app load for authenticated users, fetch profile data from the backend instead of localStorage/sessionStorage to ensure cross-device consistency
-- Remove any TTL/expiry/auto-cleanup logic from the backend; listings persist until explicitly deleted by the owner via `deleteListing`
-- Show all owner listings (Active/Sold/Paused) with status badges in the "My Listings" tab; only Active listings appear in the public Home Feed
+- Create `frontend/public/manifest.json` with app name, short name, start URL, standalone display mode, brand green theme color, background color, and 192×192 / 512×512 icon entries
+- Create a minimal `frontend/public/sw.js` service worker that caches the app shell
+- Link the manifest and register the service worker in `frontend/index.html`
+- Create a reusable `InstallBanner` React component that:
+  - On Android/Chrome: listens for `beforeinstallprompt`, shows a dismissible bottom banner with an "Install" button that triggers the native install dialog
+  - On iOS Safari: shows a static instructional banner with share icon and "Add to Home Screen" instructions
+  - Hides on desktop (max-width 768px only), hides when already in standalone mode, and persists dismissal in localStorage
+  - Is styled with the app's West African-inspired green/gold palette
+- Integrate `InstallBanner` into `App.tsx` at the root level so it appears on all pages, positioned above the bottom navigation
 
-**User-visible outcome:** Users can log in with Google or Apple, follow sellers, like listings, upload a profile picture, share their seller profile link, and access their account with all data intact from any device. Listings remain permanently unless deleted by the owner.
+**User-visible outcome:** Mobile users visiting Gambia Market on Android Chrome or iOS Safari will see a branded install banner prompting them to add the app to their home screen for a faster experience.
