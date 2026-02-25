@@ -1,0 +1,321 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Gambia Market Interactive Blueprint - Feature Showcase Implementation",
+  "requirements": [
+    {
+      "id": "REQ-13",
+      "summary": "Add Phone Number Registration with OTP feature showcase card displaying the complete registration flow with phone input, OTP verification, and profile setup steps",
+      "acceptanceCriteria": [
+        "Registration flow is visually represented with phone input, OTP verification, and profile setup steps",
+        "Each step shows relevant form fields and validation feedback",
+        "Component renders from structured data in the existing TypeScript data files"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/data/features.ts",
+          "operation": "modify",
+          "description": "Extend the Phone Number Registration feature object (REQ-13) with a new 'flowSteps' property containing structured data for the three registration steps: (1) phone input with country code selector, (2) OTP verification with 6-digit input, (3) profile setup with name and location fields. Include field types, placeholders, and validation state examples for each step."
+        },
+        {
+          "path": "frontend/src/types/blueprint.ts",
+          "operation": "modify",
+          "description": "Add optional 'flowSteps' property to the Feature interface to support multi-step flow data. Define a FlowStep type with properties: stepNumber, stepTitle, fields array (fieldName, fieldType, placeholder, validationState), and optionally iconName."
+        },
+        {
+          "path": "frontend/src/components/RegistrationFlowCard.tsx",
+          "operation": "create",
+          "description": "Create a new component that renders the phone registration flow steps as a vertical sequence of step cards. Each step card displays step number, title, form fields with appropriate input types (tel, text, number), and validation state indicators (neutral, valid, invalid). Style with warm green accents and gold highlights consistent with the kente pattern theme."
+        },
+        {
+          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
+          "operation": "modify",
+          "description": "Update to conditionally render RegistrationFlowCard when the feature has flowSteps data (for REQ-13), replacing or augmenting the standard FeatureCard for that specific feature."
+        }
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "summary": "Add Listing Creation feature showcase displaying the step-by-step flow including photo upload, category selector, price input, condition selector, and location tagging",
+      "acceptanceCriteria": [
+        "Listing creation steps are shown: photo upload, category, price, condition, location",
+        "Visual representation includes relevant field types (file picker, dropdown, number input, etc.)",
+        "Integrates consistently with existing FeatureCard styling and theme"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/data/features.ts",
+          "operation": "modify",
+          "description": "Extend the Listing Creation feature object (REQ-14) with a 'creationSteps' property containing structured data for five steps: (1) photo upload with multi-image indicator, (2) category dropdown with sample categories, (3) price input in GMD, (4) condition selector (new/used/refurbished), (5) location tagging. Include field metadata and UI hints for each step."
+        },
+        {
+          "path": "frontend/src/types/blueprint.ts",
+          "operation": "modify",
+          "description": "Add optional 'creationSteps' property to the Feature interface to support listing creation flow data. Define a CreationStep type with properties: stepNumber, stepTitle, fieldType (upload, dropdown, number, radio, location), options array for selectors, and hint text."
+        },
+        {
+          "path": "frontend/src/components/ListingCreationCard.tsx",
+          "operation": "create",
+          "description": "Create a component that renders the listing creation workflow as an illustrated step-by-step mini-form. Display each step with appropriate visual mockups: file upload icon grid for photos, styled dropdown for category, GMD-prefixed number input for price, radio buttons for condition, and map pin icon for location. Use the warm green and gold palette with batik texture accents."
+        },
+        {
+          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
+          "operation": "modify",
+          "description": "Update to conditionally render ListingCreationCard when the feature has creationSteps data (for REQ-14), integrating it within the feature grid layout."
+        }
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "summary": "Add Home Feed feature showcase displaying a mock listing grid with sample product cards showing images, titles, prices, location badges, and distance indicators",
+      "acceptanceCriteria": [
+        "Home feed mockup shows at least 3–4 sample listing cards",
+        "Each listing card includes image placeholder, title, price, and location/distance badge",
+        "Layout demonstrates responsive grid or list arrangement"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/data/features.ts",
+          "operation": "modify",
+          "description": "Extend the Home Feed feature object (REQ-15) with a 'sampleListings' property containing an array of 4 mock listing objects. Each listing includes: id, title, price (in GMD), location (Gambian city), distance (in km), category, imagePlaceholder (color or icon reference), and condition. Use realistic Gambian product examples (e.g., 'Samsung Galaxy Phone', 'Office Chair', 'Generator', 'Kids Bicycle')."
+        },
+        {
+          "path": "frontend/src/types/blueprint.ts",
+          "operation": "modify",
+          "description": "Add optional 'sampleListings' property to the Feature interface. Define a SampleListing type with properties: id, title, price, location, distance, category, imagePlaceholder, and condition."
+        },
+        {
+          "path": "frontend/src/components/HomeFeedMockup.tsx",
+          "operation": "create",
+          "description": "Create a component that renders a responsive grid of mock listing cards using the sampleListings data. Each card displays a colored placeholder box with category icon, product title, price in bold green GMD text, location badge with map pin icon, and distance indicator. Use a 2-column mobile / 3-column tablet / 4-column desktop grid layout with hover lift effects and warm color accents."
+        },
+        {
+          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
+          "operation": "modify",
+          "description": "Update to conditionally render HomeFeedMockup when the feature has sampleListings data (for REQ-15), displaying it below the feature description."
+        }
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "summary": "Add Search & Filters feature showcase displaying an interactive-looking search bar and filter panel with category dropdown, price range inputs, and condition checkboxes",
+      "acceptanceCriteria": [
+        "Search bar mockup is displayed with placeholder text",
+        "Filter options shown: category, price range, and condition",
+        "Visual demo is styled consistently with the app's African market theme"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/data/features.ts",
+          "operation": "modify",
+          "description": "Extend the Search & Filters feature object (REQ-16) with a 'filterOptions' property containing structured data for: search placeholder text, category options array (Electronics, Vehicles, Fashion, Home & Garden, etc.), price range (min/max GMD values), and condition checkboxes (New, Used, Refurbished). Include sample filter state to illustrate active filters."
+        },
+        {
+          "path": "frontend/src/types/blueprint.ts",
+          "operation": "modify",
+          "description": "Add optional 'filterOptions' property to the Feature interface. Define a FilterOptions type with properties: searchPlaceholder, categories array, priceRange (min, max, currency), conditions array, and optional activeFilters example object."
+        },
+        {
+          "path": "frontend/src/components/SearchFilterMockup.tsx",
+          "operation": "create",
+          "description": "Create a component that renders a visual demo of the search and filter UI. Display a prominent search bar with magnifying glass icon and placeholder text at the top, followed by a filter panel showing category dropdown (styled select), price range with min/max number inputs and GMD label, and condition checkboxes with green checkmarks. Use card-based layout with subtle batik background texture and warm color palette."
+        },
+        {
+          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
+          "operation": "modify",
+          "description": "Update to conditionally render SearchFilterMockup when the feature has filterOptions data (for REQ-16), placing it as a visual demo card within the feature section."
+        }
+      ]
+    },
+    {
+      "id": "REQ-17",
+      "summary": "Add In-App Chat feature showcase displaying a mock chat interface with message bubbles, listing context header, timestamps, and message input bar",
+      "acceptanceCriteria": [
+        "Chat mockup shows at least 3 sample messages alternating between buyer and seller",
+        "Listing context header is shown at top of chat",
+        "Message input bar with send button is displayed",
+        "Styled consistently with the warm African market theme"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/data/features.ts",
+          "operation": "modify",
+          "description": "Extend the In-App Chat feature object (REQ-17) with a 'chatDemo' property containing: listingContext (thumbnail placeholder, title, price), sampleMessages array with at least 3 messages alternating between buyer and seller roles (each with sender, text, timestamp), and inputPlaceholder text. Use realistic Gambian marketplace conversation examples."
+        },
+        {
+          "path": "frontend/src/types/blueprint.ts",
+          "operation": "modify",
+          "description": "Add optional 'chatDemo' property to the Feature interface. Define ChatDemo type with listingContext object, sampleMessages array (each message has: id, sender, role, text, timestamp), and inputPlaceholder string. Define ChatMessage type with required message properties."
+        },
+        {
+          "path": "frontend/src/components/ChatMockup.tsx",
+          "operation": "create",
+          "description": "Create a component that renders a realistic chat interface mockup. Display listing context header at top with thumbnail placeholder and product details. Render message bubbles alternating left (buyer) and right (seller) with different background colors (buyer: light gray, seller: warm green). Show timestamps in small gray text below each message. Include a sticky bottom input bar with text placeholder and send button icon. Style with rounded corners and consistent warm color palette."
+        },
+        {
+          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
+          "operation": "modify",
+          "description": "Update to conditionally render ChatMockup when the feature has chatDemo data (for REQ-17), displaying it as a mobile-sized chat window within the feature card."
+        }
+      ]
+    },
+    {
+      "id": "REQ-18",
+      "summary": "Add Verified Seller Badge feature showcase displaying the verification process steps and a sample verified seller profile card",
+      "acceptanceCriteria": [
+        "Verification steps (upload ID, review, badge awarded) are shown",
+        "Sample seller profile card with verified badge is displayed",
+        "Badge uses a visually distinct gold or green checkmark icon consistent with the theme"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/data/features.ts",
+          "operation": "modify",
+          "description": "Extend the Verified Seller Badge feature object (REQ-18) with a 'verificationProcess' property containing three steps (upload ID, under review, badge awarded) and a 'sampleProfile' object with seller name, verified status, star rating, transaction count, and member since date. Reference the generated verified badge image at frontend/public/assets/generated/verified-badge.dim_256x256.png."
+        },
+        {
+          "path": "frontend/src/types/blueprint.ts",
+          "operation": "modify",
+          "description": "Add optional 'verificationProcess' and 'sampleProfile' properties to the Feature interface. Define VerificationStep type (stepNumber, status, description) and SellerProfile type (name, verified, rating, transactionCount, memberSince, badgeImage)."
+        },
+        {
+          "path": "frontend/src/components/VerifiedBadgeMockup.tsx",
+          "operation": "create",
+          "description": "Create a component that displays two elements: (1) verification process as a horizontal or vertical stepper showing the three stages with status indicators (pending, in-progress, complete), and (2) a seller profile card showing profile avatar placeholder, name, the verified badge image from frontend/public/assets/generated/verified-badge.dim_256x256.png positioned next to the name, 5-star rating display, and transaction count. Use warm gold color for the verified badge and green accents for ratings."
+        },
+        {
+          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
+          "operation": "modify",
+          "description": "Update to conditionally render VerifiedBadgeMockup when the feature has verificationProcess data (for REQ-18), displaying both the process flow and sample profile card."
+        }
+      ]
+    },
+    {
+      "id": "REQ-19",
+      "summary": "Add Delivery & Meet-Up feature showcase displaying side-by-side comparison of delivery and meet-up options with icons and descriptions",
+      "acceptanceCriteria": [
+        "Both delivery and meet-up options are shown side by side",
+        "Each option includes an icon, title, and description",
+        "Visual layout is consistent with existing FeatureCard components"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/data/features.ts",
+          "operation": "modify",
+          "description": "Extend the Delivery & Meet-Up feature object (REQ-19) with a 'fulfillmentOptions' property containing two option objects: (1) Delivery with icon name, title, description (address input, estimated cost, delivery partner selection), and sample fields, (2) Meet-Up with icon name, title, description (proposed location and time), and sample fields. Include realistic Gambian location examples."
+        },
+        {
+          "path": "frontend/src/types/blueprint.ts",
+          "operation": "modify",
+          "description": "Add optional 'fulfillmentOptions' property to the Feature interface. Define FulfillmentOption type with properties: type, iconName, title, description, and sampleFields array (each field has label and placeholder)."
+        },
+        {
+          "path": "frontend/src/components/FulfillmentOptionsCard.tsx",
+          "operation": "create",
+          "description": "Create a component that renders the two fulfillment options in a responsive side-by-side layout (2 columns on desktop, stacked on mobile). Each option displays as a card with a large icon at top, option title, descriptive text, and sample form fields as visual mockups. Use truck/delivery icon for delivery option and handshake/map icon for meet-up. Style with consistent green and gold accent colors and subtle card borders."
+        },
+        {
+          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
+          "operation": "modify",
+          "description": "Update to conditionally render FulfillmentOptionsCard when the feature has fulfillmentOptions data (for REQ-19), displaying it as a comparison card within the feature section."
+        }
+      ]
+    },
+    {
+      "id": "REQ-20",
+      "summary": "Add Mobile Money Payments feature showcase displaying payment method selection UI with Afrimoney, QMoney, and Cash on Delivery options, plus transaction status badges",
+      "acceptanceCriteria": [
+        "All three payment methods (Afrimoney, QMoney, Cash on Delivery) are displayed",
+        "Payment selection UI mockup is shown",
+        "Transaction status badges (pending, completed) are included",
+        "Styled with the app's warm green and gold theme"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/data/features.ts",
+          "operation": "modify",
+          "description": "Extend the Mobile Money Payments feature object (REQ-20) with a 'paymentMethods' property containing three method objects (Afrimoney, QMoney, Cash on Delivery), each with iconName, methodName, description, and availability status. Add a 'transactionStates' property with sample status badges (pending, completed, failed) with colors. Reference the payment methods illustration image at frontend/public/assets/generated/payment-methods-illustration.dim_600x400.png."
+        },
+        {
+          "path": "frontend/src/types/blueprint.ts",
+          "operation": "modify",
+          "description": "Add optional 'paymentMethods' and 'transactionStates' properties to the Feature interface. Define PaymentMethod type (iconName, methodName, description, available) and TransactionState type (status, label, color)."
+        },
+        {
+          "path": "frontend/src/components/PaymentMethodsMockup.tsx",
+          "operation": "create",
+          "description": "Create a component that renders: (1) the payment methods illustration image from frontend/public/assets/generated/payment-methods-illustration.dim_600x400.png at the top, (2) payment selection UI showing three payment method cards with radio button selectors, method names styled as badges (Afrimoney in green, QMoney in gold, Cash on Delivery in neutral), and brief descriptions, (3) transaction status indicators showing pending (yellow), completed (green), and failed (red) badges with labels. Use card-based layout with warm color palette and clear visual hierarchy."
+        },
+        {
+          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
+          "operation": "modify",
+          "description": "Update to conditionally render PaymentMethodsMockup when the feature has paymentMethods data (for REQ-20), displaying the payment flow UI within the feature section."
+        }
+      ]
+    },
+    {
+      "id": "REQ-21",
+      "summary": "Add Trust & Safety System feature showcase displaying four trust mechanisms: star ratings, written reviews, report system, and block user functionality in a responsive grid",
+      "acceptanceCriteria": [
+        "All four trust mechanisms are visually represented",
+        "Star rating component shows interactive-style stars",
+        "Report and block actions show confirmation UI mockups",
+        "Layout is responsive and consistent with the existing theme"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/data/features.ts",
+          "operation": "modify",
+          "description": "Extend the Trust & Safety System feature object (REQ-21) with a 'trustMechanisms' property containing four mechanism objects: (1) Star Ratings with 5-star selector mockup, (2) Written Reviews with sample review text and reviewer info, (3) Report System with reason dropdown options (spam, fraud, inappropriate, etc.), (4) Block User with confirmation dialog text. Include visual hints and sample states for each mechanism."
+        },
+        {
+          "path": "frontend/src/types/blueprint.ts",
+          "operation": "modify",
+          "description": "Add optional 'trustMechanisms' property to the Feature interface. Define TrustMechanism type with properties: mechanismType, title, description, and type-specific data (e.g., ratingValue for stars, sampleReview for reviews, reportReasons array for reports, confirmationText for blocking)."
+        },
+        {
+          "path": "frontend/src/components/TrustSafetyMockup.tsx",
+          "operation": "create",
+          "description": "Create a component that renders the four trust mechanisms in a responsive 2x2 grid layout. Each mechanism is a mini-card showing: (1) Star rating with 5 gold stars and rating value, (2) Review card with sample text and reviewer name, (3) Report UI with dropdown mockup showing reason options, (4) Block user confirmation dialog mockup with warning icon and action buttons. Style with consistent warm colors, clear icons, and proper spacing."
+        },
+        {
+          "path": "frontend/src/components/FeatureBreakdownSection.tsx",
+          "operation": "modify",
+          "description": "Update to conditionally render TrustSafetyMockup when the feature has trustMechanisms data (for REQ-21), displaying the 2x2 grid of trust features within the feature section."
+        }
+      ]
+    },
+    {
+      "id": "REQ-22",
+      "summary": "Add Boosted & Promoted Listings feature showcase to the Monetization section with standard vs boosted comparison, pricing tiers, and primary revenue driver emphasis",
+      "acceptanceCriteria": [
+        "Side-by-side comparison of standard vs boosted listing is shown",
+        "Boosted listing has a 'Sponsored' badge and highlighted styling",
+        "Pricing tiers for boosting are displayed with example GMD amounts",
+        "Section is marked as the primary monetization driver with visual emphasis"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/data/monetization.ts",
+          "operation": "modify",
+          "description": "Extend the Boosted & Promoted Listings revenue stream object (primary: true) with a 'comparisonDemo' property containing two listing objects (standard and boosted) showing visual differences, and a 'pricingTiers' property with three boost options: 3-day (150 GMD), 7-day (300 GMD), and 30-day (1000 GMD) with expected reach/impressions for each tier. Add visual indicators like border colors and badge data."
+        },
+        {
+          "path": "frontend/src/types/blueprint.ts",
+          "operation": "modify",
+          "description": "Add optional 'comparisonDemo' and 'pricingTiers' properties to the RevenueStream interface. Define ListingComparison type (standard and boosted objects with styling hints) and BoostTier type (duration, price, currency, expectedReach, features array)."
+        },
+        {
+          "path": "frontend/src/components/BoostedListingMockup.tsx",
+          "operation": "create",
+          "description": "Create a component that renders: (1) side-by-side comparison showing a standard listing card (plain border, no badge) next to a boosted listing card (highlighted gold border, 'Sponsored' badge at top, elevated positioning indicator), (2) pricing tier cards in a horizontal row showing 3-day, 7-day, and 30-day boost options with prices in GMD and feature bullets. Add a prominent 'Primary Revenue Driver' label or banner above the section. Use warm gold and green colors to emphasize the boosted listing advantages."
+        },
+        {
+          "path": "frontend/src/components/MonetizationSection.tsx",
+          "operation": "modify",
+          "description": "Update to render BoostedListingMockup for the primary revenue stream (Boosted & Promoted Listings) instead of or in addition to the standard RevenueCard, providing expanded visual detail and emphasis for this critical monetization feature."
+        }
+      ]
+    }
+  ]
+}

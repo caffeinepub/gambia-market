@@ -1,0 +1,211 @@
+{
+  "kind": "build_request",
+  "title": "Build full Gambia Market interactive blueprint app",
+  "projectName": "Gambia Market",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-13",
+      "text": "Implement a Phone Number Registration with OTP feature section: display a realistic UI mockup or detailed description card showing the registration flow — enter phone number, receive OTP via SMS, verify code, and complete profile setup. Include the step-by-step flow with form fields (phone input, OTP input, name, location) and validation states.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Phone number registration with OTP via SMS"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Registration flow is visually represented with phone input, OTP verification, and profile setup steps",
+        "Each step shows relevant form fields and validation feedback",
+        "Component renders from structured data in the existing TypeScript data files"
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "text": "Implement a Listing Creation feature showcase card: display a detailed walkthrough of the listing creation flow including photo upload (multi-image), category selector, price input, condition selector (new/used/refurbished), and location tagging. Show this as an illustrated step-by-step card or mini-form mockup within the Feature Breakdown section.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Listing creation with photos, category, price, condition, and location tagging"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Listing creation steps are shown: photo upload, category, price, condition, location",
+        "Visual representation includes relevant field types (file picker, dropdown, number input, etc.)",
+        "Integrates consistently with existing FeatureCard styling and theme"
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "text": "Implement a Home Feed feature showcase: display a visual representation of the home feed showing nearby listings sorted by distance or region. Include a mock listing grid/list with sample listing cards (image, title, price, location badge, distance indicator) that illustrates the feed experience for Gambian users.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Home feed with nearby listings sorted by distance or region"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Home feed mockup shows at least 3–4 sample listing cards",
+        "Each listing card includes image placeholder, title, price, and location/distance badge",
+        "Layout demonstrates responsive grid or list arrangement"
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "text": "Implement a Search & Filters feature showcase: display an interactive-looking search bar mockup and filter panel showing category dropdown, price range slider/inputs, and condition checkboxes. Present this as a visual demo card within the Feature Breakdown section, illustrating how users would search and narrow down listings.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Search bar and category, price, and condition filters"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Search bar mockup is displayed with placeholder text",
+        "Filter options shown: category, price range, and condition",
+        "Visual demo is styled consistently with the app's African market theme"
+      ]
+    },
+    {
+      "id": "REQ-17",
+      "text": "Implement an In-App Chat feature showcase: display a visual mockup of the real-time chat interface between buyer and seller, showing a conversation thread with message bubbles, listing context (thumbnail and title at top), timestamp display, and a message input bar. Include sample messages illustrating a buyer inquiry and seller response.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "In-app real-time chat between buyer and seller"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Chat mockup shows at least 3 sample messages alternating between buyer and seller",
+        "Listing context header is shown at top of chat",
+        "Message input bar with send button is displayed",
+        "Styled consistently with the warm African market theme"
+      ]
+    },
+    {
+      "id": "REQ-18",
+      "text": "Implement a Verified Seller Badge feature showcase: display a detailed explanation card showing the badge verification process — ID upload step, review period, badge awarded state — alongside a visual example of a seller profile card showing the verified badge, star rating, and number of completed transactions.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Verified seller badge system with ID upload"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Verification steps (upload ID, review, badge awarded) are shown",
+        "Sample seller profile card with verified badge is displayed",
+        "Badge uses a visually distinct gold or green checkmark icon consistent with the theme"
+      ]
+    },
+    {
+      "id": "REQ-19",
+      "text": "Implement a Delivery & Meet-Up feature showcase: display a card illustrating the two fulfillment options — (1) Delivery Request with address input, estimated cost, and delivery partner selection, and (2) Meet-Up arrangement with proposed location and time. Show these as a side-by-side comparison card with icons and brief descriptions for each option.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Delivery request and meet-up arrangement options"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Both delivery and meet-up options are shown side by side",
+        "Each option includes an icon, title, and description",
+        "Visual layout is consistent with existing FeatureCard components"
+      ]
+    },
+    {
+      "id": "REQ-20",
+      "text": "Implement a Mobile Money Payments feature showcase: display a payment flow card showing the three payment methods — Afrimoney, QMoney, and Cash on Delivery. Include a mock payment selection screen with radio buttons or payment method cards, a confirmation step, and status badges (pending, completed). Show the Afrimoney and QMoney logos as styled text badges.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Mobile money payments via Afrimoney and QMoney plus cash on delivery"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All three payment methods (Afrimoney, QMoney, Cash on Delivery) are displayed",
+        "Payment selection UI mockup is shown",
+        "Transaction status badges (pending, completed) are included",
+        "Styled with the app's warm green and gold theme"
+      ]
+    },
+    {
+      "id": "REQ-21",
+      "text": "Implement a Trust & Safety System feature showcase: display a card illustrating the four trust mechanisms — (1) star ratings with a visual 5-star selector, (2) written review with sample text, (3) report system with a reason dropdown mockup, and (4) block user confirmation dialog. Present these as a 2×2 grid of mini-cards within the feature section.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Star ratings, written reviews, report system, and block user for trust and safety"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All four trust mechanisms are visually represented",
+        "Star rating component shows interactive-style stars",
+        "Report and block actions show confirmation UI mockups",
+        "Layout is responsive and consistent with the existing theme"
+      ]
+    },
+    {
+      "id": "REQ-22",
+      "text": "Implement a Boosted & Promoted Listings feature showcase within the Monetization section: display a visual comparison card showing a standard listing versus a boosted listing (highlighted border, 'Sponsored' badge, top-of-feed position indicator). Include a pricing tier card showing boosting options (e.g., 3-day, 7-day, 30-day boost with example prices in GMD). Mark this as the primary revenue driver with a distinct highlight.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Boosted and promoted listings as primary monetization feature"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Side-by-side comparison of standard vs boosted listing is shown",
+        "Boosted listing has a 'Sponsored' badge and highlighted styling",
+        "Pricing tiers for boosting are displayed with example GMD amounts",
+        "Section is marked as the primary monetization driver with visual emphasis"
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not modify any files under frontend/src/hooks/ or frontend/src/components/ui/",
+    "All new feature showcase content must be stored as structured TypeScript data in frontend/src/data/ files and rendered dynamically",
+    "Maintain the existing West African textile-inspired color palette and kente/batik motif styling",
+    "All new components must be consistent with existing component patterns (SectionContainer, FeatureCard, etc.)"
+  ],
+  "nonGoals": [
+    "Do not implement actual backend logic for registration, chat, payments, or any functional app features",
+    "Do not add a real database or authentication system",
+    "Do not change the backend Motoko actor",
+    "Do not implement real-time functionality — all content is static/presentational"
+  ],
+  "imageRequirements": {
+    "required": [
+      "Gambia Market mobile app screen mockup showing a home feed with colorful product listing cards in a warm green and gold UI on a smartphone frame (app-screen-mockup.dim_800x600.png)",
+      "Mobile money payment screen illustration showing Afrimoney and QMoney logos with a payment confirmation UI in warm earthy tones (payment-methods-illustration.dim_600x400.png)"
+    ],
+    "edits": []
+  }
+}

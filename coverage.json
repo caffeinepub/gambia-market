@@ -1,0 +1,213 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-25T19:28:19.512Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 10,
+    "implemented": 10,
+    "items": [
+      {
+        "id": "REQ-13",
+        "summary": "Implement a Phone Number Registration with OTP feature section: display a realistic UI mockup or detailed description card showing the registration flow — enter phone number, receive OTP via SMS, verify code, and complete profile setup. Include the step-by-step flow with form fields (phone input, OTP input, name, location) and validation states.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/RegistrationFlowCard.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/RegistrationFlowCard.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ]
+      },
+      {
+        "id": "REQ-14",
+        "summary": "Implement a Listing Creation feature showcase card: display a detailed walkthrough of the listing creation flow including photo upload (multi-image), category selector, price input, condition selector (new/used/refurbished), and location tagging. Show this as an illustrated step-by-step card or mini-form mockup within the Feature Breakdown section.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/ListingCreationCard.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/ListingCreationCard.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ]
+      },
+      {
+        "id": "REQ-15",
+        "summary": "Implement a Home Feed feature showcase: display a visual representation of the home feed showing nearby listings sorted by distance or region. Include a mock listing grid/list with sample listing cards (image, title, price, location badge, distance indicator) that illustrates the feed experience for Gambian users.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/HomeFeedMockup.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/HomeFeedMockup.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ]
+      },
+      {
+        "id": "REQ-16",
+        "summary": "Implement a Search & Filters feature showcase: display an interactive-looking search bar mockup and filter panel showing category dropdown, price range slider/inputs, and condition checkboxes. Present this as a visual demo card within the Feature Breakdown section, illustrating how users would search and narrow down listings.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/SearchFilterMockup.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/SearchFilterMockup.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ]
+      },
+      {
+        "id": "REQ-17",
+        "summary": "Implement an In-App Chat feature showcase: display a visual mockup of the real-time chat interface between buyer and seller, showing a conversation thread with message bubbles, listing context (thumbnail and title at top), timestamp display, and a message input bar. Include sample messages illustrating a buyer inquiry and seller response.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/ChatMockup.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/ChatMockup.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ]
+      },
+      {
+        "id": "REQ-18",
+        "summary": "Implement a Verified Seller Badge feature showcase: display a detailed explanation card showing the badge verification process — ID upload step, review period, badge awarded state — alongside a visual example of a seller profile card showing the verified badge, star rating, and number of completed transactions.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/VerifiedBadgeMockup.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/VerifiedBadgeMockup.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ]
+      },
+      {
+        "id": "REQ-19",
+        "summary": "Implement a Delivery & Meet-Up feature showcase: display a card illustrating the two fulfillment options — (1) Delivery Request with address input, estimated cost, and delivery partner selection, and (2) Meet-Up arrangement with proposed location and time. Show these as a side-by-side comparison card with icons and brief descriptions for each option.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/FulfillmentOptionsCard.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/FulfillmentOptionsCard.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ]
+      },
+      {
+        "id": "REQ-20",
+        "summary": "Implement a Mobile Money Payments feature showcase: display a payment flow card showing the three payment methods — Afrimoney, QMoney, and Cash on Delivery. Include a mock payment selection screen with radio buttons or payment method cards, a confirmation step, and status badges (pending, completed). Show the Afrimoney and QMoney logos as styled text badges.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/PaymentMethodsMockup.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/PaymentMethodsMockup.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ]
+      },
+      {
+        "id": "REQ-21",
+        "summary": "Implement a Trust & Safety System feature showcase: display a card illustrating the four trust mechanisms — (1) star ratings with a visual 5-star selector, (2) written review with sample text, (3) report system with a reason dropdown mockup, and (4) block user confirmation dialog. Present these as a 2×2 grid of mini-cards within the feature section.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/TrustSafetyMockup.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/data/features.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/TrustSafetyMockup.tsx",
+          "frontend/src/components/FeatureBreakdownSection.tsx"
+        ]
+      },
+      {
+        "id": "REQ-22",
+        "summary": "Implement a Boosted & Promoted Listings feature showcase within the Monetization section: display a visual comparison card showing a standard listing versus a boosted listing (highlighted border, 'Sponsored' badge, top-of-feed position indicator). Include a pricing tier card showing boosting options (e.g., 3-day, 7-day, 30-day boost with example prices in GMD). Mark this as the primary revenue driver with a distinct highlight.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/data/monetization.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/BoostedListingMockup.tsx",
+          "frontend/src/components/MonetizationSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/data/monetization.ts",
+          "frontend/src/types/blueprint.ts",
+          "frontend/src/components/BoostedListingMockup.tsx",
+          "frontend/src/components/MonetizationSection.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "build-template/README.md",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/public/assets/generated/app-screen-mockup.dim_800x600.png",
+    "frontend/public/assets/generated/payment-methods-illustration.dim_600x400.png",
+    "frontend/src/components/BoostedListingMockup.tsx",
+    "frontend/src/components/ChatMockup.tsx",
+    "frontend/src/components/FeatureBreakdownSection.tsx",
+    "frontend/src/components/FulfillmentOptionsCard.tsx",
+    "frontend/src/components/HomeFeedMockup.tsx",
+    "frontend/src/components/ListingCreationCard.tsx",
+    "frontend/src/components/MonetizationSection.tsx",
+    "frontend/src/components/PaymentMethodsMockup.tsx",
+    "frontend/src/components/RegistrationFlowCard.tsx",
+    "frontend/src/components/SearchFilterMockup.tsx",
+    "frontend/src/components/TrustSafetyMockup.tsx",
+    "frontend/src/components/VerifiedBadgeMockup.tsx",
+    "frontend/src/data/features.ts",
+    "frontend/src/data/monetization.ts",
+    "frontend/src/types/blueprint.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

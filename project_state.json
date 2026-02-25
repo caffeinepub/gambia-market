@@ -1,0 +1,258 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 5,
+  "summary": "Gambia Market is a local marketplace mobile app for The Gambia, designed to replace unorganized selling on WhatsApp/Facebook. It allows users to buy and sell products and services locally with features including phone-number registration, location-based listings, in-app chat, mobile money payments, and a trust/safety system. Targeted at everyday Gambians, small business owners, market sellers, and youth entrepreneurs. The app prioritizes simple UI for low-end Android devices, low data usage, and fast loading on slow connections.",
+  "architectural_notes": [
+    "Tech stack: React Native (Expo) with NativeWind for mobile, Node.js/Express backend, PostgreSQL plus Redis, Socket.io for chat, Cloudinary for image storage",
+    "Performance: Image compression to max 300kb, lazy loading, paginated API responses of 20 items, offline caching with WatermelonDB",
+    "Auth: JWT tokens plus SMS OTP via AfricasTalking with no email dependency",
+    "MVP scope: Phone OTP, listing CRUD with 3 photos, regional feed, basic search, text-only chat, cash payments, report button, Android only"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Gambia Market mobile app screen mockup showing a home feed with colorful product listing cards in a warm green and gold UI on a smartphone frame (app-screen-mockup.dim_800x600.png)\n- Mobile money payment screen illustration showing Afrimoney and QMoney logos with a payment confirmation UI in warm earthy tones (payment-methods-illustration.dim_600x400.png)",
+  "existing_features": [
+    {
+      "id": "feature-create-a-visually-rich-interactive-single-page-web-application-that-presents-the-full-gambia-market-product-blueprint-the-app-should-have-a-tabbed-or-sectioned-navigation-allowing-users-to-browse-1-feature-breakdown-2-user-flows-3-database-structure-4-tech-stack-5-mvp-plan-6-future-features-7-monetization-strategy-and-8-development-roadmap-each-section-should-be-readable-well-organized-and-easy-to-share",
+      "title": "Create a visually rich, interactive single-page web application that presents the full Gambia Market product blueprint. The app should have a tabbed or sectioned navigation allowing users to browse: (1) Feature Breakdown, (2) User Flows, (3) Database Structure, (4) Tech Stack, (5) MVP Plan, (6) Future Features, (7) Monetization Strategy, and (8) Development Roadmap. Each section should be readable, well-organized, and easy to share.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-feature-breakdown-section-that-lists-and-explains-all-core-features-of-gambia-market-in-a-structured-card-or-accordion-layout-phone-number-registration-with-otp-listing-creation-photos-category-price-condition-location-home-feed-with-nearby-listings-search-and-filters-category-price-condition-in-app-chat-verified-seller-badge-system-delivery-request-and-meet-up-options-mobile-money-payments-afrimoney-qmoney-and-cash-on-delivery-and-the-trust-safety-system-ratings-reviews-reports-block-user-include-a-brief-description-and-icon-for-each-feature",
+      "title": "Implement the Feature Breakdown section that lists and explains all core features of Gambia Market in a structured card or accordion layout: phone number registration with OTP, listing creation (photos, category, price, condition, location), home feed with nearby listings, search and filters (category, price, condition), in-app chat, verified seller badge system, delivery request and meet-up options, mobile money payments (Afrimoney, QMoney) and cash on delivery, and the trust/safety system (ratings, reviews, reports, block user). Include a brief description and icon for each feature.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-user-flow-section-showing-two-clearly-illustrated-step-by-step-journeys-the-buyer-journey-discover-app-register-with-phone-browse-search-listings-contact-seller-via-chat-arrange-delivery-or-meet-up-make-payment-leave-rating-and-the-seller-journey-register-create-listing-with-photos-and-details-receive-buyer-inquiry-via-chat-confirm-delivery-or-meet-up-receive-payment-build-reputation-via-reviews-use-a-visual-stepper-timeline-or-flowchart-style-layout-for-each-journey",
+      "title": "Implement the User Flow section showing two clearly illustrated step-by-step journeys: the Buyer Journey (discover app → register with phone → browse/search listings → contact seller via chat → arrange delivery or meet-up → make payment → leave rating) and the Seller Journey (register → create listing with photos and details → receive buyer inquiry via chat → confirm delivery or meet-up → receive payment → build reputation via reviews). Use a visual stepper, timeline, or flowchart-style layout for each journey.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-database-structure-section-that-displays-the-recommended-data-schema-for-gambia-market-show-the-following-entities-as-styled-table-or-card-diagrams-users-id-phone-name-location-verified-badge-rating-created-at-listings-id-seller-id-title-description-category-price-condition-photos-location-status-is-boosted-created-at-messages-id-listing-id-sender-id-receiver-id-content-timestamp-transactions-id-listing-id-buyer-id-seller-id-payment-method-amount-status-reviews-id-reviewer-id-reviewee-id-listing-id-stars-comment-created-at-reports-id-reporter-id-reported-id-reason-status-include-field-names-types-and-brief-descriptions",
+      "title": "Implement the Database Structure section that displays the recommended data schema for Gambia Market. Show the following entities as styled table or card diagrams: Users (id, phone, name, location, verified_badge, rating, created_at), Listings (id, seller_id, title, description, category, price, condition, photos, location, status, is_boosted, created_at), Messages (id, listing_id, sender_id, receiver_id, content, timestamp), Transactions (id, listing_id, buyer_id, seller_id, payment_method, amount, status), Reviews (id, reviewer_id, reviewee_id, listing_id, stars, comment, created_at), Reports (id, reporter_id, reported_id, reason, status). Include field names, types, and brief descriptions.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-tech-stack-section-that-presents-the-recommended-technology-choices-for-gambia-market-in-a-categorized-layout-categories-frontend-react-native-for-cross-platform-mobile-backend-node-js-with-express-or-similar-database-postgresql-or-firebase-authentication-phone-otp-via-africa-s-talking-or-twilio-storage-cloudinary-for-image-uploads-payments-afrimoney-api-qmoney-api-cash-on-delivery-flag-hosting-affordable-vps-or-cloud-and-real-time-chat-socket-io-or-firebase-realtime-db-each-item-should-show-the-technology-name-category-and-a-rationale-sentence-explaining-why-it-fits-low-data-low-end-android-use-in-the-gambia",
+      "title": "Implement the Tech Stack section that presents the recommended technology choices for Gambia Market in a categorized layout. Categories: Frontend (React Native for cross-platform mobile), Backend (Node.js with Express or similar), Database (PostgreSQL or Firebase), Authentication (phone OTP via Africa's Talking or Twilio), Storage (Cloudinary for image uploads), Payments (Afrimoney API, QMoney API, cash on delivery flag), Hosting (affordable VPS or cloud), and Real-time Chat (Socket.io or Firebase Realtime DB). Each item should show the technology name, category, and a rationale sentence explaining why it fits low-data, low-end Android use in The Gambia.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-mvp-plan-section-outlining-the-minimum-viable-product-for-a-fast-first-launch-display-a-prioritized-feature-checklist-split-into-must-have-phone-registration-listing-creation-home-feed-search-filters-in-app-chat-basic-trust-safety-report-and-nice-to-have-for-v1-verified-seller-badge-delivery-request-mobile-money-integration-star-ratings-include-a-suggested-mvp-timeline-table-showing-weeks-1-8-with-milestones-e-g-week-1-2-auth-onboarding-week-3-4-listings-week-5-6-chat-payments-week-7-8-testing-launch",
+      "title": "Implement the MVP Plan section outlining the minimum viable product for a fast first launch. Display a prioritized feature checklist split into: Must Have (phone registration, listing creation, home feed, search/filters, in-app chat, basic trust/safety report) and Nice to Have for V1 (verified seller badge, delivery request, mobile money integration, star ratings). Include a suggested MVP timeline table showing weeks 1–8 with milestones (e.g., Week 1–2: Auth & Onboarding, Week 3–4: Listings, Week 5–6: Chat & Payments, Week 7–8: Testing & Launch).",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-future-features-section-listing-post-mvp-advanced-capabilities-in-a-roadmap-card-layout-include-ai-powered-product-recommendations-in-app-escrow-payment-protection-group-buying-deals-loyalty-rewards-program-seller-analytics-dashboard-delivery-partner-network-integration-multi-language-support-wolof-mandinka-fula-voice-search-for-low-literacy-users-qr-code-listing-sharing-and-a-web-version-for-desktop-access",
+      "title": "Implement the Future Features section listing post-MVP advanced capabilities in a roadmap card layout. Include: AI-powered product recommendations, in-app escrow/payment protection, group buying deals, loyalty rewards program, seller analytics dashboard, delivery partner network integration, multi-language support (Wolof, Mandinka, Fula), voice search for low-literacy users, QR code listing sharing, and a web version for desktop access.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-monetization-strategy-section-explaining-how-gambia-market-can-generate-revenue-display-each-revenue-stream-as-a-card-with-a-title-description-and-projected-impact-include-boosted-promoted-listings-sellers-pay-to-appear-at-top-of-feed-featured-seller-badge-monthly-subscription-for-verified-sellers-transaction-fee-small-percentage-on-completed-mobile-money-transactions-category-sponsorship-businesses-pay-to-sponsor-a-category-page-premium-seller-tools-analytics-bulk-listing-scheduling-and-partnership-with-delivery-services-referral-fees",
+      "title": "Implement the Monetization Strategy section explaining how Gambia Market can generate revenue. Display each revenue stream as a card with a title, description, and projected impact. Include: Boosted/Promoted Listings (sellers pay to appear at top of feed), Featured Seller Badge (monthly subscription for verified sellers), Transaction Fee (small percentage on completed mobile money transactions), Category Sponsorship (businesses pay to sponsor a category page), Premium Seller Tools (analytics, bulk listing, scheduling), and Partnership with Delivery Services (referral fees).",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-development-roadmap-section-as-a-visual-timeline-showing-4-phases-phase-1-foundation-months-1-2-mvp-build-phase-2-growth-months-3-4-marketing-push-and-user-acquisition-across-gambian-cities-phase-3-monetization-months-5-6-introduce-boosted-listings-mobile-money-payments-phase-4-scale-advanced-features-months-7-12-delivery-network-analytics-multilingual-support-each-phase-should-list-its-key-deliverables-and-success-metrics",
+      "title": "Implement the Development Roadmap section as a visual timeline showing 4 phases: Phase 1 – Foundation (months 1–2, MVP build), Phase 2 – Growth (months 3–4, marketing push and user acquisition across Gambian cities), Phase 3 – Monetization (months 5–6, introduce boosted listings, mobile money payments), Phase 4 – Scale & Advanced Features (months 7–12, delivery network, analytics, multilingual support). Each phase should list its key deliverables and success metrics.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-warm-vibrant-african-market-inspired-visual-theme-across-the-entire-app-use-a-color-palette-inspired-by-west-african-textiles-warm-greens-deep-golds-amber-and-earthy-terracotta-accents-on-a-clean-off-white-or-light-background-typography-should-be-bold-and-legible-sans-serif-use-subtle-patterns-or-dividers-inspired-by-kente-or-batik-motifs-as-section-separators-the-overall-feel-should-be-energetic-trustworthy-and-modern-while-remaining-clearly-local-and-culturally-resonant-apply-this-theme-consistently-to-all-navigation-cards-buttons-badges-and-section-headings",
+      "title": "Apply a warm, vibrant, African market-inspired visual theme across the entire app. Use a color palette inspired by West African textiles — warm greens, deep golds/amber, and earthy terracotta accents — on a clean off-white or light background. Typography should be bold and legible (sans-serif). Use subtle patterns or dividers inspired by kente or batik motifs as section separators. The overall feel should be energetic, trustworthy, and modern while remaining clearly local and culturally resonant. Apply this theme consistently to all navigation, cards, buttons, badges, and section headings.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-hero-banner-section-at-the-top-of-the-app-above-the-navigation-tabs-that-introduces-gambia-market-show-the-app-name-a-tagline-e-g-buy-sell-locally-in-the-gambia-simple-safe-fast-and-the-target-audience-everyday-gambians-small-businesses-market-sellers-youth-entrepreneurs-display-the-hero-against-the-app-s-primary-brand-color-with-the-generated-hero-banner-image-as-background",
+      "title": "Add a hero/banner section at the top of the app (above the navigation tabs) that introduces Gambia Market: show the app name, a tagline (e.g., 'Buy & Sell Locally in The Gambia — Simple, Safe, Fast'), and the target audience (everyday Gambians, small businesses, market sellers, youth entrepreneurs). Display the hero against the app's primary brand color with the generated hero banner image as background.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-store-the-blueprint-content-feature-list-user-flow-steps-db-schema-entities-tech-stack-entries-mvp-checklist-future-features-monetization-streams-roadmap-phases-as-structured-static-data-in-the-frontend-e-g-typescript-data-files-or-constants-the-ui-components-should-render-dynamically-from-this-data-so-content-is-easy-to-update",
+      "title": "Store the blueprint content (feature list, user flow steps, DB schema entities, tech stack entries, MVP checklist, future features, monetization streams, roadmap phases) as structured static data in the frontend (e.g., TypeScript data files or constants). The UI components should render dynamically from this data so content is easy to update.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-phone-number-registration-with-otp-feature-section-display-a-realistic-ui-mockup-or-detailed-description-card-showing-the-registration-flow-enter-phone-number-receive-otp-via-sms-verify-code-and-complete-profile-setup-include-the-step-by-step-flow-with-form-fields-phone-input-otp-input-name-location-and-validation-states",
+      "title": "Implement a Phone Number Registration with OTP feature section: display a realistic UI mockup or detailed description card showing the registration flow — enter phone number, receive OTP via SMS, verify code, and complete profile setup. Include the step-by-step flow with form fields (phone input, OTP input, name, location) and validation states.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-listing-creation-feature-showcase-card-display-a-detailed-walkthrough-of-the-listing-creation-flow-including-photo-upload-multi-image-category-selector-price-input-condition-selector-new-used-refurbished-and-location-tagging-show-this-as-an-illustrated-step-by-step-card-or-mini-form-mockup-within-the-feature-breakdown-section",
+      "title": "Implement a Listing Creation feature showcase card: display a detailed walkthrough of the listing creation flow including photo upload (multi-image), category selector, price input, condition selector (new/used/refurbished), and location tagging. Show this as an illustrated step-by-step card or mini-form mockup within the Feature Breakdown section.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-home-feed-feature-showcase-display-a-visual-representation-of-the-home-feed-showing-nearby-listings-sorted-by-distance-or-region-include-a-mock-listing-grid-list-with-sample-listing-cards-image-title-price-location-badge-distance-indicator-that-illustrates-the-feed-experience-for-gambian-users",
+      "title": "Implement a Home Feed feature showcase: display a visual representation of the home feed showing nearby listings sorted by distance or region. Include a mock listing grid/list with sample listing cards (image, title, price, location badge, distance indicator) that illustrates the feed experience for Gambian users.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-search-filters-feature-showcase-display-an-interactive-looking-search-bar-mockup-and-filter-panel-showing-category-dropdown-price-range-slider-inputs-and-condition-checkboxes-present-this-as-a-visual-demo-card-within-the-feature-breakdown-section-illustrating-how-users-would-search-and-narrow-down-listings",
+      "title": "Implement a Search & Filters feature showcase: display an interactive-looking search bar mockup and filter panel showing category dropdown, price range slider/inputs, and condition checkboxes. Present this as a visual demo card within the Feature Breakdown section, illustrating how users would search and narrow down listings.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-an-in-app-chat-feature-showcase-display-a-visual-mockup-of-the-real-time-chat-interface-between-buyer-and-seller-showing-a-conversation-thread-with-message-bubbles-listing-context-thumbnail-and-title-at-top-timestamp-display-and-a-message-input-bar-include-sample-messages-illustrating-a-buyer-inquiry-and-seller-response",
+      "title": "Implement an In-App Chat feature showcase: display a visual mockup of the real-time chat interface between buyer and seller, showing a conversation thread with message bubbles, listing context (thumbnail and title at top), timestamp display, and a message input bar. Include sample messages illustrating a buyer inquiry and seller response.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-verified-seller-badge-feature-showcase-display-a-detailed-explanation-card-showing-the-badge-verification-process-id-upload-step-review-period-badge-awarded-state-alongside-a-visual-example-of-a-seller-profile-card-showing-the-verified-badge-star-rating-and-number-of-completed-transactions",
+      "title": "Implement a Verified Seller Badge feature showcase: display a detailed explanation card showing the badge verification process — ID upload step, review period, badge awarded state — alongside a visual example of a seller profile card showing the verified badge, star rating, and number of completed transactions.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-delivery-meet-up-feature-showcase-display-a-card-illustrating-the-two-fulfillment-options-1-delivery-request-with-address-input-estimated-cost-and-delivery-partner-selection-and-2-meet-up-arrangement-with-proposed-location-and-time-show-these-as-a-side-by-side-comparison-card-with-icons-and-brief-descriptions-for-each-option",
+      "title": "Implement a Delivery & Meet-Up feature showcase: display a card illustrating the two fulfillment options — (1) Delivery Request with address input, estimated cost, and delivery partner selection, and (2) Meet-Up arrangement with proposed location and time. Show these as a side-by-side comparison card with icons and brief descriptions for each option.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-mobile-money-payments-feature-showcase-display-a-payment-flow-card-showing-the-three-payment-methods-afrimoney-qmoney-and-cash-on-delivery-include-a-mock-payment-selection-screen-with-radio-buttons-or-payment-method-cards-a-confirmation-step-and-status-badges-pending-completed-show-the-afrimoney-and-qmoney-logos-as-styled-text-badges",
+      "title": "Implement a Mobile Money Payments feature showcase: display a payment flow card showing the three payment methods — Afrimoney, QMoney, and Cash on Delivery. Include a mock payment selection screen with radio buttons or payment method cards, a confirmation step, and status badges (pending, completed). Show the Afrimoney and QMoney logos as styled text badges.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-trust-safety-system-feature-showcase-display-a-card-illustrating-the-four-trust-mechanisms-1-star-ratings-with-a-visual-5-star-selector-2-written-review-with-sample-text-3-report-system-with-a-reason-dropdown-mockup-and-4-block-user-confirmation-dialog-present-these-as-a-2-2-grid-of-mini-cards-within-the-feature-section",
+      "title": "Implement a Trust & Safety System feature showcase: display a card illustrating the four trust mechanisms — (1) star ratings with a visual 5-star selector, (2) written review with sample text, (3) report system with a reason dropdown mockup, and (4) block user confirmation dialog. Present these as a 2×2 grid of mini-cards within the feature section.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-boosted-promoted-listings-feature-showcase-within-the-monetization-section-display-a-visual-comparison-card-showing-a-standard-listing-versus-a-boosted-listing-highlighted-border-sponsored-badge-top-of-feed-position-indicator-include-a-pricing-tier-card-showing-boosting-options-e-g-3-day-7-day-30-day-boost-with-example-prices-in-gmd-mark-this-as-the-primary-revenue-driver-with-a-distinct-highlight",
+      "title": "Implement a Boosted & Promoted Listings feature showcase within the Monetization section: display a visual comparison card showing a standard listing versus a boosted listing (highlighted border, 'Sponsored' badge, top-of-feed position indicator). Include a pricing tier card showing boosting options (e.g., 3-day, 7-day, 30-day boost with example prices in GMD). Mark this as the primary revenue driver with a distinct highlight.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Phone number registration with OTP via SMS",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Listing creation with photos, category, price, condition, and location tagging",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Home feed with nearby listings sorted by distance or region",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Search bar and category, price, and condition filters",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "In-app real-time chat between buyer and seller",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Verified seller badge system with ID upload",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Delivery request and meet-up arrangement options",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Mobile money payments via Afrimoney and QMoney plus cash on delivery",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Star ratings, written reviews, report system, and block user for trust and safety",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Boosted and promoted listings as primary monetization feature",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Gambia Market",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

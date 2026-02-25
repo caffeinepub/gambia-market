@@ -1,0 +1,87 @@
+import { RoadmapPhase } from '../types/blueprint';
+
+export const roadmapPhases: RoadmapPhase[] = [
+  {
+    phase: 1,
+    name: 'Foundation',
+    timeframe: 'Months 1–2',
+    deliverables: [
+      'MVP Android app (React Native)',
+      'Phone OTP registration & login',
+      'Listing creation with photo upload',
+      'Regional home feed & search',
+      'In-app text chat',
+      'Basic report system',
+      'Backend API & database setup',
+      'Beta launch in Serrekunda & Banjul',
+    ],
+    successMetrics: [
+      '500+ registered users in first month',
+      '200+ active listings',
+      'App store rating ≥ 4.0',
+      'Crash-free rate > 95%',
+    ],
+  },
+  {
+    phase: 2,
+    name: 'Growth',
+    timeframe: 'Months 3–4',
+    deliverables: [
+      'Marketing push across all Gambian cities',
+      'Radio and social media advertising campaign',
+      'Verified seller badge system launch',
+      'Star ratings and reviews',
+      'Delivery request feature',
+      'QR code listing sharing',
+      'Seller analytics dashboard (basic)',
+      'Referral program for user acquisition',
+    ],
+    successMetrics: [
+      '5,000+ registered users',
+      '1,000+ active listings',
+      '50+ verified sellers',
+      'Daily active users > 500',
+    ],
+  },
+  {
+    phase: 3,
+    name: 'Monetization',
+    timeframe: 'Months 5–6',
+    deliverables: [
+      'Boosted listings feature launch',
+      'Afrimoney & QMoney payment integration',
+      'Featured seller subscription plan',
+      'Category sponsorship packages',
+      'Premium seller tools (analytics, bulk upload)',
+      'First business partnerships',
+      'iOS app launch',
+    ],
+    successMetrics: [
+      'First D10,000 in monthly revenue',
+      '100+ paid boosts per month',
+      '20+ premium seller subscriptions',
+      '15,000+ registered users',
+    ],
+  },
+  {
+    phase: 4,
+    name: 'Scale & Advanced Features',
+    timeframe: 'Months 7–12',
+    deliverables: [
+      'Delivery partner network integration',
+      'Multi-language support (Wolof, Mandinka, Fula)',
+      'Voice search feature',
+      'In-app escrow payment protection',
+      'AI-powered product recommendations',
+      'Business storefront pages',
+      'Web version for desktop access',
+      'Expansion to neighboring West African markets',
+    ],
+    successMetrics: [
+      '50,000+ registered users',
+      'D100,000+ monthly revenue',
+      'Presence in 3+ West African countries',
+      'Net Promoter Score (NPS) > 50',
+    ],
+  },
+];
