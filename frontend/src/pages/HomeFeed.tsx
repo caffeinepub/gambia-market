@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useListings, useBoostedListings } from '../hooks/useQueries';
-import { ListingId, ListingCategory } from '../backend';
+import { ListingId } from '../backend';
 import HeroSection from '../components/HeroSection';
 import FeaturedListingsRow from '../components/FeaturedListingsRow';
 import CategoryFilter from '../components/CategoryFilter';
@@ -77,7 +77,7 @@ export default function HomeFeed({ onListingClick, onSellClick }: HomeFeedProps)
             </p>
             <button
               onClick={onSellClick}
-              className="px-6 py-3 rounded-xl font-body font-semibold text-sm text-accent-foreground shadow-button-accent transition-all"
+              className="px-6 py-3 rounded-xl font-body font-semibold text-sm text-accent-foreground transition-all"
               style={{ background: 'var(--accent)' }}
             >
               Post a Listing

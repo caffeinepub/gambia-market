@@ -16,12 +16,12 @@ export class ExternalBlob {
 }
 export interface UserProfile {
     id: Principal;
-    profilePicUrl?: string;
     verified: boolean;
     name: string;
     createdAt: Time;
     phone: string;
     followers: bigint;
+    profilePic?: ExternalBlob;
     location: string;
     highestRating: bigint;
 }
@@ -135,7 +135,6 @@ export interface backendInterface {
     addAllowedCategory(category: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createListing(title: string, description: string, category: ListingCategory, subCategory: RealEstateSubCategory | null, price: bigint, condition: string, photos: Array<ExternalBlob>, location: string, propertySize: bigint | null, numBedrooms: bigint | null, isFurnished: boolean | null): Promise<ListingId>;
-    createOrUpdateUserProfile(name: string, location: string): Promise<void>;
     createReport(reportedId: Principal, reason: string): Promise<ReportId>;
     createReview(revieweeId: Principal, listingId: ListingId, stars: bigint, comment: string): Promise<ReviewId>;
     createTransaction(listingId: ListingId, sellerId: Principal, paymentMethod: string, amount: bigint): Promise<TransactionId>;
@@ -175,7 +174,7 @@ export interface backendInterface {
     updateAllUserProfilesWithHighestRating(): Promise<void>;
     updateListing(listingId: ListingId, title: string, description: string, category: ListingCategory, subCategory: RealEstateSubCategory | null, price: bigint, condition: string, photos: Array<ExternalBlob>, location: string, propertySize: bigint | null, numBedrooms: bigint | null, isFurnished: boolean | null): Promise<void>;
     updateListingStatus(listingId: ListingId, status: string): Promise<void>;
-    updateProfilePic(url: string): Promise<void>;
+    updateProfilePicture(newProfilePic: ExternalBlob | null): Promise<void>;
     updateReportStatus(reportId: ReportId, status: string): Promise<void>;
     updateTransactionStatus(txId: TransactionId, status: string): Promise<void>;
 }

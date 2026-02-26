@@ -1,21 +1,69 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "New project",
+  "summary": "A listings/marketplace app where users can create listings and manage their profiles. Key issues include fixing listing creation flow and building a comprehensive user profile page.",
   "architectural_notes": [],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "Listing creation form submission is broken — users cannot successfully create a listing after filling out the form"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-redesign-the-overall-visual-theme-of-the-application-with-a-fresh-cohesive-aesthetic-including-a-new-color-palette-typography-choices-and-layout-structure-that-feels-distinct-from-the-current-dark-mode-implementation-apply-the-new-theme-consistently-across-all-pages-and-components",
-      "title": "Redesign the overall visual theme of the application with a fresh, cohesive aesthetic — including a new color palette, typography choices, and layout structure — that feels distinct from the current dark mode implementation. Apply the new theme consistently across all pages and components.",
+      "id": "feature-fix-the-listing-creation-flow-in-createlisting-tsx-so-that-submitting-the-form-after-filling-all-required-fields-title-description-category-price-condition-location-photos-etc-successfully-calls-the-backend-createlisting-mutation-shows-a-success-toast-and-navigates-the-user-to-the-newly-created-listing-or-home-feed-investigate-and-resolve-any-error-in-the-mutation-call-form-validation-blocking-submission-or-missing-required-field-mappings-including-real-estate-specific-fields-like-bedrooms-and-furnished-status",
+      "title": "Fix the listing creation flow in CreateListing.tsx so that submitting the form after filling all required fields (title, description, category, price, condition, location, photos, etc.) successfully calls the backend createListing mutation, shows a success toast, and navigates the user to the newly created listing or home feed. Investigate and resolve any error in the mutation call, form validation blocking submission, or missing required field mappings (including real-estate-specific fields like bedrooms and furnished status).",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-enhance-the-authenticated-user-s-profile-page-to-display-a-comprehensive-dashboard-showing-all-user-information-after-login-the-profile-must-include-an-editable-profile-picture-avatar-upload-display-name-phone-number-location-account-creation-date-and-any-other-stored-profile-fields-all-fields-should-be-inline-editable-or-accessible-via-an-edit-profile-modal-form",
+      "title": "Enhance the authenticated user's Profile page to display a comprehensive dashboard showing all user information after login. The profile must include: an editable profile picture (avatar upload), display name, phone number, location, account creation date, and any other stored profile fields. All fields should be inline-editable or accessible via an edit profile modal/form.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-my-listings-section-to-the-authenticated-user-s-profile-page-that-lists-all-listings-created-by-the-user-active-sold-and-draft-each-listing-card-should-show-the-listing-thumbnail-title-price-status-badge-and-action-buttons-for-edit-delete-and-boost-tapping-edit-should-navigate-to-the-editlisting-page-for-that-listing-users-should-also-be-able-to-create-a-new-listing-directly-from-the-profile-page-via-a-prominent-create-listing-button",
+      "title": "Add a 'My Listings' section to the authenticated user's Profile page that lists all listings created by the user (active, sold, and draft). Each listing card should show the listing thumbnail, title, price, status badge, and action buttons for Edit, Delete, and Boost. Tapping Edit should navigate to the EditListing page for that listing. Users should also be able to create a new listing directly from the profile page via a prominent 'Create Listing' button.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-reviews-received-section-to-the-authenticated-user-s-profile-page-that-displays-all-reviews-left-for-this-user-showing-reviewer-avatar-name-star-rating-comment-and-date-also-display-aggregate-stats-average-rating-total-reviews-total-listings-followers-count-in-a-stats-row-at-the-top-of-the-profile",
+      "title": "Add a 'Reviews Received' section to the authenticated user's Profile page that displays all reviews left for this user, showing reviewer avatar, name, star rating, comment, and date. Also display aggregate stats (average rating, total reviews, total listings, followers count) in a stats row at the top of the profile.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
     }
   ],
-  "new_feature_requests": [],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Fix the inability to add/create a listing after filling out the listing form",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "User profile page showing all user info after login, with ability to edit profile picture, manage listings, and more",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Update the backend UserProfile type and associated update mutation to support storing a profile picture as an ExternalBlob (consistent with the existing blob storage mixin pattern). Expose a dedicated updateProfilePicture endpoint or extend the existing updateProfile mutation to accept an optional avatar blob field.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
   "projectName": "Gambia Market",
   "clarification_mode": "instant",
   "clarification_rounds": 0

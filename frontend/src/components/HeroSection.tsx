@@ -1,81 +1,68 @@
 import React from 'react';
-import { MapPin, TrendingUp, Users, ShoppingBag } from 'lucide-react';
+import { Button } from './ui/button';
+import { ShoppingBag, TrendingUp } from 'lucide-react';
 
 interface HeroSectionProps {
-  onSellClick?: () => void;
+  onSellClick: () => void;
   onBrowseClick?: () => void;
 }
 
 export default function HeroSection({ onSellClick, onBrowseClick }: HeroSectionProps) {
   return (
     <section className="relative overflow-hidden rounded-2xl mx-4 mt-4 mb-2">
-      {/* Background image */}
-      <div className="absolute inset-0">
-        <img
-          src="/assets/generated/hero-banner.dim_1400x500.png"
-          alt="Gambia Market"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0" style={{
-          background: 'linear-gradient(135deg, oklch(0.18 0.12 270 / 0.88) 0%, oklch(0.28 0.1 280 / 0.75) 50%, oklch(0.38 0.08 295 / 0.55) 100%)'
-        }} />
-      </div>
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url('/assets/generated/hero-banner.dim_1400x500.png')" }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
 
-      {/* Content */}
-      <div className="relative z-10 px-6 py-8 sm:px-10 sm:py-12">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold font-body"
-            style={{ background: 'oklch(0.78 0.16 75 / 0.25)', color: 'oklch(0.92 0.12 75)', border: '1px solid oklch(0.78 0.16 75 / 0.4)' }}>
-            <MapPin className="w-3 h-3" />
-            The Gambia
+      <div className="relative z-10 px-6 py-10 sm:py-14">
+        <div className="flex flex-wrap gap-2 mb-4">
+          <span className="bg-primary/90 text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
+            🇬🇲 Made for Gambia
           </span>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold font-body"
-            style={{ background: 'oklch(0.62 0.19 38 / 0.25)', color: 'oklch(0.92 0.1 38)', border: '1px solid oklch(0.62 0.19 38 / 0.4)' }}>
-            <TrendingUp className="w-3 h-3" />
-            #1 Marketplace
+          <span className="bg-white/20 text-white text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-sm">
+            Free to list
           </span>
         </div>
 
-        <h1 className="font-display font-bold text-3xl sm:text-4xl text-white leading-tight mb-3">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 leading-tight">
           Buy & Sell Anything<br />
-          <span style={{ color: 'oklch(0.88 0.14 75)' }}>Across The Gambia</span>
+          <span className="text-primary">in The Gambia</span>
         </h1>
-
-        <p className="text-white/75 font-body text-sm sm:text-base mb-6 max-w-md">
-          The trusted marketplace for Gambians. Find great deals on electronics, vehicles, real estate, and more.
+        <p className="text-white/80 text-sm sm:text-base mb-6 max-w-xs">
+          The #1 marketplace for Gambians. Find great deals or sell your items fast.
         </p>
 
-        <div className="flex flex-wrap gap-3 mb-8">
-          <button
-            onClick={onBrowseClick}
-            className="px-6 py-2.5 rounded-xl font-body font-semibold text-sm text-white border border-white/30 hover:bg-white/15 transition-all duration-200 backdrop-blur-sm"
-          >
-            Browse Listings
-          </button>
-          <button
+        <div className="flex flex-wrap gap-3">
+          <Button
             onClick={onSellClick}
-            className="px-6 py-2.5 rounded-xl font-body font-semibold text-sm transition-all duration-200 shadow-button-accent"
-            style={{ background: 'var(--accent)', color: 'var(--accent-foreground)' }}
+            className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-lg"
           >
+            <TrendingUp className="w-4 h-4 mr-2" />
             Start Selling
-          </button>
+          </Button>
+          {onBrowseClick && (
+            <Button
+              onClick={onBrowseClick}
+              variant="outline"
+              className="bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
+            >
+              <ShoppingBag className="w-4 h-4 mr-2" />
+              Browse Listings
+            </Button>
+          )}
         </div>
 
-        {/* Stats */}
-        <div className="flex flex-wrap gap-4 sm:gap-6">
+        <div className="flex gap-6 mt-6">
           {[
-            { icon: <ShoppingBag className="w-4 h-4" />, value: '10K+', label: 'Listings' },
-            { icon: <Users className="w-4 h-4" />, value: '5K+', label: 'Sellers' },
-            { icon: <MapPin className="w-4 h-4" />, value: '7', label: 'Regions' },
-          ].map((stat) => (
-            <div key={stat.label} className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'oklch(1 0 0 / 0.15)' }}>
-                <span style={{ color: 'oklch(0.88 0.14 75)' }}>{stat.icon}</span>
-              </div>
-              <div>
-                <div className="font-display font-bold text-white text-sm leading-none">{stat.value}</div>
-                <div className="text-white/60 text-xs font-body leading-none mt-0.5">{stat.label}</div>
-              </div>
+            { label: 'Active Listings', value: '2,400+' },
+            { label: 'Happy Sellers', value: '800+' },
+            { label: 'Categories', value: '18' },
+          ].map(({ label, value }) => (
+            <div key={label} className="text-center">
+              <div className="text-white font-bold text-lg leading-none">{value}</div>
+              <div className="text-white/60 text-xs mt-0.5">{label}</div>
             </div>
           ))}
         </div>

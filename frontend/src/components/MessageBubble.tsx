@@ -57,7 +57,7 @@ export default function MessageBubble({ message, isSent }: MessageBubbleProps) {
             />
             <button
               onClick={handleEdit}
-              className="w-8 h-8 rounded-xl flex items-center justify-center text-primary-foreground shadow-button"
+              className="w-8 h-8 rounded-xl flex items-center justify-center text-primary-foreground"
               style={{ background: 'var(--primary)' }}
             >
               <Check className="w-4 h-4" />
@@ -67,8 +67,8 @@ export default function MessageBubble({ message, isSent }: MessageBubbleProps) {
           <div
             className={`px-4 py-2.5 rounded-2xl text-sm font-body leading-relaxed ${
               isSent
-                ? 'rounded-br-md text-primary-foreground shadow-button'
-                : 'rounded-bl-md bg-card border border-border text-foreground shadow-card'
+                ? 'rounded-br-md text-primary-foreground'
+                : 'rounded-bl-md bg-card border border-border text-foreground'
             }`}
             style={isSent ? { background: 'var(--primary)' } : {}}
           >

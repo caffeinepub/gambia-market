@@ -1,219 +1,116 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Redesign visual theme and layout",
+  "title": "Fix listing creation and enhance user profile page",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Redesign the overall visual theme of the application with a fresh, cohesive aesthetic — including a new color palette, typography choices, and layout structure — that feels distinct from the current dark mode implementation",
+      "summary": "Fix the listing creation flow so that submitting the form after filling all required fields successfully calls the backend createListing mutation, shows a success toast, and navigates the user to the newly created listing or home feed",
       "acceptanceCriteria": [
-        "A new color palette is defined in index.css and tailwind.config.js, replacing the current OKLCH tokens",
-        "The new theme is applied consistently across HomeFeed, ListingDetail, Profile, Search, Chat, and all shared components",
-        "The AppHeader, BottomNav, HeroSection, and ListingCard components all reflect the new visual style",
-        "Typography (font choices, sizes, weights) is updated to match the new theme",
-        "Both light and dark mode variants are updated to reflect the new palette",
-        "The overall layout and spacing feels clean and organized on both mobile and desktop viewports"
+        "User can fill out all fields in the CreateListing form and successfully submit it without errors",
+        "A new listing appears in the backend after form submission",
+        "A success toast/notification is shown after successful creation",
+        "User is redirected to the new listing detail page or the home feed after creation",
+        "Form validation errors are shown clearly for any missing required fields before submission"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/index.css",
+          "path": "frontend/src/pages/CreateListing.tsx",
           "operation": "modify",
-          "description": "Replace the current OKLCH-based CSS custom property tokens with a new fresh color palette. Define new --background, --foreground, --card, --primary, --secondary, --accent, --muted, --border, and semantic color tokens for both light and dark themes. Update typography by importing new Google Fonts (if needed) and defining font-family custom properties. Ensure the new palette feels vibrant, modern, and distinct from the current dark implementation while maintaining accessibility contrast ratios."
+          "description": "Debug and fix the form submission flow. Ensure all form fields (title, description, category, subcategory, price, condition, location, photos, bedrooms, propertySize, isFurnished) are correctly mapped to the createListing mutation parameters. Add comprehensive client-side validation that prevents submission when required fields are missing and displays clear error messages. Verify that real-estate-specific fields (bedrooms, propertySize, isFurnished) are only passed when category is 'realEstate'. Handle the mutation response correctly: show a success toast using the toast library, extract the newly created listing ID from the response, and navigate to the listing detail page using App.tsx's page navigation pattern. Add error handling for mutation failures with user-friendly error toasts. Verify the blob-storage component's usage instructions before implementing photo upload."
         },
         {
-          "path": "frontend/tailwind.config.js",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Update the Tailwind theme configuration to reference the new CSS custom properties defined in index.css. Modify the colors object to map to the new --background, --foreground, --card, --primary, --secondary, --accent, --muted, and --border tokens. Update border radius values if needed for a softer or sharper aesthetic. Adjust shadow definitions to complement the new color palette. Ensure the extend object properly wires the new theme tokens into Tailwind utility classes."
-        },
-        {
-          "path": "frontend/src/components/AppHeader.tsx",
-          "operation": "modify",
-          "description": "Apply the new visual theme to the AppHeader component. Update background colors, text colors, and border styles to use the new theme tokens. Adjust padding, height, and spacing to match the new layout structure. Update button styles (theme toggle, search, profile actions) to reflect the new aesthetic. Ensure the logo and branding elements align with the fresh cohesive design. Verify responsive behavior on mobile and desktop viewports."
-        },
-        {
-          "path": "frontend/src/components/BottomNav.tsx",
-          "operation": "modify",
-          "description": "Redesign the BottomNav component with the new theme. Update background colors, icon colors, and active/inactive tab states using the new palette tokens. Adjust the unread message badge styling to match the new accent colors. Update spacing, padding, and icon sizes for improved visual hierarchy. Ensure the navigation bar feels cohesive with the overall app aesthetic and maintains touch-friendly tap targets on mobile."
-        },
-        {
-          "path": "frontend/src/components/HeroSection.tsx",
-          "operation": "modify",
-          "description": "Redesign the HeroSection with the new visual theme. Update the background overlay colors and opacity to complement the new palette. Adjust text colors, font weights, and sizes for the tagline and stats using the new typography tokens. Update the stats row styling (border, background, spacing) to match the new card aesthetic. Ensure the hero image at frontend/public/assets/generated/hero-banner.dim_1400x500.png integrates well with the new color overlay. Verify layout and spacing on both mobile and desktop."
-        },
-        {
-          "path": "frontend/src/components/ListingCard.tsx",
-          "operation": "modify",
-          "description": "Apply the new theme to the ListingCard component. Update card background, border, and shadow styles using the new theme tokens. Adjust text colors for title, price, and location to match the new palette. Update the condition badge and sponsored indicator styling with new accent colors. Adjust spacing, padding, and border radius to align with the new layout structure. Ensure hover and active states reflect the new aesthetic. Verify the card displays correctly in grid layouts on various viewport sizes."
-        },
-        {
-          "path": "frontend/src/pages/HomeFeed.tsx",
-          "operation": "modify",
-          "description": "Update the HomeFeed page to reflect the new visual theme. Ensure all section backgrounds, text colors, and spacing use the new theme tokens. Update loading skeleton styles to match the new palette. Adjust the featured listings row and category filter bar to align with the new aesthetic. Update empty state styling if applicable. Ensure the overall page layout feels clean and organized with consistent spacing and hierarchy on both mobile and desktop viewports."
-        },
-        {
-          "path": "frontend/src/pages/ListingDetail.tsx",
-          "operation": "modify",
-          "description": "Apply the new theme to the ListingDetail page. Update background colors, card styles, and text colors throughout the page. Adjust the photo carousel, seller info section, and review sections to use the new theme tokens. Update button styles for report/share actions and the review form to match the new aesthetic. Ensure all interactive elements (buttons, inputs) reflect the new color palette and typography. Verify layout and spacing consistency on mobile and desktop."
-        },
+          "description": "Review and ensure the useCreateListing mutation hook correctly calls actor.createListing with all parameters in the correct order matching the backend interface signature. Verify that ExternalBlob objects from the PhotoUpload component are passed directly without transformation. Add proper error handling and return the created listing ID from the mutation response. Ensure the mutation invalidates the 'myListings' and 'allListings' query keys on success to refresh the feed."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Enhance the authenticated user's Profile page to display a comprehensive dashboard showing all user information after login including an editable profile picture, display name, phone number, location, and account creation date with inline editing capability",
+      "acceptanceCriteria": [
+        "After login, the profile page shows all stored user info: name, phone, location, and avatar",
+        "User can upload or change their profile picture from the profile page",
+        "Profile picture is persisted to the backend and displayed in the header/avatar after update",
+        "All editable fields (name, phone, location) can be updated inline or via an edit form with save confirmation"
+      ],
+      "file_operations": [
         {
           "path": "frontend/src/pages/Profile.tsx",
           "operation": "modify",
-          "description": "Redesign the Profile page with the new theme. Update the profile header background, text colors, and button styles. Adjust the stats row styling to use the new accent colors and card aesthetic. Update the tabbed listings/reviews view to match the new palette. Ensure inline-editable fields use the new input styling. Update the logout button to reflect the new button aesthetic. Verify the page layout feels cohesive and clean on both mobile and desktop."
-        },
-        {
-          "path": "frontend/src/pages/Search.tsx",
-          "operation": "modify",
-          "description": "Apply the new visual theme to the Search page. Update the search input styling, recent search chips, and popular category buttons to use the new theme tokens. Adjust the results grid and zero-results state to match the new aesthetic. Update all text colors, backgrounds, and interactive element styles. Ensure the page layout maintains clean spacing and hierarchy with the new palette on mobile and desktop."
-        },
-        {
-          "path": "frontend/src/pages/Chat.tsx",
-          "operation": "modify",
-          "description": "Redesign the Chat page with the new theme. Update conversation list item backgrounds, borders, and text colors. Adjust the blurred preview state for unauthenticated users to use the new palette. Update the login prompt styling to match the new aesthetic. Ensure spacing and layout consistency across the page. Verify the new theme applies to all conversation items and empty states on both mobile and desktop."
-        },
-        {
-          "path": "frontend/src/components/SearchBar.tsx",
-          "operation": "modify",
-          "description": "Update the SearchBar component to match the new visual theme. Adjust input background, border, text colors, and placeholder styling using the new theme tokens. Update the search icon and clear button colors. Ensure focus states and hover effects align with the new aesthetic. Verify the component integrates well with pages that use it (Search, AppHeader)."
-        },
-        {
-          "path": "frontend/src/components/SellerInfo.tsx",
-          "operation": "modify",
-          "description": "Apply the new theme to the SellerInfo component. Update avatar background, text colors, verified badge styling, and location/rating text to use the new palette. Adjust spacing and typography to match the new layout structure. Ensure the loading skeleton state reflects the new theme colors."
-        },
-        {
-          "path": "frontend/src/components/CategoryFilter.tsx",
-          "operation": "modify",
-          "description": "Redesign the CategoryFilter component with the new theme. Update the category pill backgrounds, borders, text colors, and active/selected states using the new theme tokens. Adjust emoji rendering and listing count badge styling. Ensure the horizontal scroll behavior and spacing align with the new aesthetic on mobile and desktop."
-        },
-        {
-          "path": "frontend/src/components/FeaturedListingsRow.tsx",
-          "operation": "modify",
-          "description": "Update the FeaturedListingsRow component to use the new visual theme. Adjust card backgrounds, borders, shadows, and text colors for the featured listing cards. Ensure the horizontal scroll behavior and spacing match the new layout structure. Verify the component displays correctly on both mobile and desktop."
-        },
-        {
-          "path": "frontend/src/components/PhotoCarousel.tsx",
-          "operation": "modify",
-          "description": "Apply the new theme to the PhotoCarousel component. Update navigation button backgrounds, icon colors, and dot indicator styling to use the new palette. Adjust the fullscreen overlay background and controls to match the new aesthetic. Ensure the carousel integrates well with the ListingDetail page layout."
-        },
-        {
-          "path": "frontend/src/components/ReviewsList.tsx",
-          "operation": "modify",
-          "description": "Redesign the ReviewsList component with the new theme. Update review item backgrounds, borders, text colors, and star rating colors. Adjust the loading skeleton and empty state styling to match the new palette. Ensure spacing and typography align with the new layout structure."
-        },
-        {
-          "path": "frontend/src/components/ConversationItem.tsx",
-          "operation": "modify",
-          "description": "Apply the new visual theme to the ConversationItem component. Update background, border, text colors, and thumbnail styling to use the new theme tokens. Adjust spacing and typography for the other user's name, message preview, and timestamp. Ensure hover and active states reflect the new aesthetic."
-        },
-        {
-          "path": "frontend/src/components/MessageBubble.tsx",
-          "operation": "modify",
-          "description": "Redesign the MessageBubble component with the new theme. Update sent/received bubble backgrounds, text colors, and border styles using the new palette. Adjust timestamp styling and edit/delete action button colors. Ensure the deleted-message placeholder state matches the new aesthetic. Verify the bubbles display correctly in the MessageThread layout."
-        },
-        {
-          "path": "frontend/src/components/MyListingCard.tsx",
-          "operation": "modify",
-          "description": "Apply the new theme to the MyListingCard component. Update card background, border, shadow, and text colors. Adjust the status badge, price, and location text styling to use the new palette. Update action button colors (edit, delete, boost) to match the new aesthetic. Ensure the delete confirmation dialog reflects the new theme."
-        },
-        {
-          "path": "frontend/src/components/ProfileStatsRow.tsx",
-          "operation": "modify",
-          "description": "Redesign the ProfileStatsRow component with the new visual theme. Update stat card backgrounds, borders, text colors, and icon colors using the new theme tokens. Adjust spacing and typography for the animated count-up stats. Ensure the grid layout displays correctly on mobile and desktop."
-        },
-        {
-          "path": "frontend/src/components/LoginPrompt.tsx",
-          "operation": "modify",
-          "description": "Apply the new theme to the LoginPrompt component. Update background colors, text colors, button styles, and card backgrounds for both the modal and full-page variants. Adjust spacing and typography to match the new aesthetic. Ensure the Internet Identity login button reflects the new palette."
-        },
-        {
-          "path": "frontend/src/components/ProfileSetup.tsx",
-          "operation": "modify",
-          "description": "Redesign the ProfileSetup form with the new theme. Update input field backgrounds, borders, text colors, and placeholder styling. Adjust button colors and hover states to match the new aesthetic. Update the form container background and spacing to align with the new layout structure."
+          "description": "Add a profile header section at the top of the page displaying the user's profile picture (using ExternalBlob.getDirectURL() if available, or a placeholder avatar), display name, phone number, location, and account creation date formatted as a human-readable string. Add an avatar upload button that opens a file input for image selection. When a new image is selected, convert it to ExternalBlob using ExternalBlob.fromBytes() and call the useUpdateProfilePicture mutation. Show upload progress using ExternalBlob.withUploadProgress(). Display a loading spinner during upload and a success toast on completion. Verify the blob-storage component's usage instructions before implementing avatar upload. Ensure the phone field is displayed (currently only name and location are shown in EditProfileForm)."
         },
         {
           "path": "frontend/src/components/EditProfileForm.tsx",
           "operation": "modify",
-          "description": "Apply the new visual theme to the EditProfileForm component. Update input styling, button colors, and form layout to use the new theme tokens. Ensure toast notifications (success/error) reflect the new palette. Adjust spacing and typography to match the new aesthetic."
+          "description": "Add a phone number input field to the form alongside name and location. Update the form submission to call a new useUpdateProfile mutation that accepts name, phone, and location. Add validation for the phone field (required, numeric format). Show a success toast on save and handle validation errors with clear messages."
         },
         {
-          "path": "frontend/src/components/InlineEditField.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Redesign the InlineEditField component with the new theme. Update read-only display and editable input styling to use the new theme tokens. Adjust save/cancel button colors and icon colors. Ensure focus states and hover effects align with the new aesthetic."
+          "description": "Add a useUpdateProfilePicture mutation hook that calls actor.updateProfilePicture with an ExternalBlob parameter. Invalidate the 'currentUserProfile' query key on success to refresh the profile display. Add error handling with user-friendly error messages. Add a useUpdateProfile mutation hook that calls actor.saveCallerUserProfile with name, phone, and location parameters, replacing the current updateProfile mutation if it only handles name and location."
         },
         {
-          "path": "frontend/src/components/StarRating.tsx",
+          "path": "frontend/src/components/AppHeader.tsx",
           "operation": "modify",
-          "description": "Apply the new theme to the StarRating component. Update star colors for filled/empty states using the new accent/muted tokens. Adjust hover states for interactive mode. Ensure the component displays correctly in all three sizes and integrates well with review components."
+          "description": "Update the profile avatar display in the header to use the user's profile picture from the currentUserProfile query. If userProfile.profilePic exists, render it using ExternalBlob.getDirectURL() as the image src. Otherwise, show the existing placeholder avatar or user initials. Ensure the avatar updates immediately after a successful profile picture upload by relying on query invalidation."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Add a 'My Listings' section to the authenticated user's Profile page that lists all listings created by the user with thumbnail, title, price, status badge, and action buttons for Edit, Delete, and Boost, plus a prominent 'Create Listing' button",
+      "acceptanceCriteria": [
+        "Profile page shows a 'My Listings' tab or section with all listings belonging to the logged-in user",
+        "Each listing card displays thumbnail, title, price, and status badge",
+        "Edit button navigates to the EditListing page for the selected listing",
+        "Delete button removes the listing with a confirmation prompt",
+        "A 'Create New Listing' button is visible on the profile page and navigates to the CreateListing page",
+        "Empty state is shown when the user has no listings"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/ProfileTabs.tsx",
+          "operation": "modify",
+          "description": "Verify that the 'My Listings' tab correctly renders a grid of MyListingCard components for each listing in the myListings query result. Ensure the MyListingCard components receive onEdit, onDelete, and onBoost callback props. Wire the onEdit callback to navigate to the EditListing page with the listing ID. Wire the onDelete callback to call the useDeleteListing mutation after showing a confirmation dialog. Wire the onBoost callback to open the BoostModal with the listing ID. Ensure the empty state message is shown when myListings is empty. Add a 'Create New Listing' button above or within the listings grid that navigates to the CreateListing page."
         },
         {
-          "path": "frontend/src/components/SkeletonListingCard.tsx",
+          "path": "frontend/src/components/MyListingCard.tsx",
           "operation": "modify",
-          "description": "Update the SkeletonListingCard component to reflect the new theme. Adjust skeleton background colors, animation, and layout to match the new ListingCard styling. Ensure the skeleton provides a smooth loading experience with the new palette."
+          "description": "Verify that the component correctly displays the listing thumbnail (using ExternalBlob.getDirectURL() for the first photo or a category emoji fallback), title, price, and status badge. Ensure the Edit, Delete, and Boost buttons are wired to call their respective callback props (onEdit, onDelete, onBoost) passed from the parent. Add proper loading and disabled states for the action buttons during mutations."
         },
         {
-          "path": "frontend/src/components/ZeroResultsState.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Apply the new visual theme to the ZeroResultsState component. Update background, text colors, and suggested category button styling to use the new theme tokens. Adjust spacing and typography to match the new aesthetic. Ensure the empty state feels cohesive with the Search page."
-        },
+          "description": "Add a useDeleteListing mutation hook that calls actor.deleteListing with a listingId parameter. Invalidate the 'myListings' and 'allListings' query keys on success to refresh the feed. Show a success toast after deletion and handle errors with user-friendly messages. Verify that the existing useSetListingBoosted mutation is correctly wired and invalidates the necessary query keys."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Add a 'Reviews Received' section to the authenticated user's Profile page that displays all reviews left for this user, showing reviewer avatar, name, star rating, comment, and date, plus aggregate stats at the top of the profile",
+      "acceptanceCriteria": [
+        "Profile page shows a summary stats row with listings count, average rating, review count, and followers",
+        "A 'Reviews' tab or section lists all reviews received by the logged-in user",
+        "Each review shows reviewer avatar, name, star rating, comment text, and relative timestamp",
+        "Empty state is displayed when there are no reviews yet"
+      ],
+      "file_operations": [
         {
-          "path": "frontend/src/components/InstallBanner.tsx",
+          "path": "frontend/src/pages/Profile.tsx",
           "operation": "modify",
-          "description": "Redesign the InstallBanner component with the new theme. Update banner background, text colors, button styling, and dismiss button colors using the new palette. Ensure the banner integrates well with the bottom navigation on mobile and displays correctly on iOS."
-        },
-        {
-          "path": "frontend/src/pages/CreateListing.tsx",
-          "operation": "modify",
-          "description": "Apply the new theme to the CreateListing page. Update form input backgrounds, borders, text colors, and button styles. Adjust the photo upload component styling to match the new aesthetic. Update dropdown, radio, and number input styling. Ensure the overall form layout feels clean and organized with the new palette on mobile and desktop."
-        },
-        {
-          "path": "frontend/src/pages/EditListing.tsx",
-          "operation": "modify",
-          "description": "Redesign the EditListing page with the new visual theme. Update all form input styling, button colors, and layout to use the new theme tokens. Ensure the pre-populated fields display correctly with the new input aesthetic. Adjust spacing and typography to match the CreateListing form for consistency."
-        },
-        {
-          "path": "frontend/src/pages/MessageThread.tsx",
-          "operation": "modify",
-          "description": "Apply the new theme to the MessageThread page. Update the chat container background, input field styling, and send button colors. Ensure the guest name prompt dialog reflects the new aesthetic. Adjust message bubble spacing and overall layout to match the new palette. Verify auto-scroll and responsive behavior."
-        },
-        {
-          "path": "frontend/src/pages/PublicProfile.tsx",
-          "operation": "modify",
-          "description": "Redesign the PublicProfile page with the new visual theme. Update avatar, location, rating, and reviews section styling to use the new theme tokens. Adjust the active listings grid to match the new ListingCard aesthetic. Ensure the read-only layout feels cohesive with the authenticated Profile page."
-        },
-        {
-          "path": "frontend/src/components/ReviewForm.tsx",
-          "operation": "modify",
-          "description": "Apply the new theme to the ReviewForm component. Update input field, textarea, and button styling to use the new palette. Adjust the star rating integration to match the new aesthetic. Ensure the form displays correctly on the ListingDetail page with proper spacing."
-        },
-        {
-          "path": "frontend/src/components/PhotoUpload.tsx",
-          "operation": "modify",
-          "description": "Redesign the PhotoUpload component with the new visual theme. Update preview thumbnail backgrounds, borders, and remove button styling. Adjust the upload button and drag-drop zone colors to match the new palette. Ensure the component integrates well with the CreateListing and EditListing forms."
-        },
-        {
-          "path": "frontend/src/components/BoostModal.tsx",
-          "operation": "modify",
-          "description": "Apply the new theme to the BoostModal dialog. Update modal background, border, shadow, and text colors. Adjust boost option card styling and button colors to use the new theme tokens. Ensure the dialog displays correctly over the listing detail or profile pages."
-        },
-        {
-          "path": "frontend/src/components/ReportModal.tsx",
-          "operation": "modify",
-          "description": "Redesign the ReportModal with the new visual theme. Update dialog background, text colors, radio button styling, and submit button colors. Ensure the modal integrates well with the ListingDetail page and reflects the new palette."
-        },
-        {
-          "path": "frontend/src/components/GuestNamePrompt.tsx",
-          "operation": "modify",
-          "description": "Apply the new theme to the GuestNamePrompt dialog. Update modal background, input field styling, and button colors (submit, login alternative) to use the new theme tokens. Adjust spacing and typography to match the new aesthetic."
+          "description": "Add a ProfileStatsRow component near the top of the profile page (below the profile header section added in REQ-2) that displays four stats: total listings count (from myListings.length), average rating (from userProfile.highestRating converted to a decimal), total reviews count (from reviewsForUser.length), and followers count (from userProfile.followers). Ensure these values are fetched from the relevant React Query hooks and formatted appropriately."
         },
         {
           "path": "frontend/src/components/ProfileTabs.tsx",
           "operation": "modify",
-          "description": "Redesign the ProfileTabs component with the new visual theme. Update tab button backgrounds, text colors, active/inactive states, and underline indicators using the new palette. Adjust the listings, reviews, activity, and following content sections to match the new aesthetic. Ensure tab switching feels smooth and cohesive."
+          "description": "Verify that the 'Reviews' tab correctly renders the ReviewsList component with the userId prop set to the current user's principal. Ensure the ReviewsList component is displayed below the tab selector and shows the reviews received by the logged-in user. Confirm that the empty state ('No reviews yet') is shown when there are no reviews."
         },
         {
-          "path": "frontend/src/components/RecentSearchChips.tsx",
+          "path": "frontend/src/components/ProfileStatsRow.tsx",
           "operation": "modify",
-          "description": "Apply the new theme to the RecentSearchChips component. Update chip backgrounds, borders, text colors, and dismiss button styling. Adjust the 'clear all' button to match the new palette. Ensure the chips integrate well with the Search page layout."
+          "description": "Verify that the component correctly receives and displays four stat values: listings (number), rating (number formatted to 1 decimal place with '/5' suffix), reviews (number), and followers (number). Ensure the count-up animation works correctly when values change. Add conditional rendering to show '0' or 'N/A' for missing values gracefully."
         }
       ]
     }

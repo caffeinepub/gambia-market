@@ -6,19 +6,21 @@ import { useBoostListing, useBoostOptions } from '../hooks/useQueries';
 interface BoostModalProps {
   listingId: ListingId;
   onClose: () => void;
+  isOpen?: boolean;
 }
 
-export default function BoostModal({ listingId, onClose }: BoostModalProps) {
+export default function BoostModal({ listingId, onClose, isOpen }: BoostModalProps) {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const { data: options, isLoading } = useBoostOptions();
   const boostListing = useBoostListing();
+
+  if (isOpen === false) return null;
 
   const handleBoost = async () => {
     if (selectedOption === null || !options) return;
     const option = options[selectedOption];
     await boostListing.mutateAsync({
       listingId,
-      isBoosted: true,
       durationDays: option.durationDays,
     });
     onClose();
@@ -30,7 +32,7 @@ export default function BoostModal({ listingId, onClose }: BoostModalProps) {
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center text-accent-foreground shadow-button-accent"
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center text-accent-foreground"
               style={{ background: 'var(--accent)' }}>
               <Zap className="w-5 h-5" />
             </div>
@@ -51,7 +53,7 @@ export default function BoostModal({ listingId, onClose }: BoostModalProps) {
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-16 rounded-2xl shimmer" />
+              <div key={i} className="h-16 rounded-2xl bg-muted animate-pulse" />
             ))}
           </div>
         ) : (
@@ -81,7 +83,7 @@ export default function BoostModal({ listingId, onClose }: BoostModalProps) {
                       <p className="text-xs font-body text-muted-foreground">Featured placement</p>
                     </div>
                   </div>
-                  <span className="font-display font-bold text-base" style={{ color: 'var(--brand-coral)' }}>
+                  <span className="font-display font-bold text-base text-primary">
                     D {Number(option.priceGMD)}
                   </span>
                 </button>
@@ -93,9 +95,10 @@ export default function BoostModal({ listingId, onClose }: BoostModalProps) {
         <button
           onClick={handleBoost}
           disabled={selectedOption === null || boostListing.isPending}
-          className="w-full py-3.5 rounded-2xl font-body font-semibold text-sm text-accent-foreground transition-all duration-200 shadow-button-accent disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-body font-semibold text-accent-foreground transition-all duration-200 disabled:opacity-50"
           style={{ background: 'var(--accent)' }}
         >
+          <Zap className="w-5 h-5" />
           {boostListing.isPending ? 'Boosting…' : 'Boost Now'}
         </button>
       </div>

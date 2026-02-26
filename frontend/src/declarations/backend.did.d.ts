@@ -107,12 +107,12 @@ export interface Transaction {
 export type TransactionId = bigint;
 export interface UserProfile {
   'id' : Principal,
-  'profilePicUrl' : [] | [string],
   'verified' : boolean,
   'name' : string,
   'createdAt' : Time,
   'phone' : string,
   'followers' : bigint,
+  'profilePic' : [] | [ExternalBlob],
   'location' : string,
   'highestRating' : bigint,
 }
@@ -165,7 +165,6 @@ export interface _SERVICE {
     ],
     ListingId
   >,
-  'createOrUpdateUserProfile' : ActorMethod<[string, string], undefined>,
   'createReport' : ActorMethod<[Principal, string], ReportId>,
   'createReview' : ActorMethod<
     [Principal, ListingId, bigint, string],
@@ -233,7 +232,7 @@ export interface _SERVICE {
     undefined
   >,
   'updateListingStatus' : ActorMethod<[ListingId, string], undefined>,
-  'updateProfilePic' : ActorMethod<[string], undefined>,
+  'updateProfilePicture' : ActorMethod<[[] | [ExternalBlob]], undefined>,
   'updateReportStatus' : ActorMethod<[ReportId, string], undefined>,
   'updateTransactionStatus' : ActorMethod<[TransactionId, string], undefined>,
 }

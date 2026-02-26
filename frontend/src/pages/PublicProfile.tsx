@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowLeft, MapPin, Star, ShieldCheck, Users } from 'lucide-react';
 import { Principal } from '@dfinity/principal';
 import { ListingId } from '../backend';
-import { useGetUserProfile, useListings, useReviews } from '../hooks/useQueries';
+import { useGetUserProfile, useListings, useGetReviewsForUser } from '../hooks/useQueries';
 import ListingCard from '../components/ListingCard';
 import ReviewsList from '../components/ReviewsList';
 import SkeletonListingCard from '../components/SkeletonListingCard';
@@ -14,9 +14,9 @@ interface PublicProfileProps {
 }
 
 export default function PublicProfile({ userId, onBack, onListingClick }: PublicProfileProps) {
-  const { data: profile, isLoading: profileLoading } = useGetUserProfile(userId.toString());
+  const { data: profile, isLoading: profileLoading } = useGetUserProfile(userId);
   const { data: allListings, isLoading: listingsLoading } = useListings();
-  const { data: reviews } = useReviews(userId);
+  const { data: reviews } = useGetReviewsForUser(userId);
 
   const userListings = allListings
     ? allListings.filter((l) => l.sellerId.toString() === userId.toString() && l.status === 'Active')
@@ -26,9 +26,7 @@ export default function PublicProfile({ userId, onBack, onListingClick }: Public
     ? reviews.reduce((sum, r) => sum + Number(r.stars), 0) / reviews.length
     : 0;
 
-  const handleListingClick = (id: ListingId) => {
-    onListingClick?.(id);
-  };
+  const profilePicUrl = profile?.profilePic ? profile.profilePic.getDirectURL() : null;
 
   if (profileLoading) {
     return (
@@ -40,10 +38,10 @@ export default function PublicProfile({ userId, onBack, onListingClick }: Public
         </div>
         <div className="p-4 space-y-4">
           <div className="flex items-center gap-4">
-            <div className="w-20 h-20 rounded-2xl shimmer" />
+            <div className="w-20 h-20 rounded-2xl bg-muted animate-pulse" />
             <div className="flex-1 space-y-2">
-              <div className="h-5 rounded-lg shimmer w-40" />
-              <div className="h-4 rounded-md shimmer w-28" />
+              <div className="h-5 rounded-lg bg-muted animate-pulse w-40" />
+              <div className="h-4 rounded-md bg-muted animate-pulse w-28" />
             </div>
           </div>
         </div>
@@ -79,11 +77,11 @@ export default function PublicProfile({ userId, onBack, onListingClick }: Public
       <div className="px-4 pt-6 pb-4">
         <div className="flex items-start gap-4">
           <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-border shrink-0">
-            {profile.profilePicUrl ? (
-              <img src={profile.profilePicUrl} alt={profile.name} className="w-full h-full object-cover" />
+            {profilePicUrl ? (
+              <img src={profilePicUrl} alt={profile.name} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full gradient-primary flex items-center justify-center">
-                <span className="font-display font-bold text-3xl text-primary-foreground">
+              <div className="w-full h-full bg-primary/10 flex items-center justify-center">
+                <span className="font-display font-bold text-3xl text-primary">
                   {profile.name.charAt(0).toUpperCase()}
                 </span>
               </div>
@@ -92,23 +90,24 @@ export default function PublicProfile({ userId, onBack, onListingClick }: Public
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <h2 className="font-display font-bold text-xl text-foreground">{profile.name}</h2>
+              <h2 className="font-display font-bold text-lg text-foreground truncate">{profile.name}</h2>
               {profile.verified && (
-                <ShieldCheck className="w-5 h-5 shrink-0" style={{ color: 'var(--brand-sage)' }} />
+                <ShieldCheck className="w-5 h-5 shrink-0 text-primary" />
               )}
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 text-sm font-body text-muted-foreground">
-              {profile.location && (
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5" />
-                  {profile.location}
-                </span>
-              )}
+            {profile.location && (
+              <div className="flex items-center gap-1 text-sm font-body text-muted-foreground mb-1">
+                <MapPin className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">{profile.location}</span>
+              </div>
+            )}
+
+            <div className="flex items-center gap-3 text-sm font-body text-muted-foreground">
               {avgRating > 0 && (
                 <span className="flex items-center gap-1">
-                  <Star className="w-3.5 h-3.5 fill-current" style={{ color: 'var(--brand-gold)' }} />
-                  {avgRating.toFixed(1)} ({reviews?.length ?? 0} reviews)
+                  <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                  {avgRating.toFixed(1)} ({reviews?.length ?? 0})
                 </span>
               )}
               {Number(profile.followers) > 0 && (
@@ -122,43 +121,24 @@ export default function PublicProfile({ userId, onBack, onListingClick }: Public
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="px-4 mb-6">
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            { label: 'Listings', value: userListings.length },
-            { label: 'Reviews', value: reviews?.length ?? 0 },
-            { label: 'Rating', value: avgRating > 0 ? avgRating.toFixed(1) : '—' },
-          ].map((stat) => (
-            <div key={stat.label} className="bg-card rounded-2xl border border-border p-3 text-center shadow-card">
-              <div className="font-display font-bold text-xl text-foreground">{stat.value}</div>
-              <div className="text-xs font-body text-muted-foreground">{stat.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Listings */}
-      <div className="px-4 mb-6">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-1 h-5 rounded-full" style={{ background: 'var(--primary)' }} />
-          <h3 className="font-display font-bold text-base text-foreground">Active Listings</h3>
-        </div>
+      <div className="px-4 pb-4">
+        <h3 className="font-display font-bold text-base text-foreground mb-3">
+          Listings ({userListings.length})
+        </h3>
         {listingsLoading ? (
           <div className="grid grid-cols-2 gap-3">
             {[1, 2, 3, 4].map((i) => <SkeletonListingCard key={i} />)}
           </div>
         ) : userListings.length === 0 ? (
-          <div className="text-center py-8 bg-card rounded-2xl border border-border">
-            <p className="font-body text-muted-foreground text-sm">No active listings</p>
-          </div>
+          <p className="text-sm font-body text-muted-foreground text-center py-8">No active listings</p>
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {userListings.map((listing) => (
               <ListingCard
                 key={listing.id.toString()}
                 listing={listing}
-                onClick={handleListingClick}
+                onClick={(id) => onListingClick?.(id)}
               />
             ))}
           </div>
@@ -167,10 +147,9 @@ export default function PublicProfile({ userId, onBack, onListingClick }: Public
 
       {/* Reviews */}
       <div className="px-4">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-1 h-5 rounded-full" style={{ background: 'var(--brand-gold)' }} />
-          <h3 className="font-display font-bold text-base text-foreground">Reviews</h3>
-        </div>
+        <h3 className="font-display font-bold text-base text-foreground mb-3">
+          Reviews ({reviews?.length ?? 0})
+        </h3>
         <ReviewsList userId={userId} />
       </div>
     </div>

@@ -1,39 +1,119 @@
 {
   "kind": "build_request",
-  "title": "Redesign visual theme and layout",
+  "title": "Fix listing creation and enhance user profile page",
   "projectName": "Gambia Market",
-  "priority": "normal",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Redesign the overall visual theme of the application with a fresh, cohesive aesthetic — including a new color palette, typography choices, and layout structure — that feels distinct from the current dark mode implementation. Apply the new theme consistently across all pages and components.",
-      "target": "frontend",
+      "text": "Fix the listing creation flow in CreateListing.tsx so that submitting the form after filling all required fields (title, description, category, price, condition, location, photos, etc.) successfully calls the backend createListing mutation, shows a success toast, and navigates the user to the newly created listing or home feed. Investigate and resolve any error in the mutation call, form validation blocking submission, or missing required field mappings (including real-estate-specific fields like bedrooms and furnished status).",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-1"
         ],
         "quotes": [
-          "no i dnt like it"
+          "am still facing the problem of not able to add and create a listing after filling the page"
         ]
       },
       "acceptanceCriteria": [
-        "A new color palette is defined in index.css and tailwind.config.js, replacing the current OKLCH tokens",
-        "The new theme is applied consistently across HomeFeed, ListingDetail, Profile, Search, Chat, and all shared components",
-        "The AppHeader, BottomNav, HeroSection, and ListingCard components all reflect the new visual style",
-        "Typography (font choices, sizes, weights) is updated to match the new theme",
-        "Both light and dark mode variants are updated to reflect the new palette",
-        "The overall layout and spacing feels clean and organized on both mobile and desktop viewports"
+        "User can fill out all fields in the CreateListing form and successfully submit it without errors",
+        "A new listing appears in the backend after form submission",
+        "A success toast/notification is shown after successful creation",
+        "User is redirected to the new listing detail page or the home feed after creation",
+        "Form validation errors are shown clearly for any missing required fields before submission"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Enhance the authenticated user's Profile page to display a comprehensive dashboard showing all user information after login. The profile must include: an editable profile picture (avatar upload), display name, phone number, location, account creation date, and any other stored profile fields. All fields should be inline-editable or accessible via an edit profile modal/form.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "i want all info of the user shown in his profile after login where he can edit profile pics"
+        ]
+      },
+      "acceptanceCriteria": [
+        "After login, the profile page shows all stored user info: name, phone, location, and avatar",
+        "User can upload or change their profile picture from the profile page",
+        "Profile picture is persisted to the backend and displayed in the header/avatar after update",
+        "All editable fields (name, phone, location) can be updated inline or via an edit form with save confirmation"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Add a 'My Listings' section to the authenticated user's Profile page that lists all listings created by the user (active, sold, and draft). Each listing card should show the listing thumbnail, title, price, status badge, and action buttons for Edit, Delete, and Boost. Tapping Edit should navigate to the EditListing page for that listing. Users should also be able to create a new listing directly from the profile page via a prominent 'Create Listing' button.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "listing create and many more"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Profile page shows a 'My Listings' tab or section with all listings belonging to the logged-in user",
+        "Each listing card displays thumbnail, title, price, and status badge",
+        "Edit button navigates to the EditListing page for the selected listing",
+        "Delete button removes the listing with a confirmation prompt",
+        "A 'Create New Listing' button is visible on the profile page and navigates to the CreateListing page",
+        "Empty state is shown when the user has no listings"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Add a 'Reviews Received' section to the authenticated user's Profile page that displays all reviews left for this user, showing reviewer avatar, name, star rating, comment, and date. Also display aggregate stats (average rating, total reviews, total listings, followers count) in a stats row at the top of the profile.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "all info of the user shown in his profile after login",
+          "many more"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Profile page shows a summary stats row with listings count, average rating, review count, and followers",
+        "A 'Reviews' tab or section lists all reviews received by the logged-in user",
+        "Each review shows reviewer avatar, name, star rating, comment text, and relative timestamp",
+        "Empty state is displayed when there are no reviews yet"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Update the backend UserProfile type and associated update mutation to support storing a profile picture as an ExternalBlob (consistent with the existing blob storage mixin pattern). Expose a dedicated updateProfilePicture endpoint or extend the existing updateProfile mutation to accept an optional avatar blob field.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "edit profile pics"
+        ]
+      },
+      "acceptanceCriteria": [
+        "UserProfile data type includes an optional avatar/profile picture field stored as ExternalBlob",
+        "The updateProfile (or a new updateProfilePicture) mutation accepts and persists the avatar blob",
+        "Fetching the caller's profile returns the stored avatar blob URL/data",
+        "Existing profiles without an avatar continue to work without errors"
       ]
     }
   ],
   "constraints": [
-    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui",
-    "Do not change backend data models or Motoko logic"
+    "Do not modify files listed in frontend.immutablePaths",
+    "All Motoko logic must remain in the single main actor (backend/main.mo)",
+    "Profile picture/avatar must be stored using the existing ExternalBlob pattern already used for listing photos"
   ],
   "nonGoals": [
-    "Adding new features or pages",
-    "Changing backend functionality",
-    "Altering navigation structure or routing logic"
+    "Third-party social login or OAuth",
+    "Real-time chat features or WebSocket integration",
+    "Payment or escrow functionality",
+    "Public profile page changes (only the authenticated user's own profile is in scope)"
   ],
   "imageRequirements": {
     "required": [],

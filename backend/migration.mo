@@ -1,7 +1,6 @@
 import Map "mo:core/Map";
-import Set "mo:core/Set";
+import Time "mo:core/Time";
 import Principal "mo:core/Principal";
-import Nat "mo:core/Nat";
 import Storage "blob-storage/Storage";
 
 module {
@@ -10,30 +9,11 @@ module {
     name : Text;
     phone : Text;
     highestRating : Nat;
+    followers : Nat;
     location : Text;
     verified : Bool;
-    createdAt : Int;
-  };
-
-  type OldListing = {
-    id : Nat;
-    sellerId : Principal;
-    title : Text;
-    description : Text;
-    category : Text;
-    price : Nat;
-    condition : Text;
-    photos : [Storage.ExternalBlob];
-    location : Text;
-    status : Text;
-    isBoosted : Bool;
-    createdAt : Int;
-    boostExpiry : ?Int;
-  };
-
-  type OldActor = {
-    users : Map.Map<Principal, OldUserProfile>;
-    listings : Map.Map<Nat, OldListing>;
+    profilePicUrl : ?Text;
+    createdAt : Time.Time;
   };
 
   type NewUserProfile = {
@@ -44,56 +24,24 @@ module {
     followers : Nat;
     location : Text;
     verified : Bool;
-    profilePicUrl : ?Text;
-    createdAt : Int;
+    profilePic : ?Storage.ExternalBlob;
+    createdAt : Time.Time;
   };
 
-  type NewListing = {
-    id : Nat;
-    sellerId : Principal;
-    title : Text;
-    description : Text;
-    category : Text;
-    price : Nat;
-    condition : Text;
-    photos : [Storage.ExternalBlob];
-    location : Text;
-    status : Text;
-    isBoosted : Bool;
-    createdAt : Int;
-    boostExpiry : ?Int;
-    likedBy : Set.Set<Principal>;
+  type OldActor = {
+    users : Map.Map<Principal, OldUserProfile>;
   };
 
   type NewActor = {
     users : Map.Map<Principal, NewUserProfile>;
-    listings : Map.Map<Nat, NewListing>;
   };
 
   public func run(old : OldActor) : NewActor {
     let newUsers = old.users.map<Principal, OldUserProfile, NewUserProfile>(
-      func(_id, oldUser) {
-        {
-          oldUser with
-          followers = 0;
-          profilePicUrl = null;
-        };
+      func(_id, oldProfile) {
+        { oldProfile with profilePic = null : ?Storage.ExternalBlob };
       }
     );
-
-    let newListings = old.listings.map<Nat, OldListing, NewListing>(
-      func(_id, oldListing) {
-        {
-          oldListing with
-          likedBy = Set.empty<Principal>();
-        };
-      }
-    );
-
-    {
-      old with
-      users = newUsers;
-      listings = newListings;
-    };
+    { users = newUsers };
   };
 };

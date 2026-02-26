@@ -91,12 +91,12 @@ export class ExternalBlob {
 }
 export interface UserProfile {
     id: Principal;
-    profilePicUrl?: string;
     verified: boolean;
     name: string;
     createdAt: Time;
     phone: string;
     followers: bigint;
+    profilePic?: ExternalBlob;
     location: string;
     highestRating: bigint;
 }
@@ -228,7 +228,6 @@ export interface backendInterface {
     addAllowedCategory(category: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createListing(title: string, description: string, category: ListingCategory, subCategory: RealEstateSubCategory | null, price: bigint, condition: string, photos: Array<ExternalBlob>, location: string, propertySize: bigint | null, numBedrooms: bigint | null, isFurnished: boolean | null): Promise<ListingId>;
-    createOrUpdateUserProfile(name: string, location: string): Promise<void>;
     createReport(reportedId: Principal, reason: string): Promise<ReportId>;
     createReview(revieweeId: Principal, listingId: ListingId, stars: bigint, comment: string): Promise<ReviewId>;
     createTransaction(listingId: ListingId, sellerId: Principal, paymentMethod: string, amount: bigint): Promise<TransactionId>;
@@ -268,7 +267,7 @@ export interface backendInterface {
     updateAllUserProfilesWithHighestRating(): Promise<void>;
     updateListing(listingId: ListingId, title: string, description: string, category: ListingCategory, subCategory: RealEstateSubCategory | null, price: bigint, condition: string, photos: Array<ExternalBlob>, location: string, propertySize: bigint | null, numBedrooms: bigint | null, isFurnished: boolean | null): Promise<void>;
     updateListingStatus(listingId: ListingId, status: string): Promise<void>;
-    updateProfilePic(url: string): Promise<void>;
+    updateProfilePicture(newProfilePic: ExternalBlob | null): Promise<void>;
     updateReportStatus(reportId: ReportId, status: string): Promise<void>;
     updateTransactionStatus(txId: TransactionId, status: string): Promise<void>;
 }
@@ -412,20 +411,6 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.createListing(arg0, arg1, to_candid_ListingCategory_n10(this._uploadFile, this._downloadFile, arg2), to_candid_opt_n12(this._uploadFile, this._downloadFile, arg3), arg4, arg5, await to_candid_vec_n15(this._uploadFile, this._downloadFile, arg6), arg7, to_candid_opt_n17(this._uploadFile, this._downloadFile, arg8), to_candid_opt_n17(this._uploadFile, this._downloadFile, arg9), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg10));
-            return result;
-        }
-    }
-    async createOrUpdateUserProfile(arg0: string, arg1: string): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.createOrUpdateUserProfile(arg0, arg1);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.createOrUpdateUserProfile(arg0, arg1);
             return result;
         }
     }
@@ -975,17 +960,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async updateProfilePic(arg0: string): Promise<void> {
+    async updateProfilePicture(arg0: ExternalBlob | null): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateProfilePic(arg0);
+                const result = await this.actor.updateProfilePicture(await to_candid_opt_n42(this._uploadFile, this._downloadFile, arg0));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateProfilePic(arg0);
+            const result = await this.actor.updateProfilePicture(await to_candid_opt_n42(this._uploadFile, this._downloadFile, arg0));
             return result;
         }
     }
@@ -1033,8 +1018,8 @@ async function from_candid_PublicListing_n20(_uploadFile: (file: ExternalBlob) =
 function from_candid_RealEstateSubCategory_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _RealEstateSubCategory): RealEstateSubCategory {
     return from_candid_variant_n24(_uploadFile, _downloadFile, value);
 }
-function from_candid_UserProfile_n35(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserProfile): UserProfile {
-    return from_candid_record_n36(_uploadFile, _downloadFile, value);
+async function from_candid_UserProfile_n35(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserProfile): Promise<UserProfile> {
+    return await from_candid_record_n36(_uploadFile, _downloadFile, value);
 }
 function from_candid_UserRole_n38(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
     return from_candid_variant_n39(_uploadFile, _downloadFile, value);
@@ -1054,11 +1039,11 @@ function from_candid_opt_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8A
 function from_candid_opt_n33(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [Principal]): Principal | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n34(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
-    return value.length === 0 ? null : from_candid_UserProfile_n35(_uploadFile, _downloadFile, value[0]);
+async function from_candid_opt_n34(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): Promise<UserProfile | null> {
+    return value.length === 0 ? null : await from_candid_UserProfile_n35(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n37(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [string]): string | null {
-    return value.length === 0 ? null : value[0];
+async function from_candid_opt_n37(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_ExternalBlob]): Promise<ExternalBlob | null> {
+    return value.length === 0 ? null : await from_candid_ExternalBlob_n29(_uploadFile, _downloadFile, value[0]);
 }
 async function from_candid_opt_n40(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_PublicListing]): Promise<PublicListing | null> {
     return value.length === 0 ? null : await from_candid_PublicListing_n20(_uploadFile, _downloadFile, value[0]);
@@ -1156,35 +1141,35 @@ function from_candid_record_n32(_uploadFile: (file: ExternalBlob) => Promise<Uin
         senderId: record_opt_to_undefined(from_candid_opt_n33(_uploadFile, _downloadFile, value.senderId))
     };
 }
-function from_candid_record_n36(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+async function from_candid_record_n36(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     id: Principal;
-    profilePicUrl: [] | [string];
     verified: boolean;
     name: string;
     createdAt: _Time;
     phone: string;
     followers: bigint;
+    profilePic: [] | [_ExternalBlob];
     location: string;
     highestRating: bigint;
-}): {
+}): Promise<{
     id: Principal;
-    profilePicUrl?: string;
     verified: boolean;
     name: string;
     createdAt: Time;
     phone: string;
     followers: bigint;
+    profilePic?: ExternalBlob;
     location: string;
     highestRating: bigint;
-} {
+}> {
     return {
         id: value.id,
-        profilePicUrl: record_opt_to_undefined(from_candid_opt_n37(_uploadFile, _downloadFile, value.profilePicUrl)),
         verified: value.verified,
         name: value.name,
         createdAt: value.createdAt,
         phone: value.phone,
         followers: value.followers,
+        profilePic: record_opt_to_undefined(await from_candid_opt_n37(_uploadFile, _downloadFile, value.profilePic)),
         location: value.location,
         highestRating: value.highestRating
     };
@@ -1296,6 +1281,9 @@ function to_candid_opt_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Arr
 }
 function to_candid_opt_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: boolean | null): [] | [boolean] {
     return value === null ? candid_none() : candid_some(value);
+}
+async function to_candid_opt_n42(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ExternalBlob | null): Promise<[] | [_ExternalBlob]> {
+    return value === null ? candid_none() : candid_some(await to_candid_ExternalBlob_n16(_uploadFile, _downloadFile, value));
 }
 function to_candid_record_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     proposed_top_up_amount?: bigint;

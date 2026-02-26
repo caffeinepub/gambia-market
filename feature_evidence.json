@@ -2,47 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-redesign-the-overall-visual-theme-of-the-application-with-a-fresh-cohesive-aesthetic-including-a-new-color-palette-typography-choices-and-layout-structure-that-feels-distinct-from-the-current-dark-mode-implementation-apply-the-new-theme-consistently-across-all-pages-and-components",
-      "featureTitle": "Redesign the overall visual theme of the application with a fresh, cohesive aesthetic — including a new color palette, typography choices, and layout structure — that feels distinct from the current dark mode implementation. Apply the new theme consistently across all pages and components.",
+      "featureId": "feature-fix-the-listing-creation-flow-in-createlisting-tsx-so-that-submitting-the-form-after-filling-all-required-fields-title-description-category-price-condition-location-photos-etc-successfully-calls-the-backend-createlisting-mutation-shows-a-success-toast-and-navigates-the-user-to-the-newly-created-listing-or-home-feed-investigate-and-resolve-any-error-in-the-mutation-call-form-validation-blocking-submission-or-missing-required-field-mappings-including-real-estate-specific-fields-like-bedrooms-and-furnished-status",
+      "featureTitle": "Fix the listing creation flow in CreateListing.tsx so that submitting the form after filling all required fields (title, description, category, price, condition, location, photos, etc.) successfully calls the backend createListing mutation, shows a success toast, and navigates the user to the newly created listing or home feed. Investigate and resolve any error in the mutation call, form validation blocking submission, or missing required field mappings (including real-estate-specific fields like bedrooms and furnished status).",
       "files": [
-        "frontend/src/components/AppHeader.tsx",
-        "frontend/src/components/BoostModal.tsx",
-        "frontend/src/components/BottomNav.tsx",
-        "frontend/src/components/CategoryFilter.tsx",
-        "frontend/src/components/ConversationItem.tsx",
-        "frontend/src/components/FeaturedListingsRow.tsx",
-        "frontend/src/components/GuestNamePrompt.tsx",
-        "frontend/src/components/HeroSection.tsx",
-        "frontend/src/components/InlineEditField.tsx",
-        "frontend/src/components/InstallBanner.tsx",
-        "frontend/src/components/ListingCard.tsx",
-        "frontend/src/components/LoginPrompt.tsx",
-        "frontend/src/components/MessageBubble.tsx",
-        "frontend/src/components/MyListingCard.tsx",
-        "frontend/src/components/PhotoCarousel.tsx",
-        "frontend/src/components/PhotoUpload.tsx",
-        "frontend/src/components/ProfileSetup.tsx",
-        "frontend/src/components/ProfileStatsRow.tsx",
-        "frontend/src/components/RecentSearchChips.tsx",
-        "frontend/src/components/ReportModal.tsx",
-        "frontend/src/components/ReviewForm.tsx",
-        "frontend/src/components/ReviewsList.tsx",
-        "frontend/src/components/SearchBar.tsx",
-        "frontend/src/components/SellerInfo.tsx",
-        "frontend/src/components/SkeletonListingCard.tsx",
-        "frontend/src/components/StarRating.tsx",
-        "frontend/src/components/ZeroResultsState.tsx",
-        "frontend/src/index.css",
-        "frontend/src/pages/Chat.tsx",
-        "frontend/src/pages/CreateListing.tsx",
-        "frontend/src/pages/EditListing.tsx",
-        "frontend/src/pages/HomeFeed.tsx",
-        "frontend/src/pages/ListingDetail.tsx",
-        "frontend/src/pages/MessageThread.tsx",
-        "frontend/src/pages/Profile.tsx",
-        "frontend/src/pages/PublicProfile.tsx",
-        "frontend/src/pages/Search.tsx",
-        "frontend/tailwind.config.js"
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/CreateListing.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -55,6 +19,72 @@
       ],
       "testIds": [
         "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-enhance-the-authenticated-user-s-profile-page-to-display-a-comprehensive-dashboard-showing-all-user-information-after-login-the-profile-must-include-an-editable-profile-picture-avatar-upload-display-name-phone-number-location-account-creation-date-and-any-other-stored-profile-fields-all-fields-should-be-inline-editable-or-accessible-via-an-edit-profile-modal-form",
+      "featureTitle": "Enhance the authenticated user's Profile page to display a comprehensive dashboard showing all user information after login. The profile must include: an editable profile picture (avatar upload), display name, phone number, location, account creation date, and any other stored profile fields. All fields should be inline-editable or accessible via an edit profile modal/form.",
+      "files": [
+        "frontend/src/components/AppHeader.tsx",
+        "frontend/src/components/EditProfileForm.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/Profile.tsx"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-my-listings-section-to-the-authenticated-user-s-profile-page-that-lists-all-listings-created-by-the-user-active-sold-and-draft-each-listing-card-should-show-the-listing-thumbnail-title-price-status-badge-and-action-buttons-for-edit-delete-and-boost-tapping-edit-should-navigate-to-the-editlisting-page-for-that-listing-users-should-also-be-able-to-create-a-new-listing-directly-from-the-profile-page-via-a-prominent-create-listing-button",
+      "featureTitle": "Add a 'My Listings' section to the authenticated user's Profile page that lists all listings created by the user (active, sold, and draft). Each listing card should show the listing thumbnail, title, price, status badge, and action buttons for Edit, Delete, and Boost. Tapping Edit should navigate to the EditListing page for that listing. Users should also be able to create a new listing directly from the profile page via a prominent 'Create Listing' button.",
+      "files": [
+        "frontend/src/components/MyListingCard.tsx",
+        "frontend/src/components/ProfileTabs.tsx",
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-reviews-received-section-to-the-authenticated-user-s-profile-page-that-displays-all-reviews-left-for-this-user-showing-reviewer-avatar-name-star-rating-comment-and-date-also-display-aggregate-stats-average-rating-total-reviews-total-listings-followers-count-in-a-stats-row-at-the-top-of-the-profile",
+      "featureTitle": "Add a 'Reviews Received' section to the authenticated user's Profile page that displays all reviews left for this user, showing reviewer avatar, name, star rating, comment, and date. Also display aggregate stats (average rating, total reviews, total listings, followers count) in a stats row at the top of the profile.",
+      "files": [
+        "frontend/src/components/ProfileTabs.tsx",
+        "frontend/src/pages/Profile.tsx"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
       ],
       "confidence": "high"
     }

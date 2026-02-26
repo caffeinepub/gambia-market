@@ -1,184 +1,236 @@
-import { useState } from 'react';
-import { useInternetIdentity } from './hooks/useInternetIdentity';
-import { useQueryClient } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from '@/components/ui/sonner';
 import AppHeader from './components/AppHeader';
 import BottomNav from './components/BottomNav';
 import HomeFeed from './pages/HomeFeed';
+import Search from './pages/Search';
 import CreateListing from './pages/CreateListing';
-import Chat from './pages/Chat';
-import Profile from './pages/Profile';
+import EditListing from './pages/EditListing';
 import ListingDetail from './pages/ListingDetail';
+import Profile from './pages/Profile';
+import Chat from './pages/Chat';
 import MessageThread from './pages/MessageThread';
 import PublicProfile from './pages/PublicProfile';
-import EditListing from './pages/EditListing';
 import InstallBanner from './components/InstallBanner';
-import { Toaster } from './components/ui/sonner';
-import { ThemeProvider } from './contexts/ThemeContext';
-import type { ListingId } from './backend';
-import type { Principal } from '@icp-sdk/core/principal';
+import { useInternetIdentity } from './hooks/useInternetIdentity';
+import { Principal } from '@dfinity/principal';
 
-// Internal navigation state — keeps all routing in App without a router library
-export type AppPage =
-  | { name: 'home' }
-  | { name: 'sell' }
-  | { name: 'chat' }
-  | { name: 'profile' }
-  | { name: 'listing-detail'; listingId: ListingId }
-  | { name: 'message-thread'; listingId: ListingId; otherUserId: Principal; otherUserName: string }
-  | { name: 'public-profile'; userId: Principal }
-  | { name: 'edit-listing'; listingId: ListingId };
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 2,
+      retry: 1,
+    },
+  },
+});
 
-export type NavTab = 'home' | 'search' | 'sell' | 'chat' | 'profile';
+type Page =
+  | 'home'
+  | 'search'
+  | 'create-listing'
+  | 'edit-listing'
+  | 'listing-detail'
+  | 'profile'
+  | 'chat'
+  | 'message-thread'
+  | 'public-profile';
 
 function AppContent() {
-  const [currentPage, setCurrentPage] = useState<AppPage>({ name: 'home' });
-  const [activeTab, setActiveTab] = useState<NavTab>('home');
-  const { identity, clear } = useInternetIdentity();
-  const queryClient = useQueryClient();
+  const [currentPage, setCurrentPage] = useState<Page>('home');
+  const [selectedListingId, setSelectedListingId] = useState<bigint | null>(null);
+  const [editListingId, setEditListingId] = useState<bigint | null>(null);
+  const [messageThreadData, setMessageThreadData] = useState<{
+    listingId: bigint;
+    otherUserId: Principal;
+    otherUserName: string;
+  } | null>(null);
+  const [publicProfileId, setPublicProfileId] = useState<Principal | null>(null);
 
-  const navigate = (page: AppPage) => {
-    setCurrentPage(page);
-    if (page.name === 'home') setActiveTab('home');
-    else if (page.name === 'sell' || page.name === 'edit-listing') setActiveTab('sell');
-    else if (page.name === 'chat' || page.name === 'message-thread') setActiveTab('chat');
-    else if (page.name === 'profile' || page.name === 'public-profile') setActiveTab('profile');
+  const { identity } = useInternetIdentity();
+  const isAuthenticated = !!identity;
+
+  const navigate = (page: Page) => setCurrentPage(page);
+
+  const handleListingClick = (listingId: bigint) => {
+    setSelectedListingId(listingId);
+    navigate('listing-detail');
   };
 
-  const handleTabChange = (tab: NavTab) => {
-    setActiveTab(tab);
-    if (tab === 'home') setCurrentPage({ name: 'home' });
-    else if (tab === 'search') setCurrentPage({ name: 'home' });
-    else if (tab === 'sell') setCurrentPage({ name: 'sell' });
-    else if (tab === 'chat') setCurrentPage({ name: 'chat' });
-    else if (tab === 'profile') setCurrentPage({ name: 'profile' });
+  const handleEditListing = (listingId: bigint) => {
+    setEditListingId(listingId);
+    navigate('edit-listing');
   };
 
-  const handleLogout = async () => {
-    await clear();
-    queryClient.clear();
-    setCurrentPage({ name: 'home' });
-    setActiveTab('home');
+  const handleCreateListingSuccess = (listingId: bigint) => {
+    setSelectedListingId(listingId);
+    navigate('listing-detail');
+  };
+
+  // Chat.tsx: onConversationClick(otherUserId: Principal, listingId: bigint)
+  const handleConversationClick = (otherUserId: Principal, listingId: bigint) => {
+    setMessageThreadData({ listingId, otherUserId, otherUserName: '' });
+    navigate('message-thread');
+  };
+
+  // ListingDetail.tsx: onMessageSeller(sellerId: Principal, listingId: ListingId)
+  const handleMessageSeller = (sellerId: Principal, listingId: bigint) => {
+    setMessageThreadData({ listingId, otherUserId: sellerId, otherUserName: '' });
+    navigate('message-thread');
+  };
+
+  const handleSellerClick = (sellerId: Principal) => {
+    setPublicProfileId(sellerId);
+    navigate('public-profile');
+  };
+
+  const handleSellClick = () => {
+    navigate('create-listing');
+  };
+
+  const handleProfileClick = () => {
+    navigate('profile');
+  };
+
+  const handleTabChange = (tab: string) => {
+    switch (tab) {
+      case 'home': navigate('home'); break;
+      case 'search': navigate('search'); break;
+      case 'sell': handleSellClick(); break;
+      case 'chat': navigate('chat'); break;
+      case 'profile': handleProfileClick(); break;
+    }
+  };
+
+  const getActiveTab = (): string => {
+    switch (currentPage) {
+      case 'home': return 'home';
+      case 'search': return 'search';
+      case 'chat': return 'chat';
+      case 'profile': return 'profile';
+      default: return 'home';
+    }
   };
 
   const renderPage = () => {
-    switch (currentPage.name) {
+    switch (currentPage) {
       case 'home':
         return (
           <HomeFeed
-            onListingClick={(id) => navigate({ name: 'listing-detail', listingId: id })}
-            onSellClick={() => navigate({ name: 'sell' })}
+            onListingClick={handleListingClick}
+            onSellClick={handleSellClick}
           />
         );
-      case 'sell':
+
+      case 'search':
+        return (
+          <Search
+            onListingClick={handleListingClick}
+            onBack={() => navigate('home')}
+          />
+        );
+
+      case 'create-listing':
         return (
           <CreateListing
-            onBack={() => navigate({ name: 'home' })}
-            onSuccess={() => navigate({ name: 'home' })}
+            onBack={() => navigate('home')}
+            onSuccess={handleCreateListingSuccess}
           />
         );
-      case 'chat':
-        return (
-          <Chat
-            onConversationClick={(otherUserId, listingId) =>
-              navigate({
-                name: 'message-thread',
-                listingId,
-                otherUserId,
-                otherUserName: '',
-              })
-            }
+
+      case 'edit-listing':
+        return editListingId !== null ? (
+          <EditListing
+            listingId={editListingId}
+            onCancel={() => navigate('profile')}
+            onSuccess={() => navigate('profile')}
           />
-        );
+        ) : null;
+
+      case 'listing-detail':
+        return selectedListingId !== null ? (
+          <ListingDetail
+            listingId={selectedListingId}
+            onBack={() => navigate('home')}
+            onMessageSeller={handleMessageSeller}
+            onSellerClick={handleSellerClick}
+          />
+        ) : null;
+
       case 'profile':
         return (
           <Profile
-            onLogout={handleLogout}
-            onListingClick={(id) => navigate({ name: 'listing-detail', listingId: id })}
-            onEditListing={(id) => navigate({ name: 'edit-listing', listingId: id })}
+            onCreateListing={() => navigate('create-listing')}
+            onEditListing={handleEditListing}
+            onListingClick={handleListingClick}
           />
         );
-      case 'listing-detail':
+
+      case 'chat':
         return (
-          <ListingDetail
-            listingId={currentPage.listingId}
-            onBack={() => navigate({ name: 'home' })}
-            onMessageSeller={(sellerId, listingId) =>
-              navigate({
-                name: 'message-thread',
-                listingId,
-                otherUserId: sellerId,
-                otherUserName: '',
-              })
-            }
-            onSellerClick={(userId) => navigate({ name: 'public-profile', userId })}
+          <Chat
+            onConversationClick={handleConversationClick}
           />
         );
+
       case 'message-thread':
-        return (
+        return messageThreadData ? (
           <MessageThread
-            listingId={currentPage.listingId}
-            otherUserId={currentPage.otherUserId}
-            otherUserName={currentPage.otherUserName}
-            onBack={() => navigate({ name: 'chat' })}
+            listingId={messageThreadData.listingId}
+            otherUserId={messageThreadData.otherUserId}
+            otherUserName={messageThreadData.otherUserName}
+            onBack={() => navigate('chat')}
           />
-        );
+        ) : null;
+
       case 'public-profile':
-        return (
+        return publicProfileId ? (
           <PublicProfile
-            userId={currentPage.userId}
-            onBack={() => navigate({ name: 'home' })}
-            onListingClick={(id) => navigate({ name: 'listing-detail', listingId: id })}
+            userId={publicProfileId}
+            onBack={() => navigate('home')}
+            onListingClick={handleListingClick}
           />
-        );
-      case 'edit-listing':
-        return (
-          <EditListing
-            listingId={currentPage.listingId}
-            onSuccess={(id) => navigate({ name: 'listing-detail', listingId: id })}
-            onCancel={() => navigate({ name: 'profile' })}
-          />
-        );
+        ) : null;
+
       default:
         return (
           <HomeFeed
-            onListingClick={(id) => navigate({ name: 'listing-detail', listingId: id })}
-            onSellClick={() => navigate({ name: 'sell' })}
+            onListingClick={handleListingClick}
+            onSellClick={handleSellClick}
           />
         );
     }
   };
 
-  const showBottomNav = currentPage.name !== 'message-thread';
+  const showBottomNav = !['message-thread', 'create-listing', 'edit-listing'].includes(currentPage);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen bg-background">
       <AppHeader
-        onLogoClick={() => navigate({ name: 'home' })}
-        onSearchClick={() => handleTabChange('home')}
-        onProfileClick={() => handleTabChange('profile')}
-        onSellClick={() => navigate({ name: 'sell' })}
+        onSearch={() => navigate('search')}
+        onSell={handleSellClick}
+        onProfile={handleProfileClick}
+        onLogin={() => navigate('profile')}
       />
-
-      <main className="flex-1 overflow-y-auto pb-20">
+      <main className={showBottomNav ? 'pb-16' : ''}>
         {renderPage()}
       </main>
-
       {showBottomNav && (
-        <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
+        <BottomNav
+          activeTab={getActiveTab()}
+          onTabChange={handleTabChange}
+        />
       )}
-
       <InstallBanner />
       <Toaster richColors position="top-center" />
     </div>
   );
 }
 
-function App() {
+export default function App() {
   return (
-    <ThemeProvider>
+    <QueryClientProvider client={queryClient}>
       <AppContent />
-    </ThemeProvider>
+    </QueryClientProvider>
   );
 }
-
-export default App;

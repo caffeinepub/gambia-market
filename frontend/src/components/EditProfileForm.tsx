@@ -1,81 +1,106 @@
-import { useState } from 'react';
-import { User, MapPin } from 'lucide-react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { useUpdateUser } from '../hooks/useQueries';
-import { toast } from 'sonner';
-import type { UserProfile } from '../backend';
+import React, { useState } from 'react';
+import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useUpdateProfile } from '../hooks/useQueries';
 
 interface EditProfileFormProps {
-  profile: UserProfile;
-  onCancel: () => void;
-  onSuccess: () => void;
+  currentName: string;
+  currentLocation: string;
+  currentPhone?: string;
+  onSaved?: () => void;
 }
 
-export default function EditProfileForm({ profile, onCancel, onSuccess }: EditProfileFormProps) {
-  const [name, setName] = useState(profile.name);
-  const [location, setLocation] = useState(profile.location);
-  const updateUser = useUpdateUser();
+export default function EditProfileForm({ currentName, currentLocation, currentPhone = '', onSaved }: EditProfileFormProps) {
+  const [name, setName] = useState(currentName);
+  const [location, setLocation] = useState(currentLocation);
+  const [phone, setPhone] = useState(currentPhone);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const updateProfile = useUpdateProfile();
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!name.trim()) newErrors.name = 'Name is required';
+    if (!location.trim()) newErrors.location = 'Location is required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) {
-      toast.error('Name is required');
-      return;
-    }
+    if (!validate()) return;
+
     try {
-      await updateUser.mutateAsync({ name: name.trim(), location: location.trim() });
-      toast.success('Profile updated!');
-      onSuccess();
+      await updateProfile.mutateAsync({
+        name: name.trim(),
+        phone: phone.trim(),
+        location: location.trim(),
+      });
+      onSaved?.();
     } catch {
-      toast.error('Failed to update profile');
+      // Error handled by mutation's onError
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4 bg-muted/50 rounded-xl border border-border">
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="edit-name" className="font-body font-medium text-sm">Name</Label>
-        <div className="relative">
-          <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            id="edit-name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="pl-9 h-11 text-base"
-            required
-          />
-        </div>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-1.5">
+        <Label htmlFor="edit-name" className="text-sm font-medium">
+          Display Name <span className="text-destructive">*</span>
+        </Label>
+        <Input
+          id="edit-name"
+          value={name}
+          onChange={(e) => { setName(e.target.value); setErrors(p => ({ ...p, name: '' })); }}
+          placeholder="Your name"
+          className={errors.name ? 'border-destructive' : ''}
+        />
+        {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="edit-location" className="font-body font-medium text-sm">Location</Label>
-        <div className="relative">
-          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            id="edit-location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="e.g. Banjul, Serrekunda"
-            className="pl-9 h-11 text-base"
-          />
-        </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="edit-phone" className="text-sm font-medium">
+          Phone Number
+        </Label>
+        <Input
+          id="edit-phone"
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder="+220 XXX XXXX"
+        />
       </div>
 
-      <div className="flex gap-2">
-        <Button type="submit" disabled={updateUser.isPending} className="flex-1 h-11">
-          {updateUser.isPending ? (
-            <span className="flex items-center gap-2">
-              <span className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+      <div className="space-y-1.5">
+        <Label htmlFor="edit-location" className="text-sm font-medium">
+          Location <span className="text-destructive">*</span>
+        </Label>
+        <Input
+          id="edit-location"
+          value={location}
+          onChange={(e) => { setLocation(e.target.value); setErrors(p => ({ ...p, location: '' })); }}
+          placeholder="e.g. Banjul, Gambia"
+          className={errors.location ? 'border-destructive' : ''}
+        />
+        {errors.location && <p className="text-xs text-destructive">{errors.location}</p>}
+      </div>
+
+      <div className="flex gap-2 pt-1">
+        <Button
+          type="submit"
+          className="flex-1 bg-brand-green hover:bg-brand-green/90 text-white"
+          disabled={updateProfile.isPending}
+        >
+          {updateProfile.isPending ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               Saving...
-            </span>
+            </>
           ) : (
             'Save Changes'
           )}
-        </Button>
-        <Button type="button" variant="outline" onClick={onCancel} className="h-11">
-          Cancel
         </Button>
       </div>
     </form>

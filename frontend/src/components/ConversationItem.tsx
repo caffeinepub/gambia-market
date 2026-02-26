@@ -20,7 +20,7 @@ export default function ConversationItem({
   isUnread,
   onClick,
 }: ConversationItemProps) {
-  const { data: profile } = useGetUserProfile(otherUserId.toString());
+  const { data: profile } = useGetUserProfile(otherUserId);
 
   const timeAgo = (ts: bigint) => {
     const ms = Number(ts) / 1_000_000;
@@ -33,6 +33,8 @@ export default function ConversationItem({
     return `${Math.floor(hrs / 24)}d`;
   };
 
+  const profilePicUrl = profile?.profilePic ? profile.profilePic.getDirectURL() : null;
+
   return (
     <button
       onClick={onClick}
@@ -42,11 +44,11 @@ export default function ConversationItem({
     >
       {/* Avatar */}
       <div className="w-11 h-11 rounded-2xl shrink-0 overflow-hidden border border-border">
-        {profile?.profilePicUrl ? (
-          <img src={profile.profilePicUrl} alt={profile.name} className="w-full h-full object-cover" />
+        {profilePicUrl ? (
+          <img src={profilePicUrl} alt={profile?.name} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full gradient-primary flex items-center justify-center">
-            <span className="font-display font-bold text-base text-primary-foreground">
+          <div className="w-full h-full bg-primary/10 flex items-center justify-center">
+            <span className="font-display font-bold text-base text-primary">
               {profile?.name?.charAt(0)?.toUpperCase() ?? '?'}
             </span>
           </div>
@@ -70,7 +72,7 @@ export default function ConversationItem({
       </div>
 
       {isUnread && (
-        <div className="w-2 h-2 rounded-full shrink-0" style={{ background: 'var(--primary)' }} />
+        <div className="w-2 h-2 rounded-full shrink-0 bg-primary" />
       )}
     </button>
   );

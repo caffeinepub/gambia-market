@@ -1,74 +1,52 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-26T02:05:00.356Z",
-  "summary": "The diff shows a comprehensive visual redesign across many frontend components. Most requirements of REQ-1 appear to be addressed — components like AppHeader, BottomNav, HeroSection, ListingCard, and many others have been restyled. However, the diff summary notes that 22 modified files were omitted due to limits, meaning we cannot confirm all acceptance criteria directly. Key files like index.css and tailwind.config.js (where the new color palette should be defined) are not visible in the diff, nor are the page-level files (HomeFeed, ListingDetail, Profile, Search, Chat). The visible components do use CSS custom properties (--primary, --accent, --brand-coral, etc.) and new typography classes (font-display, font-body), suggesting a theme system exists, but we cannot confirm the palette fully replaces OKLCH tokens or that dark mode variants are updated without seeing index.css/tailwind.config.js.",
+  "generatedAt": "2026-02-26T02:53:18.119Z",
+  "summary": "The diff implements most of the requested requirements. REQ-1 (CreateListing fix), REQ-2 (Profile page with avatar/edit), REQ-3 (My Listings section), REQ-4 (Reviews section with stats), and REQ-5 (backend ExternalBlob avatar) are all addressed. However, REQ-4's aggregate stats row is referenced via a ProfileStatsRow component that is not included in the diff, making it unverifiable. Overall coverage is strong with minor gaps in verifiable evidence.",
   "missing_requirements": [
     {
-      "id": "REQ-1",
-      "requirement": "A new color palette is defined in index.css and tailwind.config.js, replacing the current OKLCH tokens",
-      "reason": "Neither index.css nor tailwind.config.js appear in the diff summary. The HeroSection component still uses raw OKLCH tokens inline, suggesting OKLCH tokens may not have been fully replaced in the central config files.",
+      "requirement": "Display aggregate stats row (average rating, total reviews, total listings, followers count) at the top of the profile page",
+      "reason": "Profile.tsx references a 'ProfileStatsRow' component but this component file is not included in the diff (omitted due to limits). Its implementation cannot be verified from the available evidence.",
       "evidence": [
-        "frontend/src/components/HeroSection.tsx"
+        "frontend/src/pages/Profile.tsx",
+        "frontend/src/components/ProfileTabs.tsx"
       ]
-    },
-    {
-      "id": "REQ-1",
-      "requirement": "Both light and dark mode variants are updated to reflect the new palette",
-      "reason": "index.css and tailwind.config.js are not present in the diff, so dark mode variant definitions cannot be confirmed as updated.",
-      "evidence": []
-    },
-    {
-      "id": "REQ-1",
-      "requirement": "The new theme is applied consistently across HomeFeed, ListingDetail, Profile, Search, Chat, and all shared components",
-      "reason": "The page-level files HomeFeed, ListingDetail, Profile, Search, and Chat are among the 22 omitted modified files and cannot be verified from the available diff.",
-      "evidence": []
     }
   ],
-  "hallucinated_features": [],
-  "confidence": 0.52,
+  "hallucinated_features": [
+    {
+      "description": "Migration module (backend/migration.mo) that handles data migration from old UserProfile (profilePicUrl: ?Text) to new UserProfile (profilePic: ?Storage.ExternalBlob)",
+      "reason": "The build request only asked to update the UserProfile type and mutation; no explicit migration module or data migration logic was requested.",
+      "evidence": [
+        "backend/migration.mo"
+      ]
+    }
+  ],
+  "confidence": 0.8,
   "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
     "frontend/src/App.tsx",
     "frontend/src/components/AppHeader.tsx",
-    "frontend/src/components/AuthGuard.tsx",
     "frontend/src/components/BoostModal.tsx",
-    "frontend/src/components/BottomNav.tsx",
-    "frontend/src/components/CategoryFilter.tsx",
     "frontend/src/components/ConversationItem.tsx",
-    "frontend/src/components/FeaturedListingsRow.tsx",
-    "frontend/src/components/GuestNamePrompt.tsx",
-    "frontend/src/components/HeroSection.tsx",
-    "frontend/src/components/InlineEditField.tsx",
-    "frontend/src/components/InstallBanner.tsx",
-    "frontend/src/components/ListingCard.tsx",
-    "frontend/src/components/LoginPrompt.tsx",
+    "frontend/src/components/EditProfileForm.tsx",
     "frontend/src/components/MessageBubble.tsx",
     "frontend/src/components/MyListingCard.tsx",
-    "frontend/src/components/PhotoCarousel.tsx",
-    "frontend/src/components/PhotoUpload.tsx",
-    "frontend/src/components/ProfileSetup.tsx",
-    "frontend/src/components/ProfileStatsRow.tsx",
-    "frontend/src/components/RecentSearchChips.tsx",
-    "frontend/src/components/ReportModal.tsx",
+    "frontend/src/components/ProfileTabs.tsx",
     "frontend/src/components/ReviewForm.tsx",
     "frontend/src/components/ReviewsList.tsx",
-    "frontend/src/components/SearchBar.tsx",
     "frontend/src/components/SellerInfo.tsx",
-    "frontend/src/components/SkeletonListingCard.tsx",
-    "frontend/src/components/StarRating.tsx",
-    "frontend/src/components/ZeroResultsState.tsx",
-    "frontend/src/index.css",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/hooks/useUnreadMessageCount.ts",
     "frontend/src/pages/Chat.tsx",
     "frontend/src/pages/CreateListing.tsx",
     "frontend/src/pages/EditListing.tsx",
     "frontend/src/pages/HomeFeed.tsx",
     "frontend/src/pages/ListingDetail.tsx",
-    "frontend/src/pages/MessageThread.tsx",
     "frontend/src/pages/Profile.tsx",
     "frontend/src/pages/PublicProfile.tsx",
-    "frontend/src/pages/Search.tsx",
-    "frontend/tailwind.config.js",
     "project_state.json"
   ]
 }

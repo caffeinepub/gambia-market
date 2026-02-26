@@ -19,7 +19,8 @@ export default function ReviewForm({ revieweeId, listingId, onSuccess }: ReviewF
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (stars === 0) return;
-    await createReview.mutateAsync({ revieweeId, listingId, stars: BigInt(stars), comment });
+    // stars is a number, useCreateReview expects number
+    await createReview.mutateAsync({ revieweeId, listingId, stars, comment });
     setStars(0);
     setComment('');
     onSuccess?.();
@@ -52,7 +53,7 @@ export default function ReviewForm({ revieweeId, listingId, onSuccess }: ReviewF
       <button
         type="submit"
         disabled={stars === 0 || createReview.isPending}
-        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-body font-semibold text-sm text-primary-foreground transition-all duration-200 shadow-button disabled:opacity-60"
+        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-body font-semibold text-sm text-primary-foreground transition-all duration-200 disabled:opacity-60"
         style={{ background: 'var(--primary)' }}
       >
         <Send className="w-4 h-4" />

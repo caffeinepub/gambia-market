@@ -100,12 +100,12 @@ export const BoostOption = IDL.Record({
 });
 export const UserProfile = IDL.Record({
   'id' : IDL.Principal,
-  'profilePicUrl' : IDL.Opt(IDL.Text),
   'verified' : IDL.Bool,
   'name' : IDL.Text,
   'createdAt' : Time,
   'phone' : IDL.Text,
   'followers' : IDL.Nat,
+  'profilePic' : IDL.Opt(ExternalBlob),
   'location' : IDL.Text,
   'highestRating' : IDL.Nat,
 });
@@ -185,7 +185,6 @@ export const idlService = IDL.Service({
       [ListingId],
       [],
     ),
-  'createOrUpdateUserProfile' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'createReport' : IDL.Func([IDL.Principal, IDL.Text], [ReportId], []),
   'createReview' : IDL.Func(
       [IDL.Principal, ListingId, IDL.Nat, IDL.Text],
@@ -282,7 +281,7 @@ export const idlService = IDL.Service({
       [],
     ),
   'updateListingStatus' : IDL.Func([ListingId, IDL.Text], [], []),
-  'updateProfilePic' : IDL.Func([IDL.Text], [], []),
+  'updateProfilePicture' : IDL.Func([IDL.Opt(ExternalBlob)], [], []),
   'updateReportStatus' : IDL.Func([ReportId, IDL.Text], [], []),
   'updateTransactionStatus' : IDL.Func([TransactionId, IDL.Text], [], []),
 });
@@ -382,12 +381,12 @@ export const idlFactory = ({ IDL }) => {
   });
   const UserProfile = IDL.Record({
     'id' : IDL.Principal,
-    'profilePicUrl' : IDL.Opt(IDL.Text),
     'verified' : IDL.Bool,
     'name' : IDL.Text,
     'createdAt' : Time,
     'phone' : IDL.Text,
     'followers' : IDL.Nat,
+    'profilePic' : IDL.Opt(ExternalBlob),
     'location' : IDL.Text,
     'highestRating' : IDL.Nat,
   });
@@ -467,7 +466,6 @@ export const idlFactory = ({ IDL }) => {
         [ListingId],
         [],
       ),
-    'createOrUpdateUserProfile' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'createReport' : IDL.Func([IDL.Principal, IDL.Text], [ReportId], []),
     'createReview' : IDL.Func(
         [IDL.Principal, ListingId, IDL.Nat, IDL.Text],
@@ -572,7 +570,7 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'updateListingStatus' : IDL.Func([ListingId, IDL.Text], [], []),
-    'updateProfilePic' : IDL.Func([IDL.Text], [], []),
+    'updateProfilePicture' : IDL.Func([IDL.Opt(ExternalBlob)], [], []),
     'updateReportStatus' : IDL.Func([ReportId, IDL.Text], [], []),
     'updateTransactionStatus' : IDL.Func([TransactionId, IDL.Text], [], []),
   });

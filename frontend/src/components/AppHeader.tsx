@@ -1,96 +1,113 @@
-import React from 'react';
-import { Search, Sun, Moon, User, Plus, ShoppingBag } from 'lucide-react';
-import { useTheme } from '../contexts/ThemeContext';
+import React, { useState } from 'react';
+import { Search, Plus, User, LogIn, Bell } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useGetCallerUserProfile } from '../hooks/useQueries';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface AppHeaderProps {
-  onSearchClick?: () => void;
-  onProfileClick?: () => void;
-  onSellClick?: () => void;
-  onLogoClick?: () => void;
+  onSearch?: () => void;
+  onSell?: () => void;
+  onProfile?: () => void;
+  onLogin?: () => void;
 }
 
-export default function AppHeader({
-  onSearchClick,
-  onProfileClick,
-  onSellClick,
-  onLogoClick,
-}: AppHeaderProps) {
-  const { theme, toggleTheme } = useTheme();
+export default function AppHeader({ onSearch, onSell, onProfile, onLogin }: AppHeaderProps) {
+  const { identity, login, clear, loginStatus } = useInternetIdentity();
+  const isAuthenticated = !!identity;
+  const queryClient = useQueryClient();
+
+  const { data: userProfile } = useGetCallerUserProfile();
+
+  const handleAuth = async () => {
+    if (isAuthenticated) {
+      await clear();
+      queryClient.clear();
+    } else {
+      if (onLogin) {
+        onLogin();
+      } else {
+        try {
+          await login();
+        } catch (error: unknown) {
+          const err = error as Error;
+          if (err?.message === 'User is already authenticated') {
+            await clear();
+            setTimeout(() => login(), 300);
+          }
+        }
+      }
+    }
+  };
+
+  const profilePicUrl = userProfile?.profilePic ? userProfile.profilePic.getDirectURL() : null;
+  const initials = userProfile?.name
+    ? userProfile.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
+    : '?';
 
   return (
-    <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md shadow-header border-b border-border">
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center gap-3">
+    <header className="sticky top-0 z-50 bg-background border-b border-border shadow-sm">
+      <div className="max-w-screen-xl mx-auto px-4 h-14 flex items-center gap-3">
         {/* Logo */}
-        <button
-          onClick={onLogoClick}
-          className="flex items-center gap-2.5 shrink-0 group"
-        >
-          <div className="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center shadow-button">
-            <ShoppingBag className="w-5 h-5 text-primary-foreground" />
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="w-8 h-8 bg-brand-green rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-sm">GM</span>
           </div>
-          <div className="hidden sm:block">
-            <span className="font-display font-bold text-lg text-foreground leading-none">
-              Gambia
-            </span>
-            <span className="font-display font-bold text-lg leading-none" style={{ color: 'var(--brand-coral)' }}>
-              Market
-            </span>
-          </div>
-        </button>
+          <span className="font-bold text-foreground text-base hidden sm:block">Gambia Market</span>
+        </div>
 
-        {/* Search bar — desktop */}
+        {/* Search bar */}
         <button
-          onClick={onSearchClick}
-          className="hidden md:flex flex-1 max-w-md items-center gap-3 px-4 py-2.5 rounded-xl bg-muted border border-border hover:border-primary/40 hover:bg-muted/80 transition-all duration-200 text-muted-foreground group"
+          onClick={onSearch}
+          className="flex-1 flex items-center gap-2 bg-muted rounded-full px-4 py-2 text-sm text-muted-foreground hover:bg-muted/80 transition-colors min-w-0"
         >
-          <Search className="w-4 h-4 shrink-0 group-hover:text-primary transition-colors" />
-          <span className="text-sm font-body">Search listings, categories…</span>
+          <Search className="w-4 h-4 shrink-0" />
+          <span className="truncate">Search listings...</span>
         </button>
-
-        <div className="flex-1 md:hidden" />
 
         {/* Actions */}
-        <div className="flex items-center gap-1.5">
-          {/* Search — mobile */}
-          <button
-            onClick={onSearchClick}
-            className="md:hidden w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-200"
-            aria-label="Search"
-          >
-            <Search className="w-5 h-5" />
-          </button>
+        <div className="flex items-center gap-2 shrink-0">
+          {isAuthenticated && (
+            <Button
+              onClick={onSell}
+              size="sm"
+              className="bg-brand-green hover:bg-brand-green/90 text-white gap-1.5 hidden sm:flex"
+            >
+              <Plus className="w-4 h-4" />
+              Sell
+            </Button>
+          )}
 
-          {/* Theme toggle */}
-          <button
-            onClick={toggleTheme}
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-200"
-            aria-label="Toggle theme"
-          >
-            {theme === 'dark' ? (
-              <Sun className="w-5 h-5" />
-            ) : (
-              <Moon className="w-5 h-5" />
-            )}
-          </button>
-
-          {/* Sell button */}
-          <button
-            onClick={onSellClick}
-            className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl font-body font-semibold text-sm transition-all duration-200 shadow-button-accent text-accent-foreground"
-            style={{ background: 'var(--accent)' }}
-          >
-            <Plus className="w-4 h-4" />
-            <span>Sell</span>
-          </button>
-
-          {/* Profile */}
-          <button
-            onClick={onProfileClick}
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-200"
-            aria-label="Profile"
-          >
-            <User className="w-5 h-5" />
-          </button>
+          {isAuthenticated ? (
+            <button
+              onClick={onProfile}
+              className="w-9 h-9 rounded-full overflow-hidden border-2 border-brand-green/30 hover:border-brand-green transition-colors"
+              title="My Profile"
+            >
+              <Avatar className="w-full h-full">
+                {profilePicUrl ? (
+                  <AvatarImage src={profilePicUrl} alt={userProfile?.name || 'Profile'} />
+                ) : null}
+                <AvatarFallback className="bg-brand-green text-white text-xs font-bold">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+            </button>
+          ) : (
+            <Button
+              onClick={handleAuth}
+              variant="outline"
+              size="sm"
+              disabled={loginStatus === 'logging-in'}
+              className="gap-1.5"
+            >
+              <LogIn className="w-4 h-4" />
+              <span className="hidden sm:inline">
+                {loginStatus === 'logging-in' ? 'Logging in...' : 'Login'}
+              </span>
+            </Button>
+          )}
         </div>
       </div>
     </header>

@@ -1,9 +1,9 @@
 import Map "mo:core/Map";
+import Set "mo:core/Set";
 import List "mo:core/List";
 import Nat "mo:core/Nat";
-import Set "mo:core/Set";
-import Time "mo:core/Time";
 import Iter "mo:core/Iter";
+import Time "mo:core/Time";
 import Text "mo:core/Text";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
@@ -12,26 +12,14 @@ import MixinStorage "blob-storage/Mixin";
 import Storage "blob-storage/Storage";
 import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
+import Migration "migration";
 
-
-
+(with migration = Migration.run)
 actor {
   include MixinStorage();
 
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
-
-  type UserProfile = {
-    id : Principal;
-    name : Text;
-    phone : Text;
-    highestRating : Nat;
-    followers : Nat;
-    location : Text;
-    verified : Bool;
-    profilePicUrl : ?Text;
-    createdAt : Time.Time;
-  };
 
   type ListingId = Nat;
   type MessageId = Nat;
@@ -110,6 +98,18 @@ actor {
     propertySize : ?Nat;
     numBedrooms : ?Nat;
     isFurnished : ?Bool;
+  };
+
+  public type UserProfile = {
+    id : Principal;
+    name : Text;
+    phone : Text;
+    highestRating : Nat;
+    followers : Nat;
+    location : Text;
+    verified : Bool;
+    profilePic : ?Storage.ExternalBlob; // Updated field for external blob
+    createdAt : Time.Time;
   };
 
   type Message = {
@@ -211,8 +211,8 @@ actor {
       case (?p) { p.verified };
       case (null) { false };
     };
-    let profilePicUrl = switch (existing) {
-      case (?p) { p.profilePicUrl };
+    let profilePic = switch (existing) {
+      case (?p) { p.profilePic };
       case (null) { null };
     };
     let followerCount = switch (existing) {
@@ -226,51 +226,26 @@ actor {
       highestRating;
       location;
       verified;
-      profilePicUrl;
+      profilePic;
       followers = followerCount;
       createdAt;
     };
     users.add(caller, profile);
   };
 
-  public shared ({ caller }) func createOrUpdateUserProfile(name : Text, location : Text) : async () {
+  public shared ({ caller }) func updateProfilePicture(newProfilePic : ?Storage.ExternalBlob) : async () {
     if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
-      Runtime.trap("Unauthorized: Only users can update their profile");
+      Runtime.trap("Unauthorized: Only users can update their profile picture");
     };
-    let highestRating = getHighestRatingForReviewee(caller);
-    let existing = users.get(caller);
-    let createdAt = switch (existing) {
-      case (?p) { p.createdAt };
-      case (null) { Time.now() };
+    switch (users.get(caller)) {
+      case (?profile) {
+        let updatedProfile = { profile with profilePic = newProfilePic };
+        users.add(caller, updatedProfile);
+      };
+      case (null) {
+        Runtime.trap("User profile not found; please create a profile first");
+      };
     };
-    let phone = switch (existing) {
-      case (?p) { p.phone };
-      case (null) { "" };
-    };
-    let verified = switch (existing) {
-      case (?p) { p.verified };
-      case (null) { false };
-    };
-    let followerCount = switch (existing) {
-      case (?p) { p.followers };
-      case (null) { 0 };
-    };
-    let profilePicUrl = switch (existing) {
-      case (?p) { p.profilePicUrl };
-      case (null) { null };
-    };
-    let profile : UserProfile = {
-      id = caller;
-      name;
-      phone;
-      highestRating;
-      location;
-      verified;
-      profilePicUrl;
-      followers = followerCount;
-      createdAt;
-    };
-    users.add(caller, profile);
   };
 
   // ─── Listings ─────────────────────────────────────────────────────────────
@@ -884,23 +859,6 @@ actor {
       }
     );
     liked.toArray();
-  };
-
-  // ─── Profile photo management ─────────────────────────────────────────────
-
-  public shared ({ caller }) func updateProfilePic(url : Text) : async () {
-    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
-      Runtime.trap("Unauthorized: Only users can update their profile picture");
-    };
-    switch (users.get(caller)) {
-      case (?profile) {
-        let updatedProfile = { profile with profilePicUrl = ?url };
-        users.add(caller, updatedProfile);
-      };
-      case (null) {
-        Runtime.trap("User profile not found; please create a profile first");
-      };
-    };
   };
 
   // ─── Admin utilities ──────────────────────────────────────────────────────

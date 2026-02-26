@@ -14,7 +14,6 @@ export default function Chat({ onConversationClick }: ChatProps) {
   const { identity } = useInternetIdentity();
   const { data: messages, isLoading } = useMyConversations();
 
-  // Always call useMemo unconditionally — identity may be null
   const conversations = useMemo(() => {
     if (!messages || !identity) return [];
     const myId = identity.getPrincipal().toString();
@@ -72,10 +71,10 @@ export default function Chat({ onConversationClick }: ChatProps) {
         <div className="space-y-0">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="flex items-center gap-3 px-4 py-3.5 border-b border-border">
-              <div className="w-11 h-11 rounded-2xl shimmer shrink-0" />
+              <div className="w-11 h-11 rounded-2xl bg-muted animate-pulse shrink-0" />
               <div className="flex-1 space-y-2">
-                <div className="h-3.5 rounded-lg shimmer w-32" />
-                <div className="h-3 rounded-md shimmer w-48" />
+                <div className="h-3.5 rounded-lg bg-muted animate-pulse w-32" />
+                <div className="h-3 rounded-md bg-muted animate-pulse w-48" />
               </div>
             </div>
           ))}

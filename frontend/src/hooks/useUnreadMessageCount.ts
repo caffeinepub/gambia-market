@@ -29,7 +29,6 @@ export function useUnreadMessageCount(): number {
 
     let count = 0;
     for (const msg of conversations) {
-      // Only count messages received by the current user
       if (msg.receiverId.toString() !== currentUserId) continue;
       const key = `${msg.listingId.toString()}-${msg.senderId.toString()}`;
       const lastViewedTime = lastViewed[key] ?? 0;

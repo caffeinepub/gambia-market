@@ -1,15 +1,15 @@
 import React from 'react';
 import { Star } from 'lucide-react';
-import { useReviews, useGetUserProfile } from '../hooks/useQueries';
+import { useGetReviewsForUser, useGetUserProfile } from '../hooks/useQueries';
 import { Principal } from '@dfinity/principal';
-import StarRating from './StarRating';
+import { Review } from '../backend';
 
 interface ReviewsListProps {
   userId: Principal;
 }
 
-function ReviewItem({ review }: { review: any }) {
-  const { data: reviewer } = useGetUserProfile(review.reviewerId.toString());
+function ReviewItem({ review }: { review: Review }) {
+  const { data: reviewer } = useGetUserProfile(review.reviewerId as Principal);
 
   const timeAgo = (ts: bigint) => {
     const ms = Number(ts) / 1_000_000;
@@ -21,15 +21,17 @@ function ReviewItem({ review }: { review: any }) {
     return new Date(ms).toLocaleDateString();
   };
 
+  const profilePicUrl = reviewer?.profilePic ? reviewer.profilePic.getDirectURL() : null;
+
   return (
     <div className="bg-card rounded-2xl border border-border p-4 shadow-card">
       <div className="flex items-start gap-3">
         <div className="w-9 h-9 rounded-xl shrink-0 overflow-hidden border border-border">
-          {reviewer?.profilePicUrl ? (
-            <img src={reviewer.profilePicUrl} alt={reviewer.name} className="w-full h-full object-cover" />
+          {profilePicUrl ? (
+            <img src={profilePicUrl} alt={reviewer?.name} className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full gradient-primary flex items-center justify-center">
-              <span className="font-display font-bold text-sm text-primary-foreground">
+            <div className="w-full h-full bg-primary/10 flex items-center justify-center">
+              <span className="font-display font-bold text-sm text-primary">
                 {reviewer?.name?.charAt(0)?.toUpperCase() ?? '?'}
               </span>
             </div>
@@ -44,9 +46,20 @@ function ReviewItem({ review }: { review: any }) {
               {timeAgo(review.createdAt)}
             </span>
           </div>
-          <StarRating value={Number(review.stars)} readonly size="sm" />
+          <div className="flex items-center gap-0.5 mb-1">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                className={`w-3.5 h-3.5 ${
+                  i < Number(review.stars)
+                    ? 'fill-yellow-400 text-yellow-400'
+                    : 'text-muted-foreground/30'
+                }`}
+              />
+            ))}
+          </div>
           {review.comment && (
-            <p className="text-sm font-body text-muted-foreground mt-2 leading-relaxed">
+            <p className="text-sm font-body text-muted-foreground leading-relaxed">
               {review.comment}
             </p>
           )}
@@ -57,19 +70,19 @@ function ReviewItem({ review }: { review: any }) {
 }
 
 export default function ReviewsList({ userId }: ReviewsListProps) {
-  const { data: reviews, isLoading } = useReviews(userId);
+  const { data: reviews, isLoading } = useGetReviewsForUser(userId);
 
   if (isLoading) {
     return (
       <div className="space-y-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-card rounded-2xl border border-border p-4 shadow-card">
+          <div key={i} className="bg-card rounded-2xl border border-border p-4">
             <div className="flex items-start gap-3">
-              <div className="w-9 h-9 rounded-xl shimmer shrink-0" />
+              <div className="w-9 h-9 rounded-xl bg-muted animate-pulse shrink-0" />
               <div className="flex-1 space-y-2">
-                <div className="h-3.5 rounded-lg shimmer w-28" />
-                <div className="h-3 rounded-md shimmer w-20" />
-                <div className="h-3 rounded-md shimmer w-full" />
+                <div className="h-3.5 rounded-lg bg-muted animate-pulse w-28" />
+                <div className="h-3 rounded-md bg-muted animate-pulse w-20" />
+                <div className="h-3 rounded-md bg-muted animate-pulse w-full" />
               </div>
             </div>
           </div>

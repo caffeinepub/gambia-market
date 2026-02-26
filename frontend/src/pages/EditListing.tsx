@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Home } from 'lucide-react';
-import AuthGuard from '../components/AuthGuard';
 import PhotoUpload from '../components/PhotoUpload';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -19,6 +18,8 @@ import { Skeleton } from '../components/ui/skeleton';
 import { toast } from 'sonner';
 import { ListingCategory, RealEstateSubCategory } from '../backend';
 import type { ListingId, ExternalBlob } from '../backend';
+import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import LoginPrompt from '../components/LoginPrompt';
 
 const CONDITIONS = ['New', 'Used', 'Refurbished'];
 
@@ -54,7 +55,7 @@ const REAL_ESTATE_SUBCATEGORIES: { label: string; value: RealEstateSubCategory }
 
 interface EditListingProps {
   listingId: ListingId;
-  onSuccess: (id: ListingId) => void;
+  onSuccess: (id?: ListingId) => void;
   onCancel: () => void;
 }
 
@@ -116,7 +117,7 @@ function EditListingForm({ listingId, onSuccess, onCancel }: EditListingProps) {
         title: title.trim(),
         description: description.trim(),
         category: category as ListingCategory,
-        subCategory: isRealEstate && subCategory ? (subCategory as RealEstateSubCategory) : null,
+        subCategory: isRealEstate && subCategory ? (subCategory as string) : null,
         price: BigInt(Math.round(Number(price))),
         condition,
         photos,
@@ -125,7 +126,6 @@ function EditListingForm({ listingId, onSuccess, onCancel }: EditListingProps) {
         numBedrooms: isRealEstate && numBedrooms ? BigInt(Math.round(Number(numBedrooms))) : null,
         isFurnished: isRealEstate ? isFurnished : null,
       });
-      toast.success('Listing updated!');
       onSuccess(listingId);
     } catch {
       toast.error('Failed to update listing. Please try again.');
@@ -153,7 +153,6 @@ function EditListingForm({ listingId, onSuccess, onCancel }: EditListingProps) {
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5 px-4 py-5 max-w-2xl mx-auto w-full">
-        {/* Photos — use onPhotosChange prop */}
         <div className="flex flex-col gap-2">
           <Label className="font-body font-medium">Photos (up to 5)</Label>
           <PhotoUpload photos={photos} onPhotosChange={setPhotos} maxPhotos={5} />
@@ -187,7 +186,6 @@ function EditListingForm({ listingId, onSuccess, onCancel }: EditListingProps) {
           {errors.category && <p className="text-xs text-destructive font-body">{errors.category}</p>}
         </div>
 
-        {/* Real Estate subcategory */}
         {isRealEstate && (
           <div className="flex flex-col gap-1.5">
             <Label className="font-body font-medium flex items-center gap-1.5">
@@ -207,7 +205,6 @@ function EditListingForm({ listingId, onSuccess, onCancel }: EditListingProps) {
           </div>
         )}
 
-        {/* Real Estate specific fields */}
         {isRealEstate && (
           <div className="flex flex-col gap-4 p-4 bg-muted/40 rounded-xl border border-border">
             <p className="text-xs font-body font-semibold text-muted-foreground uppercase tracking-wide">Property Details</p>
@@ -326,9 +323,11 @@ function EditListingForm({ listingId, onSuccess, onCancel }: EditListingProps) {
 }
 
 export default function EditListing({ listingId, onSuccess, onCancel }: EditListingProps) {
-  return (
-    <AuthGuard onCancel={onCancel}>
-      <EditListingForm listingId={listingId} onSuccess={onSuccess} onCancel={onCancel} />
-    </AuthGuard>
-  );
+  const { identity } = useInternetIdentity();
+
+  if (!identity) {
+    return <LoginPrompt onCancel={onCancel} />;
+  }
+
+  return <EditListingForm listingId={listingId} onSuccess={onSuccess} onCancel={onCancel} />;
 }
