@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 15,
+  "projectStateVersion": 19,
   "summary": "Gambia Market is a local marketplace mobile app for The Gambia, designed to replace unorganized selling on WhatsApp/Facebook. The project has progressed from a blueprint/planning document phase to active development of the functional app. It allows users to buy and sell products and services locally with features including phone-number registration, location-based listings, in-app chat, mobile money payments, and a trust/safety system. Targeted at everyday Gambians, small business owners, market sellers, and youth entrepreneurs. The app prioritizes simple UI for low-end Android devices, low data usage, and fast loading on slow connections.",
   "architectural_notes": [
     "Tech stack: React Native (Expo) with NativeWind for mobile, Node.js/Express backend, PostgreSQL plus Redis, Socket.io for chat, Cloudinary for image storage",
@@ -10,10 +10,10 @@
     "Auth: Replace Internet Identity with Apple ID and Google OAuth as the only login methods; JWT sessions must be cross-device compatible"
   ],
   "known_issues": [
-    "Message button on Listing Detail page is not functioning"
+    "Message button on Listing Detail page is not functioning",
+    "App layout and organization needs improvement on mobile devices — spacing, alignment, and component ordering are inconsistent"
   ],
   "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Gambia Market app icon — warm green background with a bold white stylized market stall / basket logo mark, square format with rounded corners (app-icon.dim_512x512.png)\n- Gambia Market app icon smaller variant — same design as the 512px icon (app-icon-192.dim_192x192.png)",
   "existing_features": [
     {
       "id": "feature-create-a-visually-rich-interactive-single-page-web-application-that-presents-the-full-gambia-market-product-blueprint-the-app-should-have-a-tabbed-or-sectioned-navigation-allowing-users-to-browse-1-feature-breakdown-2-user-flows-3-database-structure-4-tech-stack-5-mvp-plan-6-future-features-7-monetization-strategy-and-8-development-roadmap-each-section-should-be-readable-well-organized-and-easy-to-share",
@@ -390,6 +390,30 @@
         "REQ-54"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-enhance-the-messagethread-chat-conversation-page-to-be-more-interactive-clear-and-simple-allow-authenticated-users-to-edit-their-own-sent-messages-inline-edit-with-a-pencil-icon-save-cancel-controls-and-delete-their-own-sent-messages-with-a-confirmation-prompt-show-an-edit-indicator-edited-below-edited-messages-in-the-backend-add-editmessage-and-deletemessage-functions-that-verify-the-caller-is-the-original-sender-before-modifying-or-soft-deleting-the-message",
+      "title": "Enhance the MessageThread (chat conversation) page to be more interactive, clear, and simple. Allow authenticated users to edit their own sent messages (inline edit with a pencil icon, save/cancel controls) and delete their own sent messages (with a confirmation prompt). Show an edit indicator ('edited') below edited messages. In the backend, add `editMessage` and `deleteMessage` functions that verify the caller is the original sender before modifying or soft-deleting the message.",
+      "reqIds": [
+        "REQ-55"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-real-estate-top-level-category-to-the-app-with-subcategories-land-properties-apartments-flats-houses-for-sale-houses-for-rent-commercial-spaces-and-short-let-holiday-rentals-update-the-category-list-in-the-frontend-data-constants-the-categoryfilter-component-and-the-create-listing-category-selector-to-include-real-estate-and-its-subcategories-update-the-backend-listing-schema-to-support-a-subcategory-field-optional-text-add-real-estate-specific-listing-fields-in-the-create-listing-form-subcategory-selector-property-size-optional-number-of-bedrooms-optional-and-furnished-unfurnished-toggle",
+      "title": "Add a 'Real Estate' top-level category to the app with subcategories: Land & Properties, Apartments & Flats, Houses for Sale, Houses for Rent, Commercial Spaces, and Short-Let / Holiday Rentals. Update the category list in the frontend data/constants, the CategoryFilter component, and the Create Listing category selector to include Real Estate and its subcategories. Update the backend listing schema to support a subcategory field (optional Text). Add Real Estate-specific listing fields in the Create Listing form: subcategory selector, property size (optional), number of bedrooms (optional), and furnished/unfurnished toggle.",
+      "reqIds": [
+        "REQ-57"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-entire-app-fully-responsive-across-mobile-320px-767px-tablet-768px-1023px-and-desktop-1024px-breakpoints-audit-and-fix-all-pages-homefeed-search-listingdetail-createlisting-messagethread-chat-profile-publicprofile-to-use-responsive-tailwind-grid-flex-layouts-on-desktop-show-a-two-column-layout-on-listing-detail-photos-left-details-right-show-a-sidebar-style-conversation-list-beside-the-message-thread-in-chat-and-show-the-create-listing-form-beside-a-live-preview-panel-on-tablet-use-two-column-listing-grids-ensure-all-tap-targets-are-at-minimum-44-44px-and-font-sizes-are-readable-on-small-screens-fix-any-overflow-or-horizontal-scroll-issues-on-small-devices",
+      "title": "Make the entire app fully responsive across mobile (320px–767px), tablet (768px–1023px), and desktop (1024px+) breakpoints. Audit and fix all pages — HomeFeed, Search, ListingDetail, CreateListing, MessageThread, Chat, Profile, PublicProfile — to use responsive Tailwind grid/flex layouts. On desktop: show a two-column layout on Listing Detail (photos left, details right), show a sidebar-style conversation list beside the message thread in Chat, and show the Create Listing form beside a live preview panel. On tablet: use two-column listing grids. Ensure all tap targets are at minimum 44×44px and font sizes are readable on small screens. Fix any overflow or horizontal scroll issues on small devices.",
+      "reqIds": [
+        "REQ-59"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -579,6 +603,154 @@
       "id": "AR-45",
       "summary": "Add an 'Install App' banner inside Gambia Market that automatically prompts mobile users (iOS and Android) to add the app to their home screen via the browser's Add to Home Screen mechanism (PWA install prompt)",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-46",
+      "summary": "Make the chat conversation page more interactive, clear, and simple — allow users to edit and delete sent messages",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-47",
+      "summary": "Add profile picture/avatar icon to chat conversation page",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-48",
+      "summary": "Add Real Estate category with subcategories: land/properties, apartments, and more",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-49",
+      "summary": "Make it easy and fast for users to save accounts, add new accounts, or switch between multiple accounts",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-50",
+      "summary": "Make the app fully responsive across all device sizes (mobile, tablet, desktop)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-52",
+      "summary": "Display the sender's profile picture (or initials avatar fallback) next to each message bubble in the MessageThread page. Show the current user's avatar on the right side of sent messages and the other user's avatar on the left side of received messages. Use the existing profilePicUrl field from UserProfile. Also display the other user's avatar/name in the ConversationItem list row.",
+      "reqIds": [
+        "REQ-56"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-54",
+      "summary": "Implement a multi-account / account-switching system on the frontend. In the Profile page, add a 'Switch Account' or 'Add Account' button that opens a bottom sheet or modal listing all saved identities (stored as a list of { label, principalId } in localStorage). Users can tap any saved account to switch to it (triggering re-authentication via Internet Identity for that identity) or tap '+ Add Account' to authenticate a new identity and save it. When switching, the app clears the current session and re-authenticates. Display the active account with a checkmark. This is a frontend-only UX layer — each identity still authenticates via Internet Identity individually.",
+      "reqIds": [
+        "REQ-58"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-55",
+      "summary": "Reorganize and polish the entire app layout to look perfect and well-organized on mobile devices — fix spacing, alignment, padding, typography, and component ordering across all pages",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-56",
+      "summary": "Audit and fix the AppHeader component for mobile: ensure the logo/brand text does not overflow on small screens (320px+), constrain icon button tap targets to at least 44×44px, and add consistent horizontal padding (px-4) so nothing touches the screen edge.",
+      "reqIds": [
+        "REQ-60"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-57",
+      "summary": "Audit and fix the BottomNav component for mobile: ensure all five tab items (Home, Search, Sell, Chat, Profile) are evenly distributed across the full width with equal flex spacing, labels are legible at small sizes (minimum 10px), the active tab indicator is clearly visible, and the nav is always fixed at the bottom with no content hidden behind it (add appropriate bottom padding to page content).",
+      "reqIds": [
+        "REQ-61"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-58",
+      "summary": "Fix the HomeFeed page mobile layout: ensure the listing grid uses a single column on mobile (grid-cols-1) and two columns on tablet (sm:grid-cols-2), the category filter row scrolls horizontally without causing page-level horizontal scroll, the FeaturedListingsRow horizontal scroll is contained within its bounds, the search bar has full width with proper padding, and the floating 'Sell Now' button does not overlap the BottomNav.",
+      "reqIds": [
+        "REQ-62"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-59",
+      "summary": "Fix the Search page mobile layout: the search bar must be auto-focused and full-width with proper padding, recent search chips must wrap correctly without overflow, filter panels must expand/collapse smoothly within the viewport width, and the results grid must use a single column on mobile.",
+      "reqIds": [
+        "REQ-63"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-60",
+      "summary": "Fix the ListingDetail page mobile layout: stack all content in a single column (photos carousel on top, then title/price/badges, then seller info, then description, then action buttons). Action buttons ('Message Seller', 'Make Offer') must be full-width, sticky at the bottom of the screen on mobile (above the BottomNav), and have minimum 44px height. The photo carousel must respect the viewport width without overflow.",
+      "reqIds": [
+        "REQ-64"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-61",
+      "summary": "Fix the CreateListing page mobile layout: the multi-step form must be single-column and full-width on mobile with consistent vertical spacing (gap-4) between fields, the step progress indicator must fit within the mobile viewport without text truncation, photo upload thumbnails must use a compact grid (3 columns max on mobile), and the submit button must be full-width and fixed above the BottomNav on mobile.",
+      "reqIds": [
+        "REQ-65"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-62",
+      "summary": "Fix the Chat (conversation list) page mobile layout: each ConversationItem must have adequate padding (p-3 minimum), text (name, last message preview) must be truncated with ellipsis to prevent overflow, timestamps must be right-aligned and not wrap, and the unauthenticated blurred overlay must cover the full content area without layout breaks.",
+      "reqIds": [
+        "REQ-66"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-63",
+      "summary": "Fix the MessageThread page mobile layout: the message input bar must be fixed at the bottom above the BottomNav with full width, message bubbles must not exceed 80% of the viewport width (max-w-[80vw]), the listing context header at the top must be compact and not overflow, avatar images next to bubbles must be correctly sized (32px) and not stretch the row, and the message list must have bottom padding sufficient to clear the fixed input bar.",
+      "reqIds": [
+        "REQ-67"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-64",
+      "summary": "Fix the Profile page mobile layout: the avatar/initials circle, name, and stats row must stack cleanly and be centered on mobile, the tab bar ('My Listings', 'Reviews', 'Activity', 'Following') must scroll horizontally if tabs overflow, MyListingCard items must use a compact single-column layout with properly sized thumbnails, inline edit fields must be full-width, and all buttons (Edit, Share Profile, Logout) must have minimum 44×44px tap targets.",
+      "reqIds": [
+        "REQ-68"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-65",
+      "summary": "Fix the PublicProfile page mobile layout: ensure the profile header (avatar, name, verified badge, rating, location) is properly centered and spaced, the 'Message This Seller' CTA is full-width and sticky at the bottom on mobile, and the reviews list uses consistent card padding without horizontal overflow.",
+      "reqIds": [
+        "REQ-69"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-66",
+      "summary": "Apply global mobile typography and spacing polish across all pages: ensure base font size is at minimum 14px for body text, section headings use consistent sizing (text-lg or text-xl), all interactive elements (buttons, links, inputs) have minimum 44px height/touch targets, form inputs have consistent padding (px-3 py-2.5 minimum) and rounded corners, and remove any hardcoded pixel widths that cause overflow on narrow viewports. Fix any instances of horizontal scroll introduced by wide fixed-width elements.",
+      "reqIds": [
+        "REQ-70"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-67",
+      "summary": "Fix modal and dialog components (ReportModal, BoostModal, GuestNamePrompt, and any confirmation dialogs) to be properly sized and positioned on mobile: modals must use a bottom-sheet style (slide up from bottom) on mobile with rounded top corners, a close/dismiss handle, and must not exceed 90vh in height, with internal content scrollable if it overflows.",
+      "reqIds": [
+        "REQ-71"
+      ],
       "status": "pending"
     }
   ],

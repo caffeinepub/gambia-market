@@ -1,17 +1,20 @@
 # Specification
 
 ## Summary
-**Goal:** Add PWA support to Gambia Market so mobile users are prompted to install the app to their home screen.
+**Goal:** Polish the mobile layout and organization of all major pages and components in Gambia Market so the app looks and works correctly on small screens (320px+).
 
 **Planned changes:**
-- Create `frontend/public/manifest.json` with app name, short name, start URL, standalone display mode, brand green theme color, background color, and 192×192 / 512×512 icon entries
-- Create a minimal `frontend/public/sw.js` service worker that caches the app shell
-- Link the manifest and register the service worker in `frontend/index.html`
-- Create a reusable `InstallBanner` React component that:
-  - On Android/Chrome: listens for `beforeinstallprompt`, shows a dismissible bottom banner with an "Install" button that triggers the native install dialog
-  - On iOS Safari: shows a static instructional banner with share icon and "Add to Home Screen" instructions
-  - Hides on desktop (max-width 768px only), hides when already in standalone mode, and persists dismissal in localStorage
-  - Is styled with the app's West African-inspired green/gold palette
-- Integrate `InstallBanner` into `App.tsx` at the root level so it appears on all pages, positioned above the bottom navigation
+- Fix AppHeader for mobile: prevent logo/brand overflow, enforce 44×44px icon tap targets, add consistent horizontal padding
+- Fix BottomNav: evenly distribute all 5 tabs, ensure legible labels, add bottom padding to page content so nav never obscures it, and clearly highlight the active tab
+- Fix HomeFeed: single-column grid on mobile, contained horizontal scrolls for categories and featured row, full-width search bar, floating Sell Now button positioned above BottomNav
+- Fix Search page: full-width auto-focused search bar, wrapping recent search chips, contained filter panels, single-column results grid on mobile
+- Fix ListingDetail: vertically stacked single-column layout, full-width sticky action buttons above BottomNav, contained photo carousel
+- Fix CreateListing: single-column full-width form, visible step progress indicator, 3-column photo thumbnail grid, full-width submit button above BottomNav
+- Fix Chat list: adequate row padding, truncated text with ellipsis, right-aligned timestamps, correct unauthenticated blur overlay
+- Fix MessageThread: fixed full-width input bar above BottomNav, max-width message bubbles (80vw), compact listing context header, correctly sized avatars, sufficient bottom padding
+- Fix Profile page: centered avatar/name/stats, horizontally scrollable tab bar, single-column listing cards, minimum 44×44px tap targets on all buttons
+- Fix PublicProfile: centered header, full-width sticky "Message This Seller" CTA above BottomNav, consistent review card padding
+- Apply global mobile typography and spacing: minimum 14px body text, consistent headings, 44px touch targets on all interactive elements, consistent form input padding, no hardcoded widths causing overflow
+- Convert modals (ReportModal, BoostModal, GuestNamePrompt, confirmation dialogs) to bottom-sheet style on mobile with rounded top corners, max 90vh height, and scrollable content
 
-**User-visible outcome:** Mobile users visiting Gambia Market on Android Chrome or iOS Safari will see a branded install banner prompting them to add the app to their home screen for a faster experience.
+**User-visible outcome:** The app is well-organized and fully usable on mobile devices at 320px and above, with no horizontal scroll, properly sized tap targets, readable text, and modals appearing as bottom sheets.

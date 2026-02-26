@@ -24,20 +24,53 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
+export const ListingCategory = IDL.Variant({
+  'clothing' : IDL.Null,
+  'laptops' : IDL.Null,
+  'realEstate' : IDL.Null,
+  'other' : IDL.Null,
+  'pets' : IDL.Null,
+  'furniture' : IDL.Null,
+  'bicycles' : IDL.Null,
+  'shoes' : IDL.Null,
+  'spareParts' : IDL.Null,
+  'carsAndTrucks' : IDL.Null,
+  'beauty' : IDL.Null,
+  'motorcycles' : IDL.Null,
+  'appliances' : IDL.Null,
+  'fashion' : IDL.Null,
+  'services' : IDL.Null,
+  'electronics' : IDL.Null,
+  'phones' : IDL.Null,
+  'health' : IDL.Null,
+});
+export const RealEstateSubCategory = IDL.Variant({
+  'apartmentsAndFlats' : IDL.Null,
+  'landAndProperties' : IDL.Null,
+  'commercialSpaces' : IDL.Null,
+  'housesForRent' : IDL.Null,
+  'housesForSale' : IDL.Null,
+  'shortLetHolidayRentals' : IDL.Null,
+});
 export const ExternalBlob = IDL.Vec(IDL.Nat8);
 export const ListingId = IDL.Nat;
 export const ReportId = IDL.Nat;
 export const ReviewId = IDL.Nat;
 export const TransactionId = IDL.Nat;
+export const MessageId = IDL.Nat;
 export const Time = IDL.Int;
 export const PublicListing = IDL.Record({
   'id' : ListingId,
   'status' : IDL.Text,
+  'subCategory' : IDL.Opt(RealEstateSubCategory),
   'title' : IDL.Text,
+  'numBedrooms' : IDL.Opt(IDL.Nat),
+  'propertySize' : IDL.Opt(IDL.Nat),
   'createdAt' : Time,
+  'isFurnished' : IDL.Opt(IDL.Bool),
   'description' : IDL.Text,
   'isBoosted' : IDL.Bool,
-  'category' : IDL.Text,
+  'category' : ListingCategory,
   'boostExpiry' : IDL.Opt(Time),
   'sellerId' : IDL.Principal,
   'price' : IDL.Nat,
@@ -52,7 +85,6 @@ export const Report = IDL.Record({
   'reporterId' : IDL.Principal,
   'reason' : IDL.Text,
 });
-export const MessageId = IDL.Nat;
 export const AnonMessage = IDL.Record({
   'id' : MessageId,
   'content' : IDL.Text,
@@ -79,9 +111,11 @@ export const UserProfile = IDL.Record({
 });
 export const Message = IDL.Record({
   'id' : MessageId,
+  'isDeleted' : IDL.Bool,
   'content' : IDL.Text,
   'listingId' : ListingId,
   'receiverId' : IDL.Principal,
+  'isEdited' : IDL.Bool,
   'timestamp' : Time,
   'senderId' : IDL.Principal,
 });
@@ -138,11 +172,15 @@ export const idlService = IDL.Service({
       [
         IDL.Text,
         IDL.Text,
-        IDL.Text,
+        ListingCategory,
+        IDL.Opt(RealEstateSubCategory),
         IDL.Nat,
         IDL.Text,
         IDL.Vec(ExternalBlob),
         IDL.Text,
+        IDL.Opt(IDL.Nat),
+        IDL.Opt(IDL.Nat),
+        IDL.Opt(IDL.Bool),
       ],
       [ListingId],
       [],
@@ -160,6 +198,8 @@ export const idlService = IDL.Service({
       [],
     ),
   'deleteListing' : IDL.Func([ListingId], [], []),
+  'deleteMessage' : IDL.Func([MessageId], [], []),
+  'editMessage' : IDL.Func([MessageId, IDL.Text], [], []),
   'followSeller' : IDL.Func([IDL.Principal], [], []),
   'getAllCategories' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
   'getAllListings' : IDL.Func([], [IDL.Vec(PublicListing)], ['query']),
@@ -182,7 +222,7 @@ export const idlService = IDL.Service({
   'getLikedListings' : IDL.Func([], [IDL.Vec(ListingId)], ['query']),
   'getListing' : IDL.Func([ListingId], [IDL.Opt(PublicListing)], ['query']),
   'getListingsByCategory' : IDL.Func(
-      [IDL.Text],
+      [ListingCategory],
       [IDL.Vec(PublicListing)],
       ['query'],
     ),
@@ -228,11 +268,15 @@ export const idlService = IDL.Service({
         ListingId,
         IDL.Text,
         IDL.Text,
-        IDL.Text,
+        ListingCategory,
+        IDL.Opt(RealEstateSubCategory),
         IDL.Nat,
         IDL.Text,
         IDL.Vec(ExternalBlob),
         IDL.Text,
+        IDL.Opt(IDL.Nat),
+        IDL.Opt(IDL.Nat),
+        IDL.Opt(IDL.Bool),
       ],
       [],
       [],
@@ -262,20 +306,53 @@ export const idlFactory = ({ IDL }) => {
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
+  const ListingCategory = IDL.Variant({
+    'clothing' : IDL.Null,
+    'laptops' : IDL.Null,
+    'realEstate' : IDL.Null,
+    'other' : IDL.Null,
+    'pets' : IDL.Null,
+    'furniture' : IDL.Null,
+    'bicycles' : IDL.Null,
+    'shoes' : IDL.Null,
+    'spareParts' : IDL.Null,
+    'carsAndTrucks' : IDL.Null,
+    'beauty' : IDL.Null,
+    'motorcycles' : IDL.Null,
+    'appliances' : IDL.Null,
+    'fashion' : IDL.Null,
+    'services' : IDL.Null,
+    'electronics' : IDL.Null,
+    'phones' : IDL.Null,
+    'health' : IDL.Null,
+  });
+  const RealEstateSubCategory = IDL.Variant({
+    'apartmentsAndFlats' : IDL.Null,
+    'landAndProperties' : IDL.Null,
+    'commercialSpaces' : IDL.Null,
+    'housesForRent' : IDL.Null,
+    'housesForSale' : IDL.Null,
+    'shortLetHolidayRentals' : IDL.Null,
+  });
   const ExternalBlob = IDL.Vec(IDL.Nat8);
   const ListingId = IDL.Nat;
   const ReportId = IDL.Nat;
   const ReviewId = IDL.Nat;
   const TransactionId = IDL.Nat;
+  const MessageId = IDL.Nat;
   const Time = IDL.Int;
   const PublicListing = IDL.Record({
     'id' : ListingId,
     'status' : IDL.Text,
+    'subCategory' : IDL.Opt(RealEstateSubCategory),
     'title' : IDL.Text,
+    'numBedrooms' : IDL.Opt(IDL.Nat),
+    'propertySize' : IDL.Opt(IDL.Nat),
     'createdAt' : Time,
+    'isFurnished' : IDL.Opt(IDL.Bool),
     'description' : IDL.Text,
     'isBoosted' : IDL.Bool,
-    'category' : IDL.Text,
+    'category' : ListingCategory,
     'boostExpiry' : IDL.Opt(Time),
     'sellerId' : IDL.Principal,
     'price' : IDL.Nat,
@@ -290,7 +367,6 @@ export const idlFactory = ({ IDL }) => {
     'reporterId' : IDL.Principal,
     'reason' : IDL.Text,
   });
-  const MessageId = IDL.Nat;
   const AnonMessage = IDL.Record({
     'id' : MessageId,
     'content' : IDL.Text,
@@ -317,9 +393,11 @@ export const idlFactory = ({ IDL }) => {
   });
   const Message = IDL.Record({
     'id' : MessageId,
+    'isDeleted' : IDL.Bool,
     'content' : IDL.Text,
     'listingId' : ListingId,
     'receiverId' : IDL.Principal,
+    'isEdited' : IDL.Bool,
     'timestamp' : Time,
     'senderId' : IDL.Principal,
   });
@@ -376,11 +454,15 @@ export const idlFactory = ({ IDL }) => {
         [
           IDL.Text,
           IDL.Text,
-          IDL.Text,
+          ListingCategory,
+          IDL.Opt(RealEstateSubCategory),
           IDL.Nat,
           IDL.Text,
           IDL.Vec(ExternalBlob),
           IDL.Text,
+          IDL.Opt(IDL.Nat),
+          IDL.Opt(IDL.Nat),
+          IDL.Opt(IDL.Bool),
         ],
         [ListingId],
         [],
@@ -398,6 +480,8 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'deleteListing' : IDL.Func([ListingId], [], []),
+    'deleteMessage' : IDL.Func([MessageId], [], []),
+    'editMessage' : IDL.Func([MessageId, IDL.Text], [], []),
     'followSeller' : IDL.Func([IDL.Principal], [], []),
     'getAllCategories' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
     'getAllListings' : IDL.Func([], [IDL.Vec(PublicListing)], ['query']),
@@ -420,7 +504,7 @@ export const idlFactory = ({ IDL }) => {
     'getLikedListings' : IDL.Func([], [IDL.Vec(ListingId)], ['query']),
     'getListing' : IDL.Func([ListingId], [IDL.Opt(PublicListing)], ['query']),
     'getListingsByCategory' : IDL.Func(
-        [IDL.Text],
+        [ListingCategory],
         [IDL.Vec(PublicListing)],
         ['query'],
       ),
@@ -474,11 +558,15 @@ export const idlFactory = ({ IDL }) => {
           ListingId,
           IDL.Text,
           IDL.Text,
-          IDL.Text,
+          ListingCategory,
+          IDL.Opt(RealEstateSubCategory),
           IDL.Nat,
           IDL.Text,
           IDL.Vec(ExternalBlob),
           IDL.Text,
+          IDL.Opt(IDL.Nat),
+          IDL.Opt(IDL.Nat),
+          IDL.Opt(IDL.Bool),
         ],
         [],
         [],

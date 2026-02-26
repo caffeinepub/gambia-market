@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Home } from 'lucide-react';
 import AuthGuard from '../components/AuthGuard';
 import PhotoUpload from '../components/PhotoUpload';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
+import { Switch } from '../components/ui/switch';
 import {
   Select,
   SelectContent,
@@ -13,12 +14,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../components/ui/select';
-import { useCreateListing, useCategories } from '../hooks/useQueries';
+import { useCreateListing } from '../hooks/useQueries';
 import { toast } from 'sonner';
+import { ListingCategory, RealEstateSubCategory } from '../backend';
 import type { ListingId, ExternalBlob } from '../backend';
 
-const DEFAULT_CATEGORIES = ['Electronics', 'Clothing', 'Food', 'Vehicles', 'Services', 'Furniture', 'Agriculture', 'Other'];
 const CONDITIONS = ['New', 'Used', 'Refurbished'];
+
+const CATEGORY_OPTIONS: { label: string; value: ListingCategory; icon: string }[] = [
+  { label: 'Electronics', value: ListingCategory.electronics, icon: '📱' },
+  { label: 'Phones', value: ListingCategory.phones, icon: '📞' },
+  { label: 'Laptops', value: ListingCategory.laptops, icon: '💻' },
+  { label: 'Clothing', value: ListingCategory.clothing, icon: '👗' },
+  { label: 'Shoes', value: ListingCategory.shoes, icon: '👟' },
+  { label: 'Fashion', value: ListingCategory.fashion, icon: '💍' },
+  { label: 'Furniture', value: ListingCategory.furniture, icon: '🛋️' },
+  { label: 'Appliances', value: ListingCategory.appliances, icon: '🏠' },
+  { label: 'Cars & Trucks', value: ListingCategory.carsAndTrucks, icon: '🚗' },
+  { label: 'Motorcycles', value: ListingCategory.motorcycles, icon: '🏍️' },
+  { label: 'Bicycles', value: ListingCategory.bicycles, icon: '🚲' },
+  { label: 'Spare Parts', value: ListingCategory.spareParts, icon: '🔧' },
+  { label: 'Beauty', value: ListingCategory.beauty, icon: '💄' },
+  { label: 'Health', value: ListingCategory.health, icon: '💊' },
+  { label: 'Services', value: ListingCategory.services, icon: '🛠️' },
+  { label: 'Pets', value: ListingCategory.pets, icon: '🐾' },
+  { label: 'Real Estate', value: ListingCategory.realEstate, icon: '🏠' },
+  { label: 'Other', value: ListingCategory.other, icon: '📦' },
+];
+
+const REAL_ESTATE_SUBCATEGORIES: { label: string; value: RealEstateSubCategory }[] = [
+  { label: 'Land & Properties', value: RealEstateSubCategory.landAndProperties },
+  { label: 'Apartments & Flats', value: RealEstateSubCategory.apartmentsAndFlats },
+  { label: 'Houses for Sale', value: RealEstateSubCategory.housesForSale },
+  { label: 'Houses for Rent', value: RealEstateSubCategory.housesForRent },
+  { label: 'Commercial Spaces', value: RealEstateSubCategory.commercialSpaces },
+  { label: 'Short-Let / Holiday Rentals', value: RealEstateSubCategory.shortLetHolidayRentals },
+];
 
 interface CreateListingProps {
   onSuccess: (id: ListingId) => void;
@@ -28,16 +59,19 @@ interface CreateListingProps {
 function CreateListingForm({ onSuccess, onCancel }: CreateListingProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState<ListingCategory | ''>('');
+  const [subCategory, setSubCategory] = useState<RealEstateSubCategory | ''>('');
   const [price, setPrice] = useState('');
   const [condition, setCondition] = useState('');
   const [location, setLocation] = useState('');
   const [photos, setPhotos] = useState<ExternalBlob[]>([]);
+  const [propertySize, setPropertySize] = useState('');
+  const [numBedrooms, setNumBedrooms] = useState('');
+  const [isFurnished, setIsFurnished] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const { data: categories } = useCategories();
   const createListing = useCreateListing();
-  const allCategories = categories && categories.length > 0 ? categories : DEFAULT_CATEGORIES;
+  const isRealEstate = category === ListingCategory.realEstate;
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -58,11 +92,15 @@ function CreateListingForm({ onSuccess, onCancel }: CreateListingProps) {
       const listingId = await createListing.mutateAsync({
         title: title.trim(),
         description: description.trim(),
-        category,
+        category: category as ListingCategory,
+        subCategory: isRealEstate && subCategory ? (subCategory as RealEstateSubCategory) : null,
         price: BigInt(Math.round(Number(price))),
         condition,
         photos,
         location: location.trim(),
+        propertySize: isRealEstate && propertySize ? BigInt(Math.round(Number(propertySize))) : null,
+        numBedrooms: isRealEstate && numBedrooms ? BigInt(Math.round(Number(numBedrooms))) : null,
+        isFurnished: isRealEstate ? isFurnished : null,
       });
       toast.success('Listing created successfully! 🎉');
       onSuccess(listingId);
@@ -82,7 +120,7 @@ function CreateListingForm({ onSuccess, onCancel }: CreateListingProps) {
         <h1 className="font-heading font-bold text-base text-foreground">Create Listing</h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5 px-4 py-5">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5 px-4 py-5 max-w-2xl mx-auto w-full">
         {/* Photos */}
         <div className="flex flex-col gap-2">
           <Label className="font-body font-medium">Photos (up to 5)</Label>
@@ -105,18 +143,81 @@ function CreateListingForm({ onSuccess, onCancel }: CreateListingProps) {
         {/* Category */}
         <div className="flex flex-col gap-1.5">
           <Label className="font-body font-medium">Category *</Label>
-          <Select value={category} onValueChange={setCategory}>
+          <Select value={category} onValueChange={(v) => { setCategory(v as ListingCategory); setSubCategory(''); }}>
             <SelectTrigger className={`h-12 text-base ${errors.category ? 'border-destructive' : ''}`}>
               <SelectValue placeholder="Select category..." />
             </SelectTrigger>
             <SelectContent>
-              {allCategories.map((cat) => (
-                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+              {CATEGORY_OPTIONS.map((cat) => (
+                <SelectItem key={cat.value} value={cat.value}>
+                  {cat.icon} {cat.label}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
           {errors.category && <p className="text-xs text-destructive font-body">{errors.category}</p>}
         </div>
+
+        {/* Real Estate subcategory */}
+        {isRealEstate && (
+          <div className="flex flex-col gap-1.5">
+            <Label className="font-body font-medium flex items-center gap-1.5">
+              <Home className="w-4 h-4 text-primary" />
+              Property Type
+            </Label>
+            <Select value={subCategory} onValueChange={(v) => setSubCategory(v as RealEstateSubCategory)}>
+              <SelectTrigger className="h-12 text-base">
+                <SelectValue placeholder="Select property type..." />
+              </SelectTrigger>
+              <SelectContent>
+                {REAL_ESTATE_SUBCATEGORIES.map((sub) => (
+                  <SelectItem key={sub.value} value={sub.value}>{sub.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {/* Real Estate specific fields */}
+        {isRealEstate && (
+          <div className="flex flex-col gap-4 p-4 bg-muted/40 rounded-xl border border-border">
+            <p className="text-xs font-body font-semibold text-muted-foreground uppercase tracking-wide">Property Details</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="propertySize" className="font-body font-medium text-sm">Size (sq m)</Label>
+                <Input
+                  id="propertySize"
+                  type="number"
+                  min="0"
+                  value={propertySize}
+                  onChange={(e) => setPropertySize(e.target.value)}
+                  placeholder="e.g. 120"
+                  className="h-11 text-base"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="numBedrooms" className="font-body font-medium text-sm">Bedrooms</Label>
+                <Input
+                  id="numBedrooms"
+                  type="number"
+                  min="0"
+                  value={numBedrooms}
+                  onChange={(e) => setNumBedrooms(e.target.value)}
+                  placeholder="e.g. 3"
+                  className="h-11 text-base"
+                />
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="isFurnished" className="font-body font-medium text-sm">Furnished</Label>
+              <Switch
+                id="isFurnished"
+                checked={isFurnished}
+                onCheckedChange={setIsFurnished}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Price */}
         <div className="flex flex-col gap-1.5">

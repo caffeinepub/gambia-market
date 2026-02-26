@@ -1,69 +1,145 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-25T23:47:31.183Z",
+  "generatedAt": "2026-02-26T01:01:24.495Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 3,
+    "total": 12,
+    "implemented": 0,
     "items": [
       {
-        "id": "REQ-52",
-        "summary": "Add PWA web app manifest and service worker registration to enable the browser's native 'Add to Home Screen' / install prompt on both iOS Safari and Android Chrome. Create a `frontend/public/manifest.json` with the app name ('Gambia Market'), short name ('GambiaMarket'), start URL, display mode ('standalone'), theme color (matching the app's primary brand green), background color, and icon entries referencing appropriately sized app icons (192×192 and 512×512). Register a minimal service worker in `frontend/public/sw.js` that caches the app shell. Reference the manifest and service worker registration in `frontend/index.html`.",
-        "status": "implemented",
+        "id": "REQ-60",
+        "summary": "Audit and fix the AppHeader component for mobile: ensure the logo/brand text does not overflow on small screens (320px+), constrain icon button tap targets to at least 44×44px, and add consistent horizontal padding (px-4) so nothing touches the screen edge.",
+        "status": "missing",
         "plannedFiles": [
-          "frontend/public/manifest.json",
-          "frontend/public/sw.js",
-          "frontend/index.html",
-          "frontend/src/main.tsx"
+          "frontend/src/components/AppHeader.tsx"
         ],
-        "matchedFiles": [
-          "frontend/public/manifest.json",
-          "frontend/public/sw.js",
-          "frontend/index.html"
-        ]
+        "matchedFiles": []
       },
       {
-        "id": "REQ-53",
-        "summary": "Create a reusable `InstallBanner` React component in `frontend/src/components/InstallBanner.tsx` that listens for the browser's `beforeinstallprompt` event (Android/Chrome) and displays a dismissible bottom banner prompting the user to install the app. The banner should show the Gambia Market logo/name, the text 'Add to Home Screen for a faster experience', an 'Install' button that triggers the deferred prompt, and an 'X' dismiss button. Once dismissed or installed, hide the banner and persist the dismissal in localStorage so it does not reappear in the same session. For iOS (detected via user agent), show a separate instructional banner with the text 'Tap the Share button then \"Add to Home Screen\" to install' with a share icon illustration. Style the banner using the app's West African-inspired color theme (brand green background, gold/amber accent text).",
-        "status": "implemented",
+        "id": "REQ-61",
+        "summary": "Audit and fix the BottomNav component for mobile: ensure all five tab items (Home, Search, Sell, Chat, Profile) are evenly distributed across the full width with equal flex spacing, labels are legible at small sizes (minimum 10px), the active tab indicator is clearly visible, and the nav is always fixed at the bottom with no content hidden behind it (add appropriate bottom padding to page content).",
+        "status": "missing",
         "plannedFiles": [
-          "frontend/src/components/InstallBanner.tsx"
+          "frontend/src/components/BottomNav.tsx",
+          "frontend/src/App.tsx"
         ],
-        "matchedFiles": [
-          "frontend/src/components/InstallBanner.tsx"
-        ]
+        "matchedFiles": []
       },
       {
-        "id": "REQ-54",
-        "summary": "Integrate the `InstallBanner` component into `frontend/src/App.tsx` by rendering it persistently at the root level, outside the main page content area, so it appears on all pages of the app for eligible mobile users.",
-        "status": "implemented",
+        "id": "REQ-62",
+        "summary": "Fix the HomeFeed page mobile layout: ensure the listing grid uses a single column on mobile (grid-cols-1) and two columns on tablet (sm:grid-cols-2), the category filter row scrolls horizontally without causing page-level horizontal scroll, the FeaturedListingsRow horizontal scroll is contained within its bounds, the search bar has full width with proper padding, and the floating 'Sell Now' button does not overlap the BottomNav.",
+        "status": "missing",
         "plannedFiles": [
-          "frontend/src/App.tsx"
+          "frontend/src/pages/HomeFeed.tsx",
+          "frontend/src/components/CategoryFilter.tsx",
+          "frontend/src/components/FeaturedListingsRow.tsx"
         ],
-        "matchedFiles": [
-          "frontend/src/App.tsx"
-        ]
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-63",
+        "summary": "Fix the Search page mobile layout: the search bar must be auto-focused and full-width with proper padding, recent search chips must wrap correctly without overflow, filter panels must expand/collapse smoothly within the viewport width, and the results grid must use a single column on mobile.",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/pages/Search.tsx",
+          "frontend/src/components/SearchBar.tsx",
+          "frontend/src/components/RecentSearchChips.tsx"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-64",
+        "summary": "Fix the ListingDetail page mobile layout: stack all content in a single column (photos carousel on top, then title/price/badges, then seller info, then description, then action buttons). Action buttons ('Message Seller', 'Make Offer') must be full-width, sticky at the bottom of the screen on mobile (above the BottomNav), and have minimum 44px height. The photo carousel must respect the viewport width without overflow.",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/pages/ListingDetail.tsx",
+          "frontend/src/components/PhotoCarousel.tsx"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-65",
+        "summary": "Fix the CreateListing page mobile layout: the multi-step form must be single-column and full-width on mobile with consistent vertical spacing (gap-4) between fields, the step progress indicator must fit within the mobile viewport without text truncation, photo upload thumbnails must use a compact grid (3 columns max on mobile), and the submit button must be full-width and fixed above the BottomNav on mobile.",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/pages/CreateListing.tsx",
+          "frontend/src/components/PhotoUpload.tsx"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-66",
+        "summary": "Fix the Chat (conversation list) page mobile layout: each ConversationItem must have adequate padding (p-3 minimum), text (name, last message preview) must be truncated with ellipsis to prevent overflow, timestamps must be right-aligned and not wrap, and the unauthenticated blurred overlay must cover the full content area without layout breaks.",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/pages/Chat.tsx",
+          "frontend/src/components/ConversationItem.tsx"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-67",
+        "summary": "Fix the MessageThread page mobile layout: the message input bar must be fixed at the bottom above the BottomNav with full width, message bubbles must not exceed 80% of the viewport width (max-w-[80vw]), the listing context header at the top must be compact and not overflow, avatar images next to bubbles must be correctly sized (32px) and not stretch the row, and the message list must have bottom padding sufficient to clear the fixed input bar.",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/pages/MessageThread.tsx",
+          "frontend/src/components/MessageBubble.tsx"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-68",
+        "summary": "Fix the Profile page mobile layout: the avatar/initials circle, name, and stats row must stack cleanly and be centered on mobile, the tab bar ('My Listings', 'Reviews', 'Activity', 'Following') must scroll horizontally if tabs overflow, MyListingCard items must use a compact single-column layout with properly sized thumbnails, inline edit fields must be full-width, and all buttons (Edit, Share Profile, Logout) must have minimum 44×44px tap targets.",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/pages/Profile.tsx",
+          "frontend/src/components/ProfileTabs.tsx",
+          "frontend/src/components/MyListingCard.tsx",
+          "frontend/src/components/InlineEditField.tsx"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-69",
+        "summary": "Fix the PublicProfile page mobile layout: ensure the profile header (avatar, name, verified badge, rating, location) is properly centered and spaced, the 'Message This Seller' CTA is full-width and sticky at the bottom on mobile, and the reviews list uses consistent card padding without horizontal overflow.",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/pages/PublicProfile.tsx",
+          "frontend/src/components/ReviewsList.tsx"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-70",
+        "summary": "Apply global mobile typography and spacing polish across all pages: ensure base font size is at minimum 14px for body text, section headings use consistent sizing (text-lg or text-xl), all interactive elements (buttons, links, inputs) have minimum 44px height/touch targets, form inputs have consistent padding (px-3 py-2.5 minimum) and rounded corners, and remove any hardcoded pixel widths that cause overflow on narrow viewports. Fix any instances of horizontal scroll introduced by wide fixed-width elements.",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-71",
+        "summary": "Fix modal and dialog components (ReportModal, BoostModal, GuestNamePrompt, and any confirmation dialogs) to be properly sized and positioned on mobile: modals must use a bottom-sheet style (slide up from bottom) on mobile with rounded top corners, a close/dismiss handle, and must not exceed 90vh in height, with internal content scrollable if it overflows.",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/components/ReportModal.tsx",
+          "frontend/src/components/BoostModal.tsx",
+          "frontend/src/components/GuestNamePrompt.tsx"
+        ],
+        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
     "build-request.json",
     "feature_evidence.json",
-    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/index.html",
-    "frontend/public/assets/generated/app-icon-192.dim_192x192.png",
-    "frontend/public/assets/generated/app-icon.dim_512x512.png",
-    "frontend/public/manifest.json",
-    "frontend/public/sw.js",
-    "frontend/src/App.tsx",
-    "frontend/src/components/InstallBanner.tsx",
-    "frontend/src/index.css",
-    "frontend/tailwind.config.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

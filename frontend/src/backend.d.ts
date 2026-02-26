@@ -25,11 +25,11 @@ export interface UserProfile {
     location: string;
     highestRating: bigint;
 }
+export type Time = bigint;
 export interface BoostOption {
     durationDays: bigint;
     priceGMD: bigint;
 }
-export type Time = bigint;
 export interface AnonMessage {
     id: MessageId;
     content: string;
@@ -61,20 +61,26 @@ export type ListingId = bigint;
 export type MessageId = bigint;
 export interface Message {
     id: MessageId;
+    isDeleted: boolean;
     content: string;
     listingId: ListingId;
     receiverId: Principal;
+    isEdited: boolean;
     timestamp: Time;
     senderId: Principal;
 }
 export interface PublicListing {
     id: ListingId;
     status: string;
+    subCategory?: RealEstateSubCategory;
     title: string;
+    numBedrooms?: bigint;
+    propertySize?: bigint;
     createdAt: Time;
+    isFurnished?: boolean;
     description: string;
     isBoosted: boolean;
-    category: string;
+    category: ListingCategory;
     boostExpiry?: Time;
     sellerId: Principal;
     price: bigint;
@@ -92,6 +98,34 @@ export interface Review {
     comment: string;
     stars: bigint;
 }
+export enum ListingCategory {
+    clothing = "clothing",
+    laptops = "laptops",
+    realEstate = "realEstate",
+    other = "other",
+    pets = "pets",
+    furniture = "furniture",
+    bicycles = "bicycles",
+    shoes = "shoes",
+    spareParts = "spareParts",
+    carsAndTrucks = "carsAndTrucks",
+    beauty = "beauty",
+    motorcycles = "motorcycles",
+    appliances = "appliances",
+    fashion = "fashion",
+    services = "services",
+    electronics = "electronics",
+    phones = "phones",
+    health = "health"
+}
+export enum RealEstateSubCategory {
+    apartmentsAndFlats = "apartmentsAndFlats",
+    landAndProperties = "landAndProperties",
+    commercialSpaces = "commercialSpaces",
+    housesForRent = "housesForRent",
+    housesForSale = "housesForSale",
+    shortLetHolidayRentals = "shortLetHolidayRentals"
+}
 export enum UserRole {
     admin = "admin",
     user = "user",
@@ -100,12 +134,14 @@ export enum UserRole {
 export interface backendInterface {
     addAllowedCategory(category: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    createListing(title: string, description: string, category: string, price: bigint, condition: string, photos: Array<ExternalBlob>, location: string): Promise<ListingId>;
+    createListing(title: string, description: string, category: ListingCategory, subCategory: RealEstateSubCategory | null, price: bigint, condition: string, photos: Array<ExternalBlob>, location: string, propertySize: bigint | null, numBedrooms: bigint | null, isFurnished: boolean | null): Promise<ListingId>;
     createOrUpdateUserProfile(name: string, location: string): Promise<void>;
     createReport(reportedId: Principal, reason: string): Promise<ReportId>;
     createReview(revieweeId: Principal, listingId: ListingId, stars: bigint, comment: string): Promise<ReviewId>;
     createTransaction(listingId: ListingId, sellerId: Principal, paymentMethod: string, amount: bigint): Promise<TransactionId>;
     deleteListing(listingId: ListingId): Promise<void>;
+    deleteMessage(messageId: MessageId): Promise<void>;
+    editMessage(messageId: MessageId, newContent: string): Promise<void>;
     followSeller(sellerId: Principal): Promise<void>;
     getAllCategories(): Promise<Array<string>>;
     getAllListings(): Promise<Array<PublicListing>>;
@@ -119,7 +155,7 @@ export interface backendInterface {
     getFollowing(): Promise<Array<Principal>>;
     getLikedListings(): Promise<Array<ListingId>>;
     getListing(listingId: ListingId): Promise<PublicListing | null>;
-    getListingsByCategory(category: string): Promise<Array<PublicListing>>;
+    getListingsByCategory(category: ListingCategory): Promise<Array<PublicListing>>;
     getMessagesForListing(listingId: ListingId): Promise<Array<Message>>;
     getMyConversations(): Promise<Array<Message>>;
     getMyListings(): Promise<Array<PublicListing>>;
@@ -137,7 +173,7 @@ export interface backendInterface {
     setListingBoosted(listingId: ListingId, isBoosted: boolean, durationDays: bigint): Promise<void>;
     unfollowSeller(sellerId: Principal): Promise<void>;
     updateAllUserProfilesWithHighestRating(): Promise<void>;
-    updateListing(listingId: ListingId, title: string, description: string, category: string, price: bigint, condition: string, photos: Array<ExternalBlob>, location: string): Promise<void>;
+    updateListing(listingId: ListingId, title: string, description: string, category: ListingCategory, subCategory: RealEstateSubCategory | null, price: bigint, condition: string, photos: Array<ExternalBlob>, location: string, propertySize: bigint | null, numBedrooms: bigint | null, isFurnished: boolean | null): Promise<void>;
     updateListingStatus(listingId: ListingId, status: string): Promise<void>;
     updateProfilePic(url: string): Promise<void>;
     updateReportStatus(reportId: ReportId, status: string): Promise<void>;

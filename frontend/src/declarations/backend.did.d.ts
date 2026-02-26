@@ -21,12 +21,32 @@ export interface AnonMessage {
 }
 export interface BoostOption { 'durationDays' : bigint, 'priceGMD' : bigint }
 export type ExternalBlob = Uint8Array;
+export type ListingCategory = { 'clothing' : null } |
+  { 'laptops' : null } |
+  { 'realEstate' : null } |
+  { 'other' : null } |
+  { 'pets' : null } |
+  { 'furniture' : null } |
+  { 'bicycles' : null } |
+  { 'shoes' : null } |
+  { 'spareParts' : null } |
+  { 'carsAndTrucks' : null } |
+  { 'beauty' : null } |
+  { 'motorcycles' : null } |
+  { 'appliances' : null } |
+  { 'fashion' : null } |
+  { 'services' : null } |
+  { 'electronics' : null } |
+  { 'phones' : null } |
+  { 'health' : null };
 export type ListingId = bigint;
 export interface Message {
   'id' : MessageId,
+  'isDeleted' : boolean,
   'content' : string,
   'listingId' : ListingId,
   'receiverId' : Principal,
+  'isEdited' : boolean,
   'timestamp' : Time,
   'senderId' : Principal,
 }
@@ -34,11 +54,15 @@ export type MessageId = bigint;
 export interface PublicListing {
   'id' : ListingId,
   'status' : string,
+  'subCategory' : [] | [RealEstateSubCategory],
   'title' : string,
+  'numBedrooms' : [] | [bigint],
+  'propertySize' : [] | [bigint],
   'createdAt' : Time,
+  'isFurnished' : [] | [boolean],
   'description' : string,
   'isBoosted' : boolean,
-  'category' : string,
+  'category' : ListingCategory,
   'boostExpiry' : [] | [Time],
   'sellerId' : Principal,
   'price' : bigint,
@@ -46,6 +70,12 @@ export interface PublicListing {
   'photos' : Array<ExternalBlob>,
   'condition' : string,
 }
+export type RealEstateSubCategory = { 'apartmentsAndFlats' : null } |
+  { 'landAndProperties' : null } |
+  { 'commercialSpaces' : null } |
+  { 'housesForRent' : null } |
+  { 'housesForSale' : null } |
+  { 'shortLetHolidayRentals' : null };
 export interface Report {
   'id' : ReportId,
   'status' : string,
@@ -120,7 +150,19 @@ export interface _SERVICE {
   'addAllowedCategory' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'createListing' : ActorMethod<
-    [string, string, string, bigint, string, Array<ExternalBlob>, string],
+    [
+      string,
+      string,
+      ListingCategory,
+      [] | [RealEstateSubCategory],
+      bigint,
+      string,
+      Array<ExternalBlob>,
+      string,
+      [] | [bigint],
+      [] | [bigint],
+      [] | [boolean],
+    ],
     ListingId
   >,
   'createOrUpdateUserProfile' : ActorMethod<[string, string], undefined>,
@@ -134,6 +176,8 @@ export interface _SERVICE {
     TransactionId
   >,
   'deleteListing' : ActorMethod<[ListingId], undefined>,
+  'deleteMessage' : ActorMethod<[MessageId], undefined>,
+  'editMessage' : ActorMethod<[MessageId, string], undefined>,
   'followSeller' : ActorMethod<[Principal], undefined>,
   'getAllCategories' : ActorMethod<[], Array<string>>,
   'getAllListings' : ActorMethod<[], Array<PublicListing>>,
@@ -147,7 +191,10 @@ export interface _SERVICE {
   'getFollowing' : ActorMethod<[], Array<Principal>>,
   'getLikedListings' : ActorMethod<[], Array<ListingId>>,
   'getListing' : ActorMethod<[ListingId], [] | [PublicListing]>,
-  'getListingsByCategory' : ActorMethod<[string], Array<PublicListing>>,
+  'getListingsByCategory' : ActorMethod<
+    [ListingCategory],
+    Array<PublicListing>
+  >,
   'getMessagesForListing' : ActorMethod<[ListingId], Array<Message>>,
   'getMyConversations' : ActorMethod<[], Array<Message>>,
   'getMyListings' : ActorMethod<[], Array<PublicListing>>,
@@ -173,11 +220,15 @@ export interface _SERVICE {
       ListingId,
       string,
       string,
-      string,
+      ListingCategory,
+      [] | [RealEstateSubCategory],
       bigint,
       string,
       Array<ExternalBlob>,
       string,
+      [] | [bigint],
+      [] | [bigint],
+      [] | [boolean],
     ],
     undefined
   >,

@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { PublicListing, ListingId, Message, Review, UserProfile, BoostOption } from '../backend';
+import type { PublicListing, ListingId, Message, Review, UserProfile, BoostOption, RealEstateSubCategory } from '../backend';
+import { ListingCategory, ExternalBlob } from '../backend';
 import type { Principal } from '@icp-sdk/core/principal';
-import { ExternalBlob } from '../backend';
 
 // ─── User Profile ─────────────────────────────────────────────────────────────
 
@@ -78,6 +78,13 @@ export function useSaveCallerUserProfile() {
 
 // ─── Listings ─────────────────────────────────────────────────────────────────
 
+// Map a free-form category string to the ListingCategory enum value.
+// Falls back to ListingCategory.other for unknown strings.
+function toListingCategory(category: string): ListingCategory {
+  const found = Object.values(ListingCategory).find((v) => v === category);
+  return (found as ListingCategory) ?? ListingCategory.other;
+}
+
 export function useListings(category?: string, searchText?: string) {
   const { actor, isFetching: actorFetching } = useActor();
 
@@ -89,7 +96,7 @@ export function useListings(category?: string, searchText?: string) {
         return actor.searchListings(searchText.trim());
       }
       if (category && category !== 'All') {
-        return actor.getListingsByCategory(category);
+        return actor.getListingsByCategory(toListingCategory(category));
       }
       return actor.getAllListings();
     },
@@ -158,21 +165,41 @@ export function useCreateListing() {
       title,
       description,
       category,
+      subCategory,
       price,
       condition,
       photos,
       location,
+      propertySize,
+      numBedrooms,
+      isFurnished,
     }: {
       title: string;
       description: string;
-      category: string;
+      category: ListingCategory;
+      subCategory: RealEstateSubCategory | null;
       price: bigint;
       condition: string;
       photos: ExternalBlob[];
       location: string;
+      propertySize: bigint | null;
+      numBedrooms: bigint | null;
+      isFurnished: boolean | null;
     }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.createListing(title, description, category, price, condition, photos, location);
+      return actor.createListing(
+        title,
+        description,
+        category,
+        subCategory,
+        price,
+        condition,
+        photos,
+        location,
+        propertySize,
+        numBedrooms,
+        isFurnished,
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['listings'] });
@@ -192,22 +219,43 @@ export function useUpdateListing() {
       title,
       description,
       category,
+      subCategory,
       price,
       condition,
       photos,
       location,
+      propertySize,
+      numBedrooms,
+      isFurnished,
     }: {
       listingId: ListingId;
       title: string;
       description: string;
-      category: string;
+      category: ListingCategory;
+      subCategory: RealEstateSubCategory | null;
       price: bigint;
       condition: string;
       photos: ExternalBlob[];
       location: string;
+      propertySize: bigint | null;
+      numBedrooms: bigint | null;
+      isFurnished: boolean | null;
     }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.updateListing(listingId, title, description, category, price, condition, photos, location);
+      return actor.updateListing(
+        listingId,
+        title,
+        description,
+        category,
+        subCategory,
+        price,
+        condition,
+        photos,
+        location,
+        propertySize,
+        numBedrooms,
+        isFurnished,
+      );
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['listings'] });
@@ -268,6 +316,40 @@ export function useBoostOptions() {
       return actor.getBoostOptions();
     },
     enabled: !!actor && !actorFetching,
+  });
+}
+
+// ─── Message Edit / Delete ────────────────────────────────────────────────────
+
+export function useEditMessage() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ messageId, newContent, listingId }: { messageId: bigint; newContent: string; listingId: ListingId }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.editMessage(messageId, newContent);
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['messages', variables.listingId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['myConversations'] });
+    },
+  });
+}
+
+export function useDeleteMessage() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ messageId, listingId }: { messageId: bigint; listingId: ListingId }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.deleteMessage(messageId);
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['messages', variables.listingId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['myConversations'] });
+    },
   });
 }
 
