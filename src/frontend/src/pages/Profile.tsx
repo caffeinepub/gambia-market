@@ -26,7 +26,7 @@ export default function Profile({ onCreateListing, onEditListing, onListingClick
   const isAuthenticated = !!identity;
   const queryClient = useQueryClient();
 
-  const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
+  const { data: userProfile, isLoading: profileLoading, isFetched, isError } = useGetCallerUserProfile();
   const { data: myListings = [] } = useGetMyListings();
   const { data: reviews = [] } = useGetReviewsForUser(
     userProfile ? userProfile.id : null
@@ -43,10 +43,10 @@ export default function Profile({ onCreateListing, onEditListing, onListingClick
     return <LoginPrompt />;
   }
 
-  // Loading profile
-  if (profileLoading || !isFetched) {
+  // Loading profile — show skeleton while waiting
+  if (profileLoading) {
     return (
-      <div className="min-h-screen bg-background p-4 space-y-4">
+      <div className="min-h-screen bg-background p-4 space-y-4 pt-6">
         <Skeleton className="h-32 w-full rounded-2xl" />
         <Skeleton className="h-20 w-full rounded-xl" />
         <Skeleton className="h-64 w-full rounded-xl" />
@@ -54,9 +54,38 @@ export default function Profile({ onCreateListing, onEditListing, onListingClick
     );
   }
 
+  // Error fallback — prompt retry
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="text-center space-y-3">
+          <p className="text-muted-foreground">Failed to load profile. Please try again.</p>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // No profile yet — show setup (covers both null and undefined)
-  if (!userProfile) {
+  if (isFetched && !userProfile) {
     return <ProfileSetup onComplete={() => {}} />;
+  }
+
+  // Still waiting for the first fetch result
+  if (!isFetched || !userProfile) {
+    return (
+      <div className="min-h-screen bg-background p-4 space-y-4 pt-6">
+        <Skeleton className="h-32 w-full rounded-2xl" />
+        <Skeleton className="h-20 w-full rounded-xl" />
+        <Skeleton className="h-64 w-full rounded-xl" />
+      </div>
+    );
   }
 
   // At this point userProfile is guaranteed to be UserProfile (non-null, non-undefined)

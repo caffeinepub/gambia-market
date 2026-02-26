@@ -62,6 +62,7 @@ export default {
           gold: 'var(--brand-gold)',
           sand: 'var(--brand-sand)',
           sage: 'var(--brand-sage)',
+          green: 'var(--brand-green)',
         },
       },
       borderRadius: {

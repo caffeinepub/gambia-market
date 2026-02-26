@@ -29,7 +29,7 @@ export default function MessageThread({ listingId, otherUserId, otherUserName, o
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [messages]);
 
   const handleSend = async () => {
     const trimmed = messageText.trim();

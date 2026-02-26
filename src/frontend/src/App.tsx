@@ -119,9 +119,13 @@ function AppContent() {
     }
   };
 
+  // Admin dashboard renders full-screen with no shared chrome
+  const isAdminDashboard = currentPage === 'admin-dashboard';
+
   // Message thread page renders without the standard layout wrapper
   const isMessageThread = currentPage === 'message-thread';
-  const showBottomNav = !['message-thread', 'create-listing', 'edit-listing'].includes(currentPage);
+  const showBottomNav = !['message-thread', 'create-listing', 'edit-listing', 'admin-dashboard'].includes(currentPage);
+  const showHeader = currentPage !== 'admin-dashboard';
 
   const renderPage = () => {
     switch (currentPage) {
@@ -225,6 +229,16 @@ function AppContent() {
     }
   };
 
+  // Admin dashboard — full screen, no shared chrome
+  if (isAdminDashboard) {
+    return (
+      <>
+        {renderPage()}
+        <Toaster richColors position="top-center" />
+      </>
+    );
+  }
+
   if (isMessageThread) {
     return (
       <div className="flex flex-col bg-background overflow-hidden" style={{ height: '100dvh' }}>
@@ -242,15 +256,22 @@ function AppContent() {
     );
   }
 
+  const mainClass = [
+    showBottomNav ? 'pb-20' : '',
+    showHeader ? 'pt-14' : '',
+  ].filter(Boolean).join(' ');
+
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader
-        onSearch={() => navigate('search')}
-        onSell={handleSellClick}
-        onProfile={handleProfileClick}
-        onLogin={() => navigate('profile')}
-      />
-      <main className={showBottomNav ? 'pb-16' : ''}>
+      {showHeader && (
+        <AppHeader
+          onSearch={() => navigate('search')}
+          onSell={handleSellClick}
+          onProfile={handleProfileClick}
+          onLogin={() => navigate('profile')}
+        />
+      )}
+      <main className={mainClass}>
         {renderPage()}
       </main>
       {showBottomNav && (

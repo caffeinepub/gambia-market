@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 
 export function useGetCallerUserProfile() {
   const { actor, isFetching: actorFetching } = useActor();
-  const { identity } = useInternetIdentity();
+  const { identity, isInitializing } = useInternetIdentity();
   const isAuthenticated = !!identity;
 
   const query = useQuery<UserProfile | null>({
@@ -19,13 +19,18 @@ export function useGetCallerUserProfile() {
       return actor.getCallerUserProfile();
     },
     enabled: !!actor && !actorFetching && isAuthenticated,
-    retry: false,
+    retry: 1,
   });
+
+  // Consider loading true only while identity is still initializing or actor is fetching
+  // Once the actor is ready and the query has settled (success or error), show the result
+  const isLoading = isInitializing || actorFetching || (!!actor && query.isLoading);
+  const isFetched = !isInitializing && !actorFetching && (query.isFetched || !isAuthenticated);
 
   return {
     ...query,
-    isLoading: actorFetching || query.isLoading,
-    isFetched: !!actor && query.isFetched,
+    isLoading,
+    isFetched,
   };
 }
 
@@ -681,6 +686,84 @@ export function useCreateReport() {
     },
     onError: (error: Error) => {
       toast.error(`Failed to submit report: ${error.message}`);
+    },
+  });
+}
+
+export function useGetAllReports() {
+  const { actor, isFetching } = useActor();
+  return useQuery({
+    queryKey: ['allReports'],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getAllReports();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useUpdateReportStatus() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ reportId, status }: { reportId: bigint; status: string }) => {
+      if (!actor) throw new Error('Actor not available');
+      await actor.updateReportStatus(reportId, status);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['allReports'] });
+      toast.success('Report status updated');
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed: ${error.message}`);
+    },
+  });
+}
+
+export function useGetAllCategories() {
+  const { actor, isFetching } = useActor();
+  return useQuery<string[]>({
+    queryKey: ['allCategories'],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getAllCategories();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useAddAllowedCategory() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (category: string) => {
+      if (!actor) throw new Error('Actor not available');
+      await actor.addAllowedCategory(category);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['allCategories'] });
+      toast.success('Category added');
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed: ${error.message}`);
+    },
+  });
+}
+
+export function useRemoveAllowedCategory() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (category: string) => {
+      if (!actor) throw new Error('Actor not available');
+      await actor.removeAllowedCategory(category);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['allCategories'] });
+      toast.success('Category removed');
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed: ${error.message}`);
     },
   });
 }

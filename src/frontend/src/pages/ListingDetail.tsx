@@ -35,7 +35,7 @@ export default function ListingDetail({ listingId, onBack, onMessageSeller, onSe
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background pb-24">
-        <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border px-4 h-14 flex items-center">
+        <div className="sticky top-14 z-40 bg-card/95 backdrop-blur-md border-b border-border px-4 h-14 flex items-center">
           <button type="button" onClick={onBack} className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:bg-muted transition-all">
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -66,9 +66,9 @@ export default function ListingDetail({ listingId, onBack, onMessageSeller, onSe
   const isOwner = identity && listing.sellerId.toString() === identity.getPrincipal().toString();
 
   return (
-    <div className="min-h-screen bg-background" style={{ paddingBottom: 'calc(56px + 80px)' }}>
+    <div className="min-h-screen bg-background" style={{ paddingBottom: 'calc(80px + 80px + 24px)' }}>
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border px-4 h-14 flex items-center justify-between">
+      <div className="sticky top-14 z-40 bg-card/95 backdrop-blur-md border-b border-border px-4 h-14 flex items-center justify-between">
         <button
           type="button"
           onClick={onBack}
@@ -88,9 +88,9 @@ export default function ListingDetail({ listingId, onBack, onMessageSeller, onSe
       </div>
 
       {/* Photos */}
-      {listing.photos.length > 0 && (
+      <div className="px-4 pt-3">
         <PhotoCarousel photos={listing.photos} />
-      )}
+      </div>
 
       {/* Content */}
       <div className="px-4 pt-4 space-y-4">
@@ -176,7 +176,7 @@ export default function ListingDetail({ listingId, onBack, onMessageSeller, onSe
       {!isOwner && (
         <div
           className="fixed left-0 right-0 px-4 py-3 bg-background/97 backdrop-blur-md border-t border-border"
-          style={{ bottom: '56px', zIndex: 40 }}
+          style={{ bottom: '80px', zIndex: 40 }}
         >
           <button
             type="button"

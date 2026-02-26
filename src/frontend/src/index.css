@@ -54,6 +54,7 @@
     --brand-gold: oklch(0.78 0.16 75);
     --brand-sand: oklch(0.93 0.025 80);
     --brand-sage: oklch(0.68 0.1 155);
+    --brand-green: oklch(0.55 0.18 145);
 
     --radius: 0.75rem;
   }
@@ -97,6 +98,7 @@
     --brand-gold: oklch(0.78 0.16 75);
     --brand-sand: oklch(0.24 0.04 265);
     --brand-sage: oklch(0.68 0.1 155);
+    --brand-green: oklch(0.62 0.18 145);
   }
 }
 
@@ -209,6 +211,24 @@
 
 .animate-fade-in {
   animation: fade-in 0.3s ease forwards;
+}
+
+/* Scrollbar hide utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Scrollbar none utility */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 
 /* Scrollbar styling */

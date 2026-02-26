@@ -68,7 +68,7 @@ export default function Search({ onListingClick, onBack }: SearchProps) {
   return (
     <div className="pb-24 min-h-screen bg-background">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border px-4 py-3">
+      <div className="sticky top-14 z-40 bg-card/95 backdrop-blur-md border-b border-border px-4 py-3">
         <div className="flex items-center gap-3">
           {onBack && (
             <button
