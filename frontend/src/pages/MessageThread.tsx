@@ -1,13 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Send } from 'lucide-react';
+import { Principal } from '@dfinity/principal';
+import { ListingId } from '../backend';
+import { useMessages, useSendMessage, useSendMessageAnon } from '../hooks/useQueries';
+import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import MessageBubble from '../components/MessageBubble';
 import GuestNamePrompt from '../components/GuestNamePrompt';
-import { useMessages, useSendMessage, useSendMessageAnon, useListing } from '../hooks/useQueries';
-import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { Skeleton } from '../components/ui/skeleton';
-import { toast } from 'sonner';
-import type { ListingId } from '../backend';
-import type { Principal } from '@icp-sdk/core/principal';
 
 interface MessageThreadProps {
   listingId: ListingId;
@@ -17,218 +15,138 @@ interface MessageThreadProps {
 }
 
 export default function MessageThread({ listingId, otherUserId, otherUserName, onBack }: MessageThreadProps) {
-  const { identity } = useInternetIdentity();
-  const isAuthenticated = !!identity;
-  const currentUserId = identity?.getPrincipal();
-
-  const { data: messages, isLoading } = useMessages(listingId);
-  const { data: listing } = useListing(listingId);
-  const sendMessage = useSendMessage();
-  const sendMessageAnon = useSendMessageAnon();
-
-  const [content, setContent] = useState('');
+  const [messageText, setMessageText] = useState('');
   const [showGuestPrompt, setShowGuestPrompt] = useState(false);
-  const [pendingContent, setPendingContent] = useState('');
+  const [guestName, setGuestName] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Filter messages for this specific conversation thread (authenticated only)
-  const threadMessages = (messages ?? []).filter((m) => {
-    if (!currentUserId) return false;
-    const isSentByMe =
-      m.senderId.toString() === currentUserId.toString() &&
-      m.receiverId.toString() === otherUserId.toString();
-    const isReceivedByMe =
-      m.receiverId.toString() === currentUserId.toString() &&
-      m.senderId.toString() === otherUserId.toString();
-    return isSentByMe || isReceivedByMe;
-  });
+  const { identity } = useInternetIdentity();
+  const { data: messages, isLoading } = useMessages(listingId);
+  const sendMessage = useSendMessage();
+  const sendAnonMessage = useSendMessageAnon();
 
-  // Auto-scroll to latest message
+  const currentUserId = identity?.getPrincipal();
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [threadMessages.length]);
+  }, [messages]);
 
   const handleSend = async () => {
-    const trimmed = content.trim();
+    const trimmed = messageText.trim();
     if (!trimmed) return;
 
-    if (isAuthenticated && currentUserId) {
-      // Authenticated send
-      try {
-        await sendMessage.mutateAsync({ listingId, receiverId: otherUserId, content: trimmed });
-        setContent('');
-      } catch {
-        toast.error('Failed to send message');
-      }
-    } else {
-      // Guest send — check for stored name
-      const storedName = sessionStorage.getItem('guestDisplayName');
-      if (storedName) {
-        await sendAsGuest(storedName, trimmed);
-      } else {
-        setPendingContent(trimmed);
-        setShowGuestPrompt(true);
-      }
-    }
-  };
-
-  const sendAsGuest = async (guestName: string, text: string) => {
-    try {
-      await sendMessageAnon.mutateAsync({
+    if (identity) {
+      await sendMessage.mutateAsync({
+        listingId,
+        receiverId: otherUserId,
+        content: trimmed,
+      });
+    } else if (guestName) {
+      await sendAnonMessage.mutateAsync({
         senderName: guestName,
-        messageText: text,
+        messageText: trimmed,
         listingId,
         receiverId: otherUserId,
       });
-      setContent('');
-      toast.success('Message sent!');
-    } catch {
-      toast.error('Failed to send message');
+    } else {
+      setShowGuestPrompt(true);
+      return;
     }
+
+    setMessageText('');
   };
 
-  const handleGuestConfirm = async (name: string) => {
-    if (pendingContent) {
-      await sendAsGuest(name, pendingContent);
-      setPendingContent('');
+  const handleGuestNameSubmit = async (name: string) => {
+    setGuestName(name);
+    setShowGuestPrompt(false);
+    if (messageText.trim()) {
+      await sendAnonMessage.mutateAsync({
+        senderName: name,
+        messageText: messageText.trim(),
+        listingId,
+        receiverId: otherUserId,
+      });
+      setMessageText('');
     }
   };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  const listingPhotoUrl = listing?.photos?.[0]?.getDirectURL();
-  const isPending = sendMessage.isPending || sendMessageAnon.isPending;
 
   return (
-    <div className="flex flex-col" style={{ height: 'calc(100vh - 56px)' }}>
-      {/* Guest name prompt */}
-      <GuestNamePrompt
-        open={showGuestPrompt}
-        onClose={() => setShowGuestPrompt(false)}
-        onConfirm={handleGuestConfirm}
-      />
-
+    <div className="flex flex-col h-screen bg-background">
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card flex-shrink-0 sticky top-14 z-10">
+      <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border px-4 h-14 flex items-center gap-3 shrink-0">
         <button
           onClick={onBack}
-          className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-muted transition-colors flex-shrink-0"
-          aria-label="Go back"
+          className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
         >
-          <ArrowLeft className="w-5 h-5 text-foreground" />
+          <ArrowLeft className="w-5 h-5" />
         </button>
-
-        <div className="flex items-center gap-2 flex-1 min-w-0">
-          {listingPhotoUrl ? (
-            <img
-              src={listingPhotoUrl}
-              alt={listing?.title}
-              className="w-9 h-9 rounded-lg object-cover flex-shrink-0"
-            />
-          ) : (
-            <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
-              <span className="text-base">📦</span>
-            </div>
-          )}
-          <div className="min-w-0">
-            <p className="font-heading font-semibold text-sm text-foreground truncate">
-              {otherUserName || 'Conversation'}
-            </p>
-            {listing && (
-              <p className="text-xs text-muted-foreground font-body truncate">{listing.title}</p>
-            )}
-          </div>
+        <div className="flex-1 min-w-0">
+          <h1 className="font-display font-bold text-base text-foreground truncate">
+            {otherUserName || 'Conversation'}
+          </h1>
+          <p className="text-xs font-body text-muted-foreground">Listing conversation</p>
         </div>
-
-        {/* Guest indicator */}
-        {!isAuthenticated && (
-          <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded-full font-body flex-shrink-0">
-            Guest
-          </span>
-        )}
       </div>
 
-      {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4">
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
         {isLoading ? (
-          <div className="flex flex-col gap-3">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className={`flex ${i % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
-                <Skeleton className="h-10 w-48 rounded-2xl" />
-              </div>
-            ))}
+          <div className="flex items-center justify-center h-full">
+            <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
           </div>
-        ) : !isAuthenticated ? (
-          <div className="flex flex-col items-center justify-center h-full text-center py-12">
-            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-3">
-              <span className="text-2xl">💬</span>
-            </div>
-            <p className="text-muted-foreground font-body text-sm mb-1">
-              You're messaging as a guest
-            </p>
-            <p className="text-muted-foreground font-body text-xs">
-              Log in to see full conversation history
-            </p>
-          </div>
-        ) : threadMessages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center py-12">
-            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-3">
-              <span className="text-2xl">💬</span>
-            </div>
-            <p className="text-muted-foreground font-body text-sm">
-              Start the conversation! Say hello 👋
-            </p>
-          </div>
-        ) : (
+        ) : messages && messages.length > 0 ? (
           <>
-            {threadMessages.map((msg) => (
+            {messages.map((message) => (
               <MessageBubble
-                key={msg.id.toString()}
-                message={msg}
-                currentUserId={currentUserId!}
+                key={message.id.toString()}
+                message={message}
+                isSent={currentUserId ? message.senderId.toString() === currentUserId.toString() : false}
               />
             ))}
             <div ref={messagesEndRef} />
           </>
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-3">
+                <Send className="w-7 h-7 text-muted-foreground" />
+              </div>
+              <p className="font-body font-semibold text-foreground mb-1">Start the conversation</p>
+              <p className="text-sm font-body text-muted-foreground">Send a message to the seller</p>
+            </div>
+          </div>
         )}
       </div>
 
-      {/* Input bar */}
-      <div className="flex-shrink-0 border-t border-border bg-card px-4 py-3">
-        {!isAuthenticated && sessionStorage.getItem('guestDisplayName') && (
-          <p className="text-xs text-muted-foreground font-body mb-2">
-            Messaging as <span className="font-semibold text-foreground">{sessionStorage.getItem('guestDisplayName')}</span>
-          </p>
-        )}
-        <div className="flex items-end gap-2">
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={isAuthenticated ? 'Type a message…' : 'Type a message as guest…'}
-            rows={1}
-            className="flex-1 resize-none rounded-xl border border-border bg-muted px-4 py-2.5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all font-body min-h-[44px] max-h-[120px]"
-            style={{ lineHeight: '1.5' }}
+      {/* Input */}
+      <div className="shrink-0 bg-card/95 backdrop-blur-md border-t border-border px-4 py-3">
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={messageText}
+            onChange={(e) => setMessageText(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+            placeholder="Type a message…"
+            className="flex-1 px-4 py-3 rounded-xl border border-border bg-muted text-foreground font-body text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
           />
           <button
             onClick={handleSend}
-            disabled={!content.trim() || isPending}
-            className="w-11 h-11 flex items-center justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex-shrink-0"
-            aria-label="Send message"
+            disabled={!messageText.trim() || sendMessage.isPending || sendAnonMessage.isPending}
+            className="w-11 h-11 rounded-xl flex items-center justify-center text-primary-foreground transition-all shadow-button disabled:opacity-60"
+            style={{ background: 'var(--primary)' }}
           >
-            {isPending ? (
-              <span className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
+            <Send className="w-5 h-5" />
           </button>
         </div>
       </div>
+
+      {/* Guest name prompt */}
+      {showGuestPrompt && (
+        <GuestNamePrompt
+          onSubmit={handleGuestNameSubmit}
+          onClose={() => setShowGuestPrompt(false)}
+        />
+      )}
     </div>
   );
 }

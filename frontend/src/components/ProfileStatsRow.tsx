@@ -1,51 +1,62 @@
-import { useEffect, useState } from 'react';
-import { ShoppingBag, Star, MessageCircle } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { ShoppingBag, Star, MessageSquare, Users } from 'lucide-react';
 
 interface ProfileStatsRowProps {
   listingCount: number;
   reviewCount: number;
   avgRating: number;
+  followerCount?: number;
 }
 
-function useCountUp(target: number, duration = 800): number {
-  const [value, setValue] = useState(0);
+function AnimatedCount({ target, duration = 800 }: { target: number; duration?: number }) {
+  const [count, setCount] = useState(0);
+
   useEffect(() => {
-    if (target === 0) { setValue(0); return; }
-    const start = Date.now();
-    const tick = () => {
-      const elapsed = Date.now() - start;
-      const progress = Math.min(elapsed / duration, 1);
-      setValue(Math.round(progress * target));
-      if (progress < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
+    if (target === 0) return;
+    const steps = 30;
+    const increment = target / steps;
+    let current = 0;
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        setCount(target);
+        clearInterval(timer);
+      } else {
+        setCount(Math.floor(current));
+      }
+    }, duration / steps);
+    return () => clearInterval(timer);
   }, [target, duration]);
-  return value;
+
+  return <span>{count}</span>;
 }
 
-export default function ProfileStatsRow({ listingCount, reviewCount, avgRating }: ProfileStatsRowProps) {
-  const animatedListings = useCountUp(listingCount);
-  const animatedReviews = useCountUp(reviewCount);
-  const animatedRating = useCountUp(Math.round(avgRating * 10)) / 10;
-
+export default function ProfileStatsRow({ listingCount, reviewCount, avgRating, followerCount = 0 }: ProfileStatsRowProps) {
   const stats = [
-    { icon: ShoppingBag, label: 'Listings', value: animatedListings.toString() },
-    { icon: Star, label: 'Avg Rating', value: avgRating > 0 ? animatedRating.toFixed(1) : '—' },
-    { icon: MessageCircle, label: 'Reviews', value: animatedReviews.toString() },
+    { icon: <ShoppingBag className="w-4 h-4" />, value: listingCount, label: 'Listings', isRating: false },
+    { icon: <Star className="w-4 h-4" />, value: avgRating, label: 'Avg Rating', isRating: true },
+    { icon: <MessageSquare className="w-4 h-4" />, value: reviewCount, label: 'Reviews', isRating: false },
+    { icon: <Users className="w-4 h-4" />, value: followerCount, label: 'Followers', isRating: false },
   ];
 
   return (
-    <div className="flex items-stretch gap-0 bg-muted/50 rounded-xl overflow-hidden border border-border">
-      {stats.map(({ icon: Icon, label, value }, i) => (
+    <div className="grid grid-cols-4 gap-2 px-4">
+      {stats.map((stat) => (
         <div
-          key={label}
-          className={`flex-1 flex flex-col items-center justify-center py-3 px-2 ${
-            i < stats.length - 1 ? 'border-r border-border' : ''
-          }`}
+          key={stat.label}
+          className="bg-card rounded-2xl border border-border p-3 text-center shadow-card"
         >
-          <Icon className="w-4 h-4 text-primary mb-1" />
-          <span className="font-heading font-black text-lg text-foreground leading-none">{value}</span>
-          <span className="text-[10px] font-body text-muted-foreground mt-0.5">{label}</span>
+          <div className="w-8 h-8 rounded-xl mx-auto mb-2 flex items-center justify-center"
+            style={{ background: 'var(--primary)', color: 'var(--primary-foreground)' }}>
+            {stat.icon}
+          </div>
+          <div className="font-display font-bold text-lg text-foreground leading-none mb-0.5">
+            {stat.isRating
+              ? stat.value > 0 ? stat.value.toFixed(1) : '—'
+              : <AnimatedCount target={stat.value} />
+            }
+          </div>
+          <div className="text-[10px] font-body text-muted-foreground leading-none">{stat.label}</div>
         </div>
       ))}
     </div>

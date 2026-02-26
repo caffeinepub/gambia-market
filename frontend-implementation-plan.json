@@ -1,290 +1,219 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Mobile layout polish and organization overhaul",
+  "title": "Redesign visual theme and layout",
   "requirements": [
     {
-      "id": "REQ-60",
-      "summary": "Audit and fix the AppHeader component for mobile: ensure the logo/brand text does not overflow on small screens (320px+), constrain icon button tap targets to at least 44×44px, and add consistent horizontal padding (px-4) so nothing touches the screen edge.",
+      "id": "REQ-1",
+      "summary": "Redesign the overall visual theme of the application with a fresh, cohesive aesthetic — including a new color palette, typography choices, and layout structure — that feels distinct from the current dark mode implementation",
       "acceptanceCriteria": [
-        "AppHeader renders without horizontal overflow on a 320px-wide viewport",
-        "Search and profile icon buttons have a minimum touch target of 44×44px",
-        "No content is flush against the screen edge — consistent side padding applied"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/AppHeader.tsx",
-          "operation": "modify",
-          "description": "Fix mobile layout by adding px-4 horizontal padding to the container, constraining logo/brand text with text truncation (truncate class), and ensuring icon buttons have min-w-11 min-h-11 (44px) touch targets with proper flex centering."
-        }
-      ]
-    },
-    {
-      "id": "REQ-61",
-      "summary": "Audit and fix the BottomNav component for mobile: ensure all five tab items are evenly distributed across the full width with equal flex spacing, labels are legible at small sizes (minimum 10px), the active tab indicator is clearly visible, and the nav is always fixed at the bottom with no content hidden behind it.",
-      "acceptanceCriteria": [
-        "All 5 tabs are visible and evenly spaced on a 320px viewport without overflow",
-        "Tab labels are readable (min 10px font size)",
-        "Page content has sufficient bottom padding (pb-20 or equivalent) so the BottomNav never covers content",
-        "Active tab is clearly highlighted"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/BottomNav.tsx",
-          "operation": "modify",
-          "description": "Fix mobile layout by ensuring each tab item uses flex-1 for equal distribution, applying text-[10px] minimum font size to labels, enhancing active tab indicator visibility with a thicker border or background, and confirming the nav is fixed at bottom with proper z-index."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Add pb-20 or pb-24 to the main content container to ensure page content is never hidden behind the fixed BottomNav."
-        }
-      ]
-    },
-    {
-      "id": "REQ-62",
-      "summary": "Fix the HomeFeed page mobile layout: ensure the listing grid uses a single column on mobile (grid-cols-1) and two columns on tablet (sm:grid-cols-2), the category filter row scrolls horizontally without causing page-level horizontal scroll, the FeaturedListingsRow horizontal scroll is contained within its bounds, the search bar has full width with proper padding, and the floating 'Sell Now' button does not overlap the BottomNav.",
-      "acceptanceCriteria": [
-        "On 320px viewport, listing grid shows 1 column",
-        "Category filter row scrolls horizontally without triggering page-level horizontal scrollbar",
-        "Featured row does not cause horizontal page overflow",
-        "Floating Sell Now button is positioned above the BottomNav (bottom-20 or equivalent)",
-        "Search bar spans full width with px-4 padding"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/HomeFeed.tsx",
-          "operation": "modify",
-          "description": "Fix mobile layout by applying grid-cols-1 sm:grid-cols-2 to the listing grid, wrapping CategoryFilter in a container with overflow-x-auto and preventing parent overflow, ensuring FeaturedListingsRow is contained, adding px-4 to search bar wrapper, and positioning the floating Sell Now button with bottom-20 or bottom-24 to sit above the BottomNav."
-        },
-        {
-          "path": "frontend/src/components/CategoryFilter.tsx",
-          "operation": "modify",
-          "description": "Ensure the horizontal scroll container has overflow-x-auto, whitespace-nowrap, and does not cause parent container overflow. Add scrollbar-hide class if available or hide scrollbar via CSS."
-        },
-        {
-          "path": "frontend/src/components/FeaturedListingsRow.tsx",
-          "operation": "modify",
-          "description": "Ensure the horizontal scroll container is properly constrained with overflow-x-auto and does not trigger page-level horizontal scroll. Add proper padding and gap between items."
-        }
-      ]
-    },
-    {
-      "id": "REQ-63",
-      "summary": "Fix the Search page mobile layout: the search bar must be auto-focused and full-width with proper padding, recent search chips must wrap correctly without overflow, filter panels must expand/collapse smoothly within the viewport width, and the results grid must use a single column on mobile.",
-      "acceptanceCriteria": [
-        "Search bar is full-width and properly padded on mobile",
-        "Recent search chips wrap without causing horizontal overflow",
-        "Filter toggle panels do not extend beyond viewport width",
-        "Results grid is single-column on mobile (320px–767px)"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/Search.tsx",
-          "operation": "modify",
-          "description": "Fix mobile layout by ensuring the search bar is full-width with px-4 padding and auto-focus enabled, wrapping the recent search chips container with flex-wrap, constraining filter panels to viewport width with proper padding, and applying grid-cols-1 sm:grid-cols-2 to the results grid."
-        },
-        {
-          "path": "frontend/src/components/SearchBar.tsx",
-          "operation": "modify",
-          "description": "Ensure the search input container is full-width on mobile with proper padding (px-3 py-2.5 minimum) and supports auto-focus prop."
-        },
-        {
-          "path": "frontend/src/components/RecentSearchChips.tsx",
-          "operation": "modify",
-          "description": "Ensure the chips container uses flex-wrap so chips wrap to multiple lines on narrow viewports without causing horizontal overflow."
-        }
-      ]
-    },
-    {
-      "id": "REQ-64",
-      "summary": "Fix the ListingDetail page mobile layout: stack all content in a single column (photos carousel on top, then title/price/badges, then seller info, then description, then action buttons). Action buttons must be full-width, sticky at the bottom of the screen on mobile (above the BottomNav), and have minimum 44px height.",
-      "acceptanceCriteria": [
-        "On mobile, all content stacks vertically in the correct order",
-        "Action buttons are full-width and sticky above the BottomNav",
-        "Photo carousel does not cause horizontal overflow",
-        "Minimum 44px height on action buttons"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/ListingDetail.tsx",
-          "operation": "modify",
-          "description": "Fix mobile layout by restructuring the content to stack vertically (PhotoCarousel, title/price/badges, SellerInfo, description, actions) using flex-col. Make action buttons sticky at bottom with fixed positioning (bottom-20 or bottom-24 to clear BottomNav), full-width (w-full), and minimum height (min-h-11 for 44px). Ensure proper padding around all sections."
-        },
-        {
-          "path": "frontend/src/components/PhotoCarousel.tsx",
-          "operation": "modify",
-          "description": "Ensure the carousel container does not exceed viewport width by applying max-w-full and proper containment. Images should use object-cover and respect container bounds."
-        }
-      ]
-    },
-    {
-      "id": "REQ-65",
-      "summary": "Fix the CreateListing page mobile layout: the multi-step form must be single-column and full-width on mobile with consistent vertical spacing (gap-4) between fields, the step progress indicator must fit within the mobile viewport without text truncation, photo upload thumbnails must use a compact grid (3 columns max on mobile), and the submit button must be full-width and fixed above the BottomNav on mobile.",
-      "acceptanceCriteria": [
-        "Form fields are single-column and full-width on mobile",
-        "Step progress indicator is fully visible without truncation on 320px viewport",
-        "Photo thumbnails are arranged in a 3-column grid on mobile",
-        "Submit button is full-width and does not overlap BottomNav"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/CreateListing.tsx",
-          "operation": "modify",
-          "description": "Fix mobile layout by ensuring the form uses flex-col with gap-4 spacing, all input fields are w-full, the step progress indicator uses compact text or icons that fit 320px viewport, and the submit button is sticky at bottom (bottom-20 or bottom-24) with full width and min-h-11."
-        },
-        {
-          "path": "frontend/src/components/PhotoUpload.tsx",
-          "operation": "modify",
-          "description": "Ensure the photo thumbnail grid uses grid-cols-3 on mobile with proper gap spacing and does not cause horizontal overflow."
-        }
-      ]
-    },
-    {
-      "id": "REQ-66",
-      "summary": "Fix the Chat (conversation list) page mobile layout: each ConversationItem must have adequate padding (p-3 minimum), text (name, last message preview) must be truncated with ellipsis to prevent overflow, timestamps must be right-aligned and not wrap, and the unauthenticated blurred overlay must cover the full content area without layout breaks.",
-      "acceptanceCriteria": [
-        "ConversationItem rows have at least p-3 padding",
-        "Name and preview text truncate with ellipsis on narrow screens",
-        "Timestamps right-align without wrapping",
-        "Unauthenticated blur overlay covers full list without breaking layout"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/Chat.tsx",
-          "operation": "modify",
-          "description": "Fix mobile layout by ensuring the unauthenticated overlay covers the full conversation list with proper backdrop-blur and positioning. Ensure the list container has proper padding."
-        },
-        {
-          "path": "frontend/src/components/ConversationItem.tsx",
-          "operation": "modify",
-          "description": "Fix mobile layout by applying p-3 minimum padding, using truncate class on name and message preview text, ensuring timestamp is right-aligned with whitespace-nowrap, and constraining the overall width to prevent overflow."
-        }
-      ]
-    },
-    {
-      "id": "REQ-67",
-      "summary": "Fix the MessageThread page mobile layout: the message input bar must be fixed at the bottom above the BottomNav with full width, message bubbles must not exceed 80% of the viewport width (max-w-[80vw]), the listing context header at the top must be compact and not overflow, avatar images next to bubbles must be correctly sized (32px) and not stretch the row, and the message list must have bottom padding sufficient to clear the fixed input bar.",
-      "acceptanceCriteria": [
-        "Message input bar is fixed above the BottomNav with full width",
-        "Message bubbles have max-w-[80vw] constraint",
-        "Listing context header is compact and does not overflow on 320px viewport",
-        "Avatars are 32px and do not distort row height",
-        "Message list has enough bottom padding to not be obscured by the input bar"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/MessageThread.tsx",
-          "operation": "modify",
-          "description": "Fix mobile layout by positioning the message input bar fixed at bottom (bottom-20 or bottom-24 above BottomNav) with full width, adding sufficient bottom padding to the message list (pb-32 or more) to clear the input bar, ensuring the listing context header is compact with truncate on text, and verifying message bubbles respect max-w-[80vw]."
-        },
-        {
-          "path": "frontend/src/components/MessageBubble.tsx",
-          "operation": "modify",
-          "description": "Ensure message bubbles have max-w-[80vw] constraint, avatars are fixed at w-8 h-8 (32px), and the bubble layout does not distort when avatar is present."
-        }
-      ]
-    },
-    {
-      "id": "REQ-68",
-      "summary": "Fix the Profile page mobile layout: the avatar/initials circle, name, and stats row must stack cleanly and be centered on mobile, the tab bar must scroll horizontally if tabs overflow, MyListingCard items must use a compact single-column layout with properly sized thumbnails, inline edit fields must be full-width, and all buttons have minimum 44×44px tap targets.",
-      "acceptanceCriteria": [
-        "Avatar, name, and stats are centered and stack cleanly on mobile",
-        "Profile tabs scroll horizontally when they overflow the viewport",
-        "MyListingCard uses single-column layout on mobile",
-        "All profile action buttons have minimum 44×44px tap targets"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/Profile.tsx",
-          "operation": "modify",
-          "description": "Fix mobile layout by centering avatar/name/stats with items-center and flex-col, ensuring inline edit fields are w-full, and verifying all action buttons (Edit, Share, Logout) have min-w-11 min-h-11 (44px) touch targets."
-        },
-        {
-          "path": "frontend/src/components/ProfileTabs.tsx",
-          "operation": "modify",
-          "description": "Ensure the tab bar container has overflow-x-auto and whitespace-nowrap so tabs scroll horizontally on narrow viewports without wrapping or causing page overflow."
-        },
-        {
-          "path": "frontend/src/components/MyListingCard.tsx",
-          "operation": "modify",
-          "description": "Fix mobile layout by using flex-col on mobile for single-column stacking, ensuring thumbnails are properly sized and constrained, and action buttons have minimum 44px touch targets."
-        },
-        {
-          "path": "frontend/src/components/InlineEditField.tsx",
-          "operation": "modify",
-          "description": "Ensure the input field is w-full on mobile and has proper padding (px-3 py-2.5 minimum)."
-        }
-      ]
-    },
-    {
-      "id": "REQ-69",
-      "summary": "Fix the PublicProfile page mobile layout: ensure the profile header (avatar, name, verified badge, rating, location) is properly centered and spaced, the 'Message This Seller' CTA is full-width and sticky at the bottom on mobile, and the reviews list uses consistent card padding without horizontal overflow.",
-      "acceptanceCriteria": [
-        "Profile header is centered with correct spacing on 320px viewport",
-        "'Message This Seller' button is full-width and visible above BottomNav",
-        "Reviews list cards have consistent padding and no horizontal overflow"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/PublicProfile.tsx",
-          "operation": "modify",
-          "description": "Fix mobile layout by centering the profile header with items-center and proper spacing (gap-4), making the 'Message This Seller' button sticky at bottom (bottom-20 or bottom-24) with full width and min-h-11, and ensuring reviews cards have consistent padding without overflow."
-        },
-        {
-          "path": "frontend/src/components/ReviewsList.tsx",
-          "operation": "modify",
-          "description": "Ensure review cards have consistent padding (p-3 or p-4), use max-w-full to prevent overflow, and text content truncates appropriately on narrow viewports."
-        }
-      ]
-    },
-    {
-      "id": "REQ-70",
-      "summary": "Apply global mobile typography and spacing polish across all pages: ensure base font size is at minimum 14px for body text, section headings use consistent sizing (text-lg or text-xl), all interactive elements have minimum 44px height/touch targets, form inputs have consistent padding (px-3 py-2.5 minimum) and rounded corners, and remove any hardcoded pixel widths that cause overflow on narrow viewports.",
-      "acceptanceCriteria": [
-        "No horizontal scroll at 320px viewport on any page",
-        "Body text is minimum 14px across all pages",
-        "All interactive elements have minimum 44px touch targets",
-        "Form inputs have consistent padding and border-radius",
-        "No hardcoded pixel widths wider than the viewport on any page"
+        "A new color palette is defined in index.css and tailwind.config.js, replacing the current OKLCH tokens",
+        "The new theme is applied consistently across HomeFeed, ListingDetail, Profile, Search, Chat, and all shared components",
+        "The AppHeader, BottomNav, HeroSection, and ListingCard components all reflect the new visual style",
+        "Typography (font choices, sizes, weights) is updated to match the new theme",
+        "Both light and dark mode variants are updated to reflect the new palette",
+        "The overall layout and spacing feels clean and organized on both mobile and desktop viewports"
       ],
       "file_operations": [
         {
           "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Add global typography rules to ensure base font size is minimum 14px (text-sm as minimum), define consistent heading sizes (text-lg, text-xl), and add utility classes for minimum touch targets if not already present. Remove or override any hardcoded widths that exceed viewport on mobile."
+          "description": "Replace the current OKLCH-based CSS custom property tokens with a new fresh color palette. Define new --background, --foreground, --card, --primary, --secondary, --accent, --muted, --border, and semantic color tokens for both light and dark themes. Update typography by importing new Google Fonts (if needed) and defining font-family custom properties. Ensure the new palette feels vibrant, modern, and distinct from the current dark implementation while maintaining accessibility contrast ratios."
         },
         {
           "path": "frontend/tailwind.config.js",
           "operation": "modify",
-          "description": "Ensure Tailwind configuration supports minimum font sizes (fontSize.sm: 14px), consistent spacing scale, and touch-target-friendly sizing utilities. Add custom utilities for min-h-11 (44px) if not defined."
-        }
-      ]
-    },
-    {
-      "id": "REQ-71",
-      "summary": "Fix modal and dialog components (ReportModal, BoostModal, GuestNamePrompt, and any confirmation dialogs) to be properly sized and positioned on mobile: modals must use a bottom-sheet style (slide up from bottom) on mobile with rounded top corners, a close/dismiss handle, and must not exceed 90vh in height, with internal content scrollable if it overflows.",
-      "acceptanceCriteria": [
-        "On mobile, modals appear as bottom sheets with top-rounded corners",
-        "Modal height does not exceed 90vh",
-        "Modal content is scrollable when content overflows",
-        "Dismiss/close control is visible and tappable"
-      ],
-      "file_operations": [
+          "description": "Update the Tailwind theme configuration to reference the new CSS custom properties defined in index.css. Modify the colors object to map to the new --background, --foreground, --card, --primary, --secondary, --accent, --muted, and --border tokens. Update border radius values if needed for a softer or sharper aesthetic. Adjust shadow definitions to complement the new color palette. Ensure the extend object properly wires the new theme tokens into Tailwind utility classes."
+        },
         {
-          "path": "frontend/src/components/ReportModal.tsx",
+          "path": "frontend/src/components/AppHeader.tsx",
           "operation": "modify",
-          "description": "Refactor to use bottom-sheet style on mobile: position at bottom of screen, apply rounded-t-xl for top corners, constrain height to max-h-[90vh], make content area scrollable (overflow-y-auto), and add a visible dismiss handle or close button with min 44px touch target."
+          "description": "Apply the new visual theme to the AppHeader component. Update background colors, text colors, and border styles to use the new theme tokens. Adjust padding, height, and spacing to match the new layout structure. Update button styles (theme toggle, search, profile actions) to reflect the new aesthetic. Ensure the logo and branding elements align with the fresh cohesive design. Verify responsive behavior on mobile and desktop viewports."
+        },
+        {
+          "path": "frontend/src/components/BottomNav.tsx",
+          "operation": "modify",
+          "description": "Redesign the BottomNav component with the new theme. Update background colors, icon colors, and active/inactive tab states using the new palette tokens. Adjust the unread message badge styling to match the new accent colors. Update spacing, padding, and icon sizes for improved visual hierarchy. Ensure the navigation bar feels cohesive with the overall app aesthetic and maintains touch-friendly tap targets on mobile."
+        },
+        {
+          "path": "frontend/src/components/HeroSection.tsx",
+          "operation": "modify",
+          "description": "Redesign the HeroSection with the new visual theme. Update the background overlay colors and opacity to complement the new palette. Adjust text colors, font weights, and sizes for the tagline and stats using the new typography tokens. Update the stats row styling (border, background, spacing) to match the new card aesthetic. Ensure the hero image at frontend/public/assets/generated/hero-banner.dim_1400x500.png integrates well with the new color overlay. Verify layout and spacing on both mobile and desktop."
+        },
+        {
+          "path": "frontend/src/components/ListingCard.tsx",
+          "operation": "modify",
+          "description": "Apply the new theme to the ListingCard component. Update card background, border, and shadow styles using the new theme tokens. Adjust text colors for title, price, and location to match the new palette. Update the condition badge and sponsored indicator styling with new accent colors. Adjust spacing, padding, and border radius to align with the new layout structure. Ensure hover and active states reflect the new aesthetic. Verify the card displays correctly in grid layouts on various viewport sizes."
+        },
+        {
+          "path": "frontend/src/pages/HomeFeed.tsx",
+          "operation": "modify",
+          "description": "Update the HomeFeed page to reflect the new visual theme. Ensure all section backgrounds, text colors, and spacing use the new theme tokens. Update loading skeleton styles to match the new palette. Adjust the featured listings row and category filter bar to align with the new aesthetic. Update empty state styling if applicable. Ensure the overall page layout feels clean and organized with consistent spacing and hierarchy on both mobile and desktop viewports."
+        },
+        {
+          "path": "frontend/src/pages/ListingDetail.tsx",
+          "operation": "modify",
+          "description": "Apply the new theme to the ListingDetail page. Update background colors, card styles, and text colors throughout the page. Adjust the photo carousel, seller info section, and review sections to use the new theme tokens. Update button styles for report/share actions and the review form to match the new aesthetic. Ensure all interactive elements (buttons, inputs) reflect the new color palette and typography. Verify layout and spacing consistency on mobile and desktop."
+        },
+        {
+          "path": "frontend/src/pages/Profile.tsx",
+          "operation": "modify",
+          "description": "Redesign the Profile page with the new theme. Update the profile header background, text colors, and button styles. Adjust the stats row styling to use the new accent colors and card aesthetic. Update the tabbed listings/reviews view to match the new palette. Ensure inline-editable fields use the new input styling. Update the logout button to reflect the new button aesthetic. Verify the page layout feels cohesive and clean on both mobile and desktop."
+        },
+        {
+          "path": "frontend/src/pages/Search.tsx",
+          "operation": "modify",
+          "description": "Apply the new visual theme to the Search page. Update the search input styling, recent search chips, and popular category buttons to use the new theme tokens. Adjust the results grid and zero-results state to match the new aesthetic. Update all text colors, backgrounds, and interactive element styles. Ensure the page layout maintains clean spacing and hierarchy with the new palette on mobile and desktop."
+        },
+        {
+          "path": "frontend/src/pages/Chat.tsx",
+          "operation": "modify",
+          "description": "Redesign the Chat page with the new theme. Update conversation list item backgrounds, borders, and text colors. Adjust the blurred preview state for unauthenticated users to use the new palette. Update the login prompt styling to match the new aesthetic. Ensure spacing and layout consistency across the page. Verify the new theme applies to all conversation items and empty states on both mobile and desktop."
+        },
+        {
+          "path": "frontend/src/components/SearchBar.tsx",
+          "operation": "modify",
+          "description": "Update the SearchBar component to match the new visual theme. Adjust input background, border, text colors, and placeholder styling using the new theme tokens. Update the search icon and clear button colors. Ensure focus states and hover effects align with the new aesthetic. Verify the component integrates well with pages that use it (Search, AppHeader)."
+        },
+        {
+          "path": "frontend/src/components/SellerInfo.tsx",
+          "operation": "modify",
+          "description": "Apply the new theme to the SellerInfo component. Update avatar background, text colors, verified badge styling, and location/rating text to use the new palette. Adjust spacing and typography to match the new layout structure. Ensure the loading skeleton state reflects the new theme colors."
+        },
+        {
+          "path": "frontend/src/components/CategoryFilter.tsx",
+          "operation": "modify",
+          "description": "Redesign the CategoryFilter component with the new theme. Update the category pill backgrounds, borders, text colors, and active/selected states using the new theme tokens. Adjust emoji rendering and listing count badge styling. Ensure the horizontal scroll behavior and spacing align with the new aesthetic on mobile and desktop."
+        },
+        {
+          "path": "frontend/src/components/FeaturedListingsRow.tsx",
+          "operation": "modify",
+          "description": "Update the FeaturedListingsRow component to use the new visual theme. Adjust card backgrounds, borders, shadows, and text colors for the featured listing cards. Ensure the horizontal scroll behavior and spacing match the new layout structure. Verify the component displays correctly on both mobile and desktop."
+        },
+        {
+          "path": "frontend/src/components/PhotoCarousel.tsx",
+          "operation": "modify",
+          "description": "Apply the new theme to the PhotoCarousel component. Update navigation button backgrounds, icon colors, and dot indicator styling to use the new palette. Adjust the fullscreen overlay background and controls to match the new aesthetic. Ensure the carousel integrates well with the ListingDetail page layout."
+        },
+        {
+          "path": "frontend/src/components/ReviewsList.tsx",
+          "operation": "modify",
+          "description": "Redesign the ReviewsList component with the new theme. Update review item backgrounds, borders, text colors, and star rating colors. Adjust the loading skeleton and empty state styling to match the new palette. Ensure spacing and typography align with the new layout structure."
+        },
+        {
+          "path": "frontend/src/components/ConversationItem.tsx",
+          "operation": "modify",
+          "description": "Apply the new visual theme to the ConversationItem component. Update background, border, text colors, and thumbnail styling to use the new theme tokens. Adjust spacing and typography for the other user's name, message preview, and timestamp. Ensure hover and active states reflect the new aesthetic."
+        },
+        {
+          "path": "frontend/src/components/MessageBubble.tsx",
+          "operation": "modify",
+          "description": "Redesign the MessageBubble component with the new theme. Update sent/received bubble backgrounds, text colors, and border styles using the new palette. Adjust timestamp styling and edit/delete action button colors. Ensure the deleted-message placeholder state matches the new aesthetic. Verify the bubbles display correctly in the MessageThread layout."
+        },
+        {
+          "path": "frontend/src/components/MyListingCard.tsx",
+          "operation": "modify",
+          "description": "Apply the new theme to the MyListingCard component. Update card background, border, shadow, and text colors. Adjust the status badge, price, and location text styling to use the new palette. Update action button colors (edit, delete, boost) to match the new aesthetic. Ensure the delete confirmation dialog reflects the new theme."
+        },
+        {
+          "path": "frontend/src/components/ProfileStatsRow.tsx",
+          "operation": "modify",
+          "description": "Redesign the ProfileStatsRow component with the new visual theme. Update stat card backgrounds, borders, text colors, and icon colors using the new theme tokens. Adjust spacing and typography for the animated count-up stats. Ensure the grid layout displays correctly on mobile and desktop."
+        },
+        {
+          "path": "frontend/src/components/LoginPrompt.tsx",
+          "operation": "modify",
+          "description": "Apply the new theme to the LoginPrompt component. Update background colors, text colors, button styles, and card backgrounds for both the modal and full-page variants. Adjust spacing and typography to match the new aesthetic. Ensure the Internet Identity login button reflects the new palette."
+        },
+        {
+          "path": "frontend/src/components/ProfileSetup.tsx",
+          "operation": "modify",
+          "description": "Redesign the ProfileSetup form with the new theme. Update input field backgrounds, borders, text colors, and placeholder styling. Adjust button colors and hover states to match the new aesthetic. Update the form container background and spacing to align with the new layout structure."
+        },
+        {
+          "path": "frontend/src/components/EditProfileForm.tsx",
+          "operation": "modify",
+          "description": "Apply the new visual theme to the EditProfileForm component. Update input styling, button colors, and form layout to use the new theme tokens. Ensure toast notifications (success/error) reflect the new palette. Adjust spacing and typography to match the new aesthetic."
+        },
+        {
+          "path": "frontend/src/components/InlineEditField.tsx",
+          "operation": "modify",
+          "description": "Redesign the InlineEditField component with the new theme. Update read-only display and editable input styling to use the new theme tokens. Adjust save/cancel button colors and icon colors. Ensure focus states and hover effects align with the new aesthetic."
+        },
+        {
+          "path": "frontend/src/components/StarRating.tsx",
+          "operation": "modify",
+          "description": "Apply the new theme to the StarRating component. Update star colors for filled/empty states using the new accent/muted tokens. Adjust hover states for interactive mode. Ensure the component displays correctly in all three sizes and integrates well with review components."
+        },
+        {
+          "path": "frontend/src/components/SkeletonListingCard.tsx",
+          "operation": "modify",
+          "description": "Update the SkeletonListingCard component to reflect the new theme. Adjust skeleton background colors, animation, and layout to match the new ListingCard styling. Ensure the skeleton provides a smooth loading experience with the new palette."
+        },
+        {
+          "path": "frontend/src/components/ZeroResultsState.tsx",
+          "operation": "modify",
+          "description": "Apply the new visual theme to the ZeroResultsState component. Update background, text colors, and suggested category button styling to use the new theme tokens. Adjust spacing and typography to match the new aesthetic. Ensure the empty state feels cohesive with the Search page."
+        },
+        {
+          "path": "frontend/src/components/InstallBanner.tsx",
+          "operation": "modify",
+          "description": "Redesign the InstallBanner component with the new theme. Update banner background, text colors, button styling, and dismiss button colors using the new palette. Ensure the banner integrates well with the bottom navigation on mobile and displays correctly on iOS."
+        },
+        {
+          "path": "frontend/src/pages/CreateListing.tsx",
+          "operation": "modify",
+          "description": "Apply the new theme to the CreateListing page. Update form input backgrounds, borders, text colors, and button styles. Adjust the photo upload component styling to match the new aesthetic. Update dropdown, radio, and number input styling. Ensure the overall form layout feels clean and organized with the new palette on mobile and desktop."
+        },
+        {
+          "path": "frontend/src/pages/EditListing.tsx",
+          "operation": "modify",
+          "description": "Redesign the EditListing page with the new visual theme. Update all form input styling, button colors, and layout to use the new theme tokens. Ensure the pre-populated fields display correctly with the new input aesthetic. Adjust spacing and typography to match the CreateListing form for consistency."
+        },
+        {
+          "path": "frontend/src/pages/MessageThread.tsx",
+          "operation": "modify",
+          "description": "Apply the new theme to the MessageThread page. Update the chat container background, input field styling, and send button colors. Ensure the guest name prompt dialog reflects the new aesthetic. Adjust message bubble spacing and overall layout to match the new palette. Verify auto-scroll and responsive behavior."
+        },
+        {
+          "path": "frontend/src/pages/PublicProfile.tsx",
+          "operation": "modify",
+          "description": "Redesign the PublicProfile page with the new visual theme. Update avatar, location, rating, and reviews section styling to use the new theme tokens. Adjust the active listings grid to match the new ListingCard aesthetic. Ensure the read-only layout feels cohesive with the authenticated Profile page."
+        },
+        {
+          "path": "frontend/src/components/ReviewForm.tsx",
+          "operation": "modify",
+          "description": "Apply the new theme to the ReviewForm component. Update input field, textarea, and button styling to use the new palette. Adjust the star rating integration to match the new aesthetic. Ensure the form displays correctly on the ListingDetail page with proper spacing."
+        },
+        {
+          "path": "frontend/src/components/PhotoUpload.tsx",
+          "operation": "modify",
+          "description": "Redesign the PhotoUpload component with the new visual theme. Update preview thumbnail backgrounds, borders, and remove button styling. Adjust the upload button and drag-drop zone colors to match the new palette. Ensure the component integrates well with the CreateListing and EditListing forms."
         },
         {
           "path": "frontend/src/components/BoostModal.tsx",
           "operation": "modify",
-          "description": "Refactor to use bottom-sheet style on mobile: position at bottom, apply rounded-t-xl, max-h-[90vh], scrollable content, and visible dismiss control with 44px touch target."
+          "description": "Apply the new theme to the BoostModal dialog. Update modal background, border, shadow, and text colors. Adjust boost option card styling and button colors to use the new theme tokens. Ensure the dialog displays correctly over the listing detail or profile pages."
+        },
+        {
+          "path": "frontend/src/components/ReportModal.tsx",
+          "operation": "modify",
+          "description": "Redesign the ReportModal with the new visual theme. Update dialog background, text colors, radio button styling, and submit button colors. Ensure the modal integrates well with the ListingDetail page and reflects the new palette."
         },
         {
           "path": "frontend/src/components/GuestNamePrompt.tsx",
           "operation": "modify",
-          "description": "Refactor to use bottom-sheet style on mobile: position at bottom, rounded-t-xl, max-h-[90vh], scrollable content if needed, and visible dismiss/close control with 44px touch target."
+          "description": "Apply the new theme to the GuestNamePrompt dialog. Update modal background, input field styling, and button colors (submit, login alternative) to use the new theme tokens. Adjust spacing and typography to match the new aesthetic."
+        },
+        {
+          "path": "frontend/src/components/ProfileTabs.tsx",
+          "operation": "modify",
+          "description": "Redesign the ProfileTabs component with the new visual theme. Update tab button backgrounds, text colors, active/inactive states, and underline indicators using the new palette. Adjust the listings, reviews, activity, and following content sections to match the new aesthetic. Ensure tab switching feels smooth and cohesive."
+        },
+        {
+          "path": "frontend/src/components/RecentSearchChips.tsx",
+          "operation": "modify",
+          "description": "Apply the new theme to the RecentSearchChips component. Update chip backgrounds, borders, text colors, and dismiss button styling. Adjust the 'clear all' button to match the new palette. Ensure the chips integrate well with the Search page layout."
         }
       ]
     }

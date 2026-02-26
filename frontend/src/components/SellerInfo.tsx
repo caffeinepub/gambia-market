@@ -1,65 +1,95 @@
-import { MapPin, Star } from 'lucide-react';
-import type { UserProfile } from '../backend';
-import type { Principal } from '@icp-sdk/core/principal';
+import React from 'react';
+import { MapPin, Star, ShieldCheck, Users } from 'lucide-react';
+import { Principal } from '@dfinity/principal';
+import { useGetUserProfile, useReviews } from '../hooks/useQueries';
 
 interface SellerInfoProps {
-  seller: UserProfile | null | undefined;
   sellerId: Principal;
   onSellerClick?: (userId: Principal) => void;
 }
 
-export default function SellerInfo({ seller, sellerId, onSellerClick }: SellerInfoProps) {
-  if (!seller) {
+export default function SellerInfo({ sellerId, onSellerClick }: SellerInfoProps) {
+  const { data: profile, isLoading } = useGetUserProfile(sellerId.toString());
+  const { data: reviews } = useReviews(sellerId);
+
+  const avgRating = reviews && reviews.length > 0
+    ? reviews.reduce((sum, r) => sum + Number(r.stars), 0) / reviews.length
+    : 0;
+
+  if (isLoading) {
     return (
-      <div className="flex items-center gap-3 p-3 bg-muted rounded-xl animate-pulse">
-        <div className="w-10 h-10 rounded-full bg-muted-foreground/20" />
-        <div className="flex-1">
-          <div className="h-4 bg-muted-foreground/20 rounded w-24 mb-1" />
-          <div className="h-3 bg-muted-foreground/20 rounded w-16" />
+      <div className="bg-card rounded-2xl border border-border p-4 shadow-card">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl shimmer shrink-0" />
+          <div className="flex-1 space-y-2">
+            <div className="h-4 rounded-lg shimmer w-32" />
+            <div className="h-3 rounded-md shimmer w-24" />
+          </div>
         </div>
       </div>
     );
   }
 
+  if (!profile) return null;
+
   return (
     <button
       onClick={() => onSellerClick?.(sellerId)}
-      className="w-full flex items-center gap-3 p-3 bg-muted/50 rounded-xl hover:bg-muted transition-colors text-left"
+      className="w-full text-left bg-card rounded-2xl border border-border p-4 shadow-card card-hover group"
     >
-      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-        <span className="font-heading font-bold text-primary text-base">
-          {seller.name.charAt(0).toUpperCase()}
-        </span>
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5">
-          <span className="font-heading font-semibold text-foreground text-sm truncate">
-            {seller.name}
-          </span>
-          {seller.verified && (
-            <img
-              src="/assets/generated/verified-badge.dim_256x256.png"
-              alt="Verified"
-              className="w-4 h-4 flex-shrink-0"
-            />
-          )}
-        </div>
-        <div className="flex items-center gap-2 mt-0.5">
-          {seller.location && (
-            <div className="flex items-center gap-0.5 text-muted-foreground">
-              <MapPin className="w-3 h-3" />
-              <span className="text-xs font-body truncate">{seller.location}</span>
-            </div>
-          )}
-          {Number(seller.highestRating) > 0 && (
-            <div className="flex items-center gap-0.5 text-accent">
-              <Star className="w-3 h-3 fill-accent" />
-              <span className="text-xs font-body">{Number(seller.highestRating)}/5</span>
+      <div className="flex items-center gap-3">
+        {/* Avatar */}
+        <div className="w-12 h-12 rounded-2xl shrink-0 overflow-hidden border-2 border-border">
+          {profile.profilePicUrl ? (
+            <img src={profile.profilePicUrl} alt={profile.name} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full gradient-primary flex items-center justify-center">
+              <span className="font-display font-bold text-lg text-primary-foreground">
+                {profile.name.charAt(0).toUpperCase()}
+              </span>
             </div>
           )}
         </div>
+
+        {/* Info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5 mb-0.5">
+            <span className="font-body font-semibold text-sm text-foreground group-hover:text-primary transition-colors truncate">
+              {profile.name}
+            </span>
+            {profile.verified && (
+              <ShieldCheck className="w-4 h-4 shrink-0" style={{ color: 'var(--brand-sage)' }} />
+            )}
+          </div>
+
+          <div className="flex items-center gap-3 text-xs text-muted-foreground font-body">
+            {profile.location && (
+              <span className="flex items-center gap-1">
+                <MapPin className="w-3 h-3 shrink-0" />
+                {profile.location}
+              </span>
+            )}
+            {avgRating > 0 && (
+              <span className="flex items-center gap-1">
+                <Star className="w-3 h-3 fill-current" style={{ color: 'var(--brand-gold)' }} />
+                {avgRating.toFixed(1)}
+              </span>
+            )}
+            {Number(profile.followers) > 0 && (
+              <span className="flex items-center gap-1">
+                <Users className="w-3 h-3" />
+                {Number(profile.followers).toLocaleString()}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="text-muted-foreground group-hover:text-primary transition-colors">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
       </div>
-      <span className="text-xs text-muted-foreground font-body">View →</span>
     </button>
   );
 }

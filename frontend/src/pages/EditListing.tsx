@@ -149,13 +149,14 @@ function EditListingForm({ listingId, onSuccess, onCancel }: EditListingProps) {
           <ArrowLeft className="w-5 h-5" />
           <span className="font-body font-medium text-sm">Cancel</span>
         </button>
-        <h1 className="font-heading font-bold text-base text-foreground">Edit Listing</h1>
+        <h1 className="font-display font-bold text-base text-foreground">Edit Listing</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5 px-4 py-5 max-w-2xl mx-auto w-full">
+        {/* Photos — use onPhotosChange prop */}
         <div className="flex flex-col gap-2">
           <Label className="font-body font-medium">Photos (up to 5)</Label>
-          <PhotoUpload photos={photos} onChange={setPhotos} maxPhotos={5} />
+          <PhotoUpload photos={photos} onPhotosChange={setPhotos} maxPhotos={5} />
         </div>
 
         <div className="flex flex-col gap-1.5">
@@ -250,7 +251,7 @@ function EditListingForm({ listingId, onSuccess, onCancel }: EditListingProps) {
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="edit-price" className="font-body font-medium">Price (GMD) *</Label>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 font-heading font-bold text-primary">D</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 font-display font-bold text-primary">D</span>
             <Input
               id="edit-price"
               type="number"

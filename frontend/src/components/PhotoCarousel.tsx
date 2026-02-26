@@ -1,21 +1,20 @@
-import { useState } from 'react';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
-import type { ExternalBlob } from '../backend';
+import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight, X, Maximize2 } from 'lucide-react';
+import { ExternalBlob } from '../backend';
 
 interface PhotoCarouselProps {
   photos: ExternalBlob[];
-  categoryIcon?: string;
-  alt?: string;
+  title?: string;
 }
 
-export default function PhotoCarousel({ photos, categoryIcon = '📦', alt = 'Listing photo' }: PhotoCarouselProps) {
+export default function PhotoCarousel({ photos, title }: PhotoCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [fullscreen, setFullscreen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
-  if (photos.length === 0) {
+  if (!photos || photos.length === 0) {
     return (
-      <div className="w-full aspect-square bg-muted flex items-center justify-center rounded-xl">
-        <span className="text-6xl">{categoryIcon}</span>
+      <div className="aspect-[4/3] bg-muted rounded-2xl flex items-center justify-center border border-border">
+        <span className="text-5xl opacity-30">📷</span>
       </div>
     );
   }
@@ -25,67 +24,94 @@ export default function PhotoCarousel({ photos, categoryIcon = '📦', alt = 'Li
 
   return (
     <>
-      <div className="relative w-full aspect-square bg-muted rounded-xl overflow-hidden">
+      <div className="relative aspect-[4/3] bg-muted rounded-2xl overflow-hidden border border-border">
         <img
           src={photos[currentIndex].getDirectURL()}
-          alt={`${alt} ${currentIndex + 1}`}
-          className="w-full h-full object-cover cursor-pointer"
-          onClick={() => setFullscreen(true)}
+          alt={`${title ?? 'Photo'} ${currentIndex + 1}`}
+          className="w-full h-full object-cover"
         />
 
+        {/* Controls */}
         {photos.length > 1 && (
           <>
             <button
               onClick={prev}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition-colors"
-              aria-label="Previous photo"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-card/80 backdrop-blur-sm border border-border flex items-center justify-center text-foreground hover:bg-card transition-all shadow-card"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={next}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition-colors"
-              aria-label="Next photo"
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl bg-card/80 backdrop-blur-sm border border-border flex items-center justify-center text-foreground hover:bg-card transition-all shadow-card"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-5 h-5" />
             </button>
-
-            {/* Dots */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-              {photos.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentIndex(i)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    i === currentIndex ? 'bg-white scale-125' : 'bg-white/50'
-                  }`}
-                  aria-label={`Go to photo ${i + 1}`}
-                />
-              ))}
-            </div>
           </>
+        )}
+
+        {/* Fullscreen button */}
+        <button
+          onClick={() => setIsFullscreen(true)}
+          className="absolute top-3 right-3 w-8 h-8 rounded-xl bg-card/80 backdrop-blur-sm border border-border flex items-center justify-center text-foreground hover:bg-card transition-all shadow-card"
+        >
+          <Maximize2 className="w-4 h-4" />
+        </button>
+
+        {/* Dots */}
+        {photos.length > 1 && (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+            {photos.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentIndex(i)}
+                className={`rounded-full transition-all duration-200 ${
+                  i === currentIndex
+                    ? 'w-5 h-2 bg-white'
+                    : 'w-2 h-2 bg-white/50 hover:bg-white/75'
+                }`}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Counter */}
+        {photos.length > 1 && (
+          <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-card/80 backdrop-blur-sm border border-border text-xs font-body font-semibold text-foreground">
+            {currentIndex + 1} / {photos.length}
+          </div>
         )}
       </div>
 
       {/* Fullscreen overlay */}
-      {fullscreen && (
-        <div
-          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
-          onClick={() => setFullscreen(false)}
-        >
+      {isFullscreen && (
+        <div className="fixed inset-0 z-50 bg-foreground/95 flex items-center justify-center p-4">
           <button
-            className="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center"
-            onClick={() => setFullscreen(false)}
-            aria-label="Close fullscreen"
+            onClick={() => setIsFullscreen(false)}
+            className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-card/20 border border-white/20 flex items-center justify-center text-white hover:bg-card/30 transition-all"
           >
             <X className="w-5 h-5" />
           </button>
           <img
             src={photos[currentIndex].getDirectURL()}
-            alt={`${alt} ${currentIndex + 1} fullscreen`}
-            className="max-w-full max-h-full object-contain"
-            onClick={(e) => e.stopPropagation()}
+            alt={`${title ?? 'Photo'} ${currentIndex + 1}`}
+            className="max-w-full max-h-full object-contain rounded-xl"
           />
+          {photos.length > 1 && (
+            <>
+              <button
+                onClick={prev}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-card/20 border border-white/20 flex items-center justify-center text-white hover:bg-card/30 transition-all"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={next}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-card/20 border border-white/20 flex items-center justify-center text-white hover:bg-card/30 transition-all"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </>
+          )}
         </div>
       )}
     </>

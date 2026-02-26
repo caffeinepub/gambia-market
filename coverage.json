@@ -1,145 +1,149 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-26T01:01:24.495Z",
+  "generatedAt": "2026-02-26T02:05:00.360Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 12,
-    "implemented": 0,
+    "total": 1,
+    "implemented": 1,
     "items": [
       {
-        "id": "REQ-60",
-        "summary": "Audit and fix the AppHeader component for mobile: ensure the logo/brand text does not overflow on small screens (320px+), constrain icon button tap targets to at least 44×44px, and add consistent horizontal padding (px-4) so nothing touches the screen edge.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/components/AppHeader.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-61",
-        "summary": "Audit and fix the BottomNav component for mobile: ensure all five tab items (Home, Search, Sell, Chat, Profile) are evenly distributed across the full width with equal flex spacing, labels are legible at small sizes (minimum 10px), the active tab indicator is clearly visible, and the nav is always fixed at the bottom with no content hidden behind it (add appropriate bottom padding to page content).",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/components/BottomNav.tsx",
-          "frontend/src/App.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-62",
-        "summary": "Fix the HomeFeed page mobile layout: ensure the listing grid uses a single column on mobile (grid-cols-1) and two columns on tablet (sm:grid-cols-2), the category filter row scrolls horizontally without causing page-level horizontal scroll, the FeaturedListingsRow horizontal scroll is contained within its bounds, the search bar has full width with proper padding, and the floating 'Sell Now' button does not overlap the BottomNav.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/pages/HomeFeed.tsx",
-          "frontend/src/components/CategoryFilter.tsx",
-          "frontend/src/components/FeaturedListingsRow.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-63",
-        "summary": "Fix the Search page mobile layout: the search bar must be auto-focused and full-width with proper padding, recent search chips must wrap correctly without overflow, filter panels must expand/collapse smoothly within the viewport width, and the results grid must use a single column on mobile.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/pages/Search.tsx",
-          "frontend/src/components/SearchBar.tsx",
-          "frontend/src/components/RecentSearchChips.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-64",
-        "summary": "Fix the ListingDetail page mobile layout: stack all content in a single column (photos carousel on top, then title/price/badges, then seller info, then description, then action buttons). Action buttons ('Message Seller', 'Make Offer') must be full-width, sticky at the bottom of the screen on mobile (above the BottomNav), and have minimum 44px height. The photo carousel must respect the viewport width without overflow.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/pages/ListingDetail.tsx",
-          "frontend/src/components/PhotoCarousel.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-65",
-        "summary": "Fix the CreateListing page mobile layout: the multi-step form must be single-column and full-width on mobile with consistent vertical spacing (gap-4) between fields, the step progress indicator must fit within the mobile viewport without text truncation, photo upload thumbnails must use a compact grid (3 columns max on mobile), and the submit button must be full-width and fixed above the BottomNav on mobile.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/pages/CreateListing.tsx",
-          "frontend/src/components/PhotoUpload.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-66",
-        "summary": "Fix the Chat (conversation list) page mobile layout: each ConversationItem must have adequate padding (p-3 minimum), text (name, last message preview) must be truncated with ellipsis to prevent overflow, timestamps must be right-aligned and not wrap, and the unauthenticated blurred overlay must cover the full content area without layout breaks.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/pages/Chat.tsx",
-          "frontend/src/components/ConversationItem.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-67",
-        "summary": "Fix the MessageThread page mobile layout: the message input bar must be fixed at the bottom above the BottomNav with full width, message bubbles must not exceed 80% of the viewport width (max-w-[80vw]), the listing context header at the top must be compact and not overflow, avatar images next to bubbles must be correctly sized (32px) and not stretch the row, and the message list must have bottom padding sufficient to clear the fixed input bar.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/pages/MessageThread.tsx",
-          "frontend/src/components/MessageBubble.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-68",
-        "summary": "Fix the Profile page mobile layout: the avatar/initials circle, name, and stats row must stack cleanly and be centered on mobile, the tab bar ('My Listings', 'Reviews', 'Activity', 'Following') must scroll horizontally if tabs overflow, MyListingCard items must use a compact single-column layout with properly sized thumbnails, inline edit fields must be full-width, and all buttons (Edit, Share Profile, Logout) must have minimum 44×44px tap targets.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/pages/Profile.tsx",
-          "frontend/src/components/ProfileTabs.tsx",
-          "frontend/src/components/MyListingCard.tsx",
-          "frontend/src/components/InlineEditField.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-69",
-        "summary": "Fix the PublicProfile page mobile layout: ensure the profile header (avatar, name, verified badge, rating, location) is properly centered and spaced, the 'Message This Seller' CTA is full-width and sticky at the bottom on mobile, and the reviews list uses consistent card padding without horizontal overflow.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/pages/PublicProfile.tsx",
-          "frontend/src/components/ReviewsList.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-70",
-        "summary": "Apply global mobile typography and spacing polish across all pages: ensure base font size is at minimum 14px for body text, section headings use consistent sizing (text-lg or text-xl), all interactive elements (buttons, links, inputs) have minimum 44px height/touch targets, form inputs have consistent padding (px-3 py-2.5 minimum) and rounded corners, and remove any hardcoded pixel widths that cause overflow on narrow viewports. Fix any instances of horizontal scroll introduced by wide fixed-width elements.",
-        "status": "missing",
+        "id": "REQ-1",
+        "summary": "Redesign the overall visual theme of the application with a fresh, cohesive aesthetic — including a new color palette, typography choices, and layout structure — that feels distinct from the current dark mode implementation. Apply the new theme consistently across all pages and components.",
+        "status": "implemented",
         "plannedFiles": [
           "frontend/src/index.css",
-          "frontend/tailwind.config.js"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-71",
-        "summary": "Fix modal and dialog components (ReportModal, BoostModal, GuestNamePrompt, and any confirmation dialogs) to be properly sized and positioned on mobile: modals must use a bottom-sheet style (slide up from bottom) on mobile with rounded top corners, a close/dismiss handle, and must not exceed 90vh in height, with internal content scrollable if it overflows.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/components/ReportModal.tsx",
+          "frontend/tailwind.config.js",
+          "frontend/src/components/AppHeader.tsx",
+          "frontend/src/components/BottomNav.tsx",
+          "frontend/src/components/HeroSection.tsx",
+          "frontend/src/components/ListingCard.tsx",
+          "frontend/src/pages/HomeFeed.tsx",
+          "frontend/src/pages/ListingDetail.tsx",
+          "frontend/src/pages/Profile.tsx",
+          "frontend/src/pages/Search.tsx",
+          "frontend/src/pages/Chat.tsx",
+          "frontend/src/components/SearchBar.tsx",
+          "frontend/src/components/SellerInfo.tsx",
+          "frontend/src/components/CategoryFilter.tsx",
+          "frontend/src/components/FeaturedListingsRow.tsx",
+          "frontend/src/components/PhotoCarousel.tsx",
+          "frontend/src/components/ReviewsList.tsx",
+          "frontend/src/components/ConversationItem.tsx",
+          "frontend/src/components/MessageBubble.tsx",
+          "frontend/src/components/MyListingCard.tsx",
+          "frontend/src/components/ProfileStatsRow.tsx",
+          "frontend/src/components/LoginPrompt.tsx",
+          "frontend/src/components/ProfileSetup.tsx",
+          "frontend/src/components/EditProfileForm.tsx",
+          "frontend/src/components/InlineEditField.tsx",
+          "frontend/src/components/StarRating.tsx",
+          "frontend/src/components/SkeletonListingCard.tsx",
+          "frontend/src/components/ZeroResultsState.tsx",
+          "frontend/src/components/InstallBanner.tsx",
+          "frontend/src/pages/CreateListing.tsx",
+          "frontend/src/pages/EditListing.tsx",
+          "frontend/src/pages/MessageThread.tsx",
+          "frontend/src/pages/PublicProfile.tsx",
+          "frontend/src/components/ReviewForm.tsx",
+          "frontend/src/components/PhotoUpload.tsx",
           "frontend/src/components/BoostModal.tsx",
-          "frontend/src/components/GuestNamePrompt.tsx"
+          "frontend/src/components/ReportModal.tsx",
+          "frontend/src/components/GuestNamePrompt.tsx",
+          "frontend/src/components/ProfileTabs.tsx",
+          "frontend/src/components/RecentSearchChips.tsx"
         ],
-        "matchedFiles": []
+        "matchedFiles": [
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js",
+          "frontend/src/components/AppHeader.tsx",
+          "frontend/src/components/BottomNav.tsx",
+          "frontend/src/components/HeroSection.tsx",
+          "frontend/src/components/ListingCard.tsx",
+          "frontend/src/pages/HomeFeed.tsx",
+          "frontend/src/pages/ListingDetail.tsx",
+          "frontend/src/pages/Profile.tsx",
+          "frontend/src/pages/Search.tsx",
+          "frontend/src/pages/Chat.tsx",
+          "frontend/src/components/SearchBar.tsx",
+          "frontend/src/components/SellerInfo.tsx",
+          "frontend/src/components/CategoryFilter.tsx",
+          "frontend/src/components/FeaturedListingsRow.tsx",
+          "frontend/src/components/PhotoCarousel.tsx",
+          "frontend/src/components/ReviewsList.tsx",
+          "frontend/src/components/ConversationItem.tsx",
+          "frontend/src/components/MessageBubble.tsx",
+          "frontend/src/components/MyListingCard.tsx",
+          "frontend/src/components/ProfileStatsRow.tsx",
+          "frontend/src/components/LoginPrompt.tsx",
+          "frontend/src/components/ProfileSetup.tsx",
+          "frontend/src/components/InlineEditField.tsx",
+          "frontend/src/components/StarRating.tsx",
+          "frontend/src/components/SkeletonListingCard.tsx",
+          "frontend/src/components/ZeroResultsState.tsx",
+          "frontend/src/components/InstallBanner.tsx",
+          "frontend/src/pages/CreateListing.tsx",
+          "frontend/src/pages/EditListing.tsx",
+          "frontend/src/pages/MessageThread.tsx",
+          "frontend/src/pages/PublicProfile.tsx",
+          "frontend/src/components/ReviewForm.tsx",
+          "frontend/src/components/PhotoUpload.tsx",
+          "frontend/src/components/BoostModal.tsx",
+          "frontend/src/components/ReportModal.tsx",
+          "frontend/src/components/GuestNamePrompt.tsx",
+          "frontend/src/components/RecentSearchChips.tsx"
+        ]
       }
     ]
   },
   "changedFiles": [
     "build-request.json",
     "feature_evidence.json",
+    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/src/App.tsx",
+    "frontend/src/components/AppHeader.tsx",
+    "frontend/src/components/AuthGuard.tsx",
+    "frontend/src/components/BoostModal.tsx",
+    "frontend/src/components/BottomNav.tsx",
+    "frontend/src/components/CategoryFilter.tsx",
+    "frontend/src/components/ConversationItem.tsx",
+    "frontend/src/components/FeaturedListingsRow.tsx",
+    "frontend/src/components/GuestNamePrompt.tsx",
+    "frontend/src/components/HeroSection.tsx",
+    "frontend/src/components/InlineEditField.tsx",
+    "frontend/src/components/InstallBanner.tsx",
+    "frontend/src/components/ListingCard.tsx",
+    "frontend/src/components/LoginPrompt.tsx",
+    "frontend/src/components/MessageBubble.tsx",
+    "frontend/src/components/MyListingCard.tsx",
+    "frontend/src/components/PhotoCarousel.tsx",
+    "frontend/src/components/PhotoUpload.tsx",
+    "frontend/src/components/ProfileSetup.tsx",
+    "frontend/src/components/ProfileStatsRow.tsx",
+    "frontend/src/components/RecentSearchChips.tsx",
+    "frontend/src/components/ReportModal.tsx",
+    "frontend/src/components/ReviewForm.tsx",
+    "frontend/src/components/ReviewsList.tsx",
+    "frontend/src/components/SearchBar.tsx",
+    "frontend/src/components/SellerInfo.tsx",
+    "frontend/src/components/SkeletonListingCard.tsx",
+    "frontend/src/components/StarRating.tsx",
+    "frontend/src/components/ZeroResultsState.tsx",
+    "frontend/src/index.css",
+    "frontend/src/pages/Chat.tsx",
+    "frontend/src/pages/CreateListing.tsx",
+    "frontend/src/pages/EditListing.tsx",
+    "frontend/src/pages/HomeFeed.tsx",
+    "frontend/src/pages/ListingDetail.tsx",
+    "frontend/src/pages/MessageThread.tsx",
+    "frontend/src/pages/Profile.tsx",
+    "frontend/src/pages/PublicProfile.tsx",
+    "frontend/src/pages/Search.tsx",
+    "frontend/tailwind.config.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

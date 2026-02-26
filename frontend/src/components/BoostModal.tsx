@@ -1,87 +1,104 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from './ui/dialog';
-import { Button } from './ui/button';
-import { Zap } from 'lucide-react';
+import React, { useState } from 'react';
+import { Zap, X, Check } from 'lucide-react';
+import { ListingId } from '../backend';
 import { useBoostListing, useBoostOptions } from '../hooks/useQueries';
-import { toast } from 'sonner';
-import type { ListingId } from '../backend';
 
 interface BoostModalProps {
-  open: boolean;
-  onClose: () => void;
   listingId: ListingId;
+  onClose: () => void;
 }
 
-export default function BoostModal({ open, onClose, listingId }: BoostModalProps) {
-  const { data: boostOptions, isLoading } = useBoostOptions();
+export default function BoostModal({ listingId, onClose }: BoostModalProps) {
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const { data: options, isLoading } = useBoostOptions();
   const boostListing = useBoostListing();
 
-  const handleBoost = async (durationDays: bigint) => {
-    try {
-      await boostListing.mutateAsync({ listingId, isBoosted: true, durationDays });
-      toast.success('Listing boosted! It will now appear at the top of the feed.');
-      onClose();
-    } catch {
-      toast.error('Failed to boost listing. Please try again.');
-    }
+  const handleBoost = async () => {
+    if (selectedOption === null || !options) return;
+    const option = options[selectedOption];
+    await boostListing.mutateAsync({
+      listingId,
+      isBoosted: true,
+      durationDays: option.durationDays,
+    });
+    onClose();
   };
 
   return (
-    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-sm mx-4">
-        <DialogHeader>
-          <DialogTitle className="font-heading flex items-center gap-2">
-            <Zap className="w-5 h-5 text-accent" />
-            Boost Your Listing
-          </DialogTitle>
-          <DialogDescription className="font-body">
-            Get more visibility by boosting your listing to the top of the feed.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="flex flex-col gap-3 py-2">
-          {isLoading ? (
-            <div className="flex flex-col gap-2">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-16 bg-muted rounded-xl animate-pulse" />
-              ))}
+    <div className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+      <div className="w-full max-w-sm bg-card rounded-3xl border border-border shadow-modal p-6 animate-slide-up">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center text-accent-foreground shadow-button-accent"
+              style={{ background: 'var(--accent)' }}>
+              <Zap className="w-5 h-5" />
             </div>
-          ) : (
-            boostOptions?.map((option) => (
-              <button
-                key={option.durationDays.toString()}
-                onClick={() => handleBoost(option.durationDays)}
-                disabled={boostListing.isPending}
-                className="flex items-center justify-between p-4 rounded-xl border-2 border-border hover:border-accent hover:bg-accent/5 transition-all text-left disabled:opacity-50"
-              >
-                <div>
-                  <p className="font-heading font-semibold text-foreground">
-                    {Number(option.durationDays)}-Day Boost
-                  </p>
-                  <p className="text-xs text-muted-foreground font-body mt-0.5">
-                    Appear at the top for {Number(option.durationDays)} days
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="font-heading font-bold text-accent text-lg">
-                    D {Number(option.priceGMD)}
-                  </p>
-                  <p className="text-xs text-muted-foreground font-body">GMD</p>
-                </div>
-              </button>
-            ))
-          )}
+            <div>
+              <h3 className="font-display font-bold text-base text-foreground">Boost Listing</h3>
+              <p className="text-xs font-body text-muted-foreground">Get more visibility</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        <Button variant="outline" onClick={onClose} className="w-full h-11">
-          Cancel
-        </Button>
-      </DialogContent>
-    </Dialog>
+        {/* Options */}
+        {isLoading ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-16 rounded-2xl shimmer" />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-2.5 mb-5">
+            {options?.map((option, idx) => {
+              const isSelected = selectedOption === idx;
+              return (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedOption(idx)}
+                  className={`w-full flex items-center justify-between p-3.5 rounded-2xl border-2 transition-all duration-200 ${
+                    isSelected
+                      ? 'border-primary bg-primary/5'
+                      : 'border-border bg-muted/30 hover:border-primary/40'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                      isSelected ? 'border-primary bg-primary' : 'border-border'
+                    }`}>
+                      {isSelected && <Check className="w-3 h-3 text-primary-foreground" />}
+                    </div>
+                    <div className="text-left">
+                      <p className="font-body font-semibold text-sm text-foreground">
+                        {Number(option.durationDays)} days
+                      </p>
+                      <p className="text-xs font-body text-muted-foreground">Featured placement</p>
+                    </div>
+                  </div>
+                  <span className="font-display font-bold text-base" style={{ color: 'var(--brand-coral)' }}>
+                    D {Number(option.priceGMD)}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        <button
+          onClick={handleBoost}
+          disabled={selectedOption === null || boostListing.isPending}
+          className="w-full py-3.5 rounded-2xl font-body font-semibold text-sm text-accent-foreground transition-all duration-200 shadow-button-accent disabled:opacity-50"
+          style={{ background: 'var(--accent)' }}
+        >
+          {boostListing.isPending ? 'Boosting…' : 'Boost Now'}
+        </button>
+      </div>
+    </div>
   );
 }

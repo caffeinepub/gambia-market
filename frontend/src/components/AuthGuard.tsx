@@ -1,3 +1,4 @@
+import React from 'react';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useGetCallerUserProfile } from '../hooks/useQueries';
 import LoginPrompt from './LoginPrompt';
@@ -41,7 +42,8 @@ export default function AuthGuard({ children, onCancel }: AuthGuardProps) {
   }
 
   if (isAuthenticated && isFetched && userProfile === null) {
-    return <ProfileSetup />;
+    // ProfileSetup requires onComplete; use a no-op since the query will refetch automatically
+    return <ProfileSetup onComplete={() => {}} />;
   }
 
   return <>{children}</>;

@@ -1,250 +1,39 @@
 {
   "kind": "build_request",
-  "title": "Mobile layout polish and organization overhaul",
+  "title": "Redesign visual theme and layout",
   "projectName": "Gambia Market",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-60",
-      "text": "Audit and fix the AppHeader component for mobile: ensure the logo/brand text does not overflow on small screens (320px+), constrain icon button tap targets to at least 44×44px, and add consistent horizontal padding (px-4) so nothing touches the screen edge.",
+      "id": "REQ-1",
+      "text": "Redesign the overall visual theme of the application with a fresh, cohesive aesthetic — including a new color palette, typography choices, and layout structure — that feels distinct from the current dark mode implementation. Apply the new theme consistently across all pages and components.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "the app is not that well organize and i want u to work on that to look perfect on mobile devices"
+          "no i dnt like it"
         ]
       },
       "acceptanceCriteria": [
-        "AppHeader renders without horizontal overflow on a 320px-wide viewport",
-        "Search and profile icon buttons have a minimum touch target of 44×44px",
-        "No content is flush against the screen edge — consistent side padding applied"
-      ]
-    },
-    {
-      "id": "REQ-61",
-      "text": "Audit and fix the BottomNav component for mobile: ensure all five tab items (Home, Search, Sell, Chat, Profile) are evenly distributed across the full width with equal flex spacing, labels are legible at small sizes (minimum 10px), the active tab indicator is clearly visible, and the nav is always fixed at the bottom with no content hidden behind it (add appropriate bottom padding to page content).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "the app is not that well organize and i want u to work on that to look perfect on mobile devices"
-        ]
-      },
-      "acceptanceCriteria": [
-        "All 5 tabs are visible and evenly spaced on a 320px viewport without overflow",
-        "Tab labels are readable (min 10px font size)",
-        "Page content has sufficient bottom padding (pb-20 or equivalent) so the BottomNav never covers content",
-        "Active tab is clearly highlighted"
-      ]
-    },
-    {
-      "id": "REQ-62",
-      "text": "Fix the HomeFeed page mobile layout: ensure the listing grid uses a single column on mobile (grid-cols-1) and two columns on tablet (sm:grid-cols-2), the category filter row scrolls horizontally without causing page-level horizontal scroll, the FeaturedListingsRow horizontal scroll is contained within its bounds, the search bar has full width with proper padding, and the floating 'Sell Now' button does not overlap the BottomNav.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "the app is not that well organize and i want u to work on that to look perfect on mobile devices"
-        ]
-      },
-      "acceptanceCriteria": [
-        "On 320px viewport, listing grid shows 1 column",
-        "Category filter row scrolls horizontally without triggering page-level horizontal scrollbar",
-        "Featured row does not cause horizontal page overflow",
-        "Floating Sell Now button is positioned above the BottomNav (bottom-20 or equivalent)",
-        "Search bar spans full width with px-4 padding"
-      ]
-    },
-    {
-      "id": "REQ-63",
-      "text": "Fix the Search page mobile layout: the search bar must be auto-focused and full-width with proper padding, recent search chips must wrap correctly without overflow, filter panels must expand/collapse smoothly within the viewport width, and the results grid must use a single column on mobile.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "the app is not that well organize and i want u to work on that to look perfect on mobile devices"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Search bar is full-width and properly padded on mobile",
-        "Recent search chips wrap without causing horizontal overflow",
-        "Filter toggle panels do not extend beyond viewport width",
-        "Results grid is single-column on mobile (320px–767px)"
-      ]
-    },
-    {
-      "id": "REQ-64",
-      "text": "Fix the ListingDetail page mobile layout: stack all content in a single column (photos carousel on top, then title/price/badges, then seller info, then description, then action buttons). Action buttons ('Message Seller', 'Make Offer') must be full-width, sticky at the bottom of the screen on mobile (above the BottomNav), and have minimum 44px height. The photo carousel must respect the viewport width without overflow.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "the app is not that well organize and i want u to work on that to look perfect on mobile devices"
-        ]
-      },
-      "acceptanceCriteria": [
-        "On mobile, all content stacks vertically in the correct order",
-        "Action buttons are full-width and sticky above the BottomNav",
-        "Photo carousel does not cause horizontal overflow",
-        "Minimum 44px height on action buttons"
-      ]
-    },
-    {
-      "id": "REQ-65",
-      "text": "Fix the CreateListing page mobile layout: the multi-step form must be single-column and full-width on mobile with consistent vertical spacing (gap-4) between fields, the step progress indicator must fit within the mobile viewport without text truncation, photo upload thumbnails must use a compact grid (3 columns max on mobile), and the submit button must be full-width and fixed above the BottomNav on mobile.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "the app is not that well organize and i want u to work on that to look perfect on mobile devices"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Form fields are single-column and full-width on mobile",
-        "Step progress indicator is fully visible without truncation on 320px viewport",
-        "Photo thumbnails are arranged in a 3-column grid on mobile",
-        "Submit button is full-width and does not overlap BottomNav"
-      ]
-    },
-    {
-      "id": "REQ-66",
-      "text": "Fix the Chat (conversation list) page mobile layout: each ConversationItem must have adequate padding (p-3 minimum), text (name, last message preview) must be truncated with ellipsis to prevent overflow, timestamps must be right-aligned and not wrap, and the unauthenticated blurred overlay must cover the full content area without layout breaks.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "the app is not that well organize and i want u to work on that to look perfect on mobile devices"
-        ]
-      },
-      "acceptanceCriteria": [
-        "ConversationItem rows have at least p-3 padding",
-        "Name and preview text truncate with ellipsis on narrow screens",
-        "Timestamps right-align without wrapping",
-        "Unauthenticated blur overlay covers full list without breaking layout"
-      ]
-    },
-    {
-      "id": "REQ-67",
-      "text": "Fix the MessageThread page mobile layout: the message input bar must be fixed at the bottom above the BottomNav with full width, message bubbles must not exceed 80% of the viewport width (max-w-[80vw]), the listing context header at the top must be compact and not overflow, avatar images next to bubbles must be correctly sized (32px) and not stretch the row, and the message list must have bottom padding sufficient to clear the fixed input bar.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "the app is not that well organize and i want u to work on that to look perfect on mobile devices"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Message input bar is fixed above the BottomNav with full width",
-        "Message bubbles have max-w-[80vw] constraint",
-        "Listing context header is compact and does not overflow on 320px viewport",
-        "Avatars are 32px and do not distort row height",
-        "Message list has enough bottom padding to not be obscured by the input bar"
-      ]
-    },
-    {
-      "id": "REQ-68",
-      "text": "Fix the Profile page mobile layout: the avatar/initials circle, name, and stats row must stack cleanly and be centered on mobile, the tab bar ('My Listings', 'Reviews', 'Activity', 'Following') must scroll horizontally if tabs overflow, MyListingCard items must use a compact single-column layout with properly sized thumbnails, inline edit fields must be full-width, and all buttons (Edit, Share Profile, Logout) must have minimum 44×44px tap targets.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "the app is not that well organize and i want u to work on that to look perfect on mobile devices"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Avatar, name, and stats are centered and stack cleanly on mobile",
-        "Profile tabs scroll horizontally when they overflow the viewport",
-        "MyListingCard uses single-column layout on mobile",
-        "All profile action buttons have minimum 44×44px tap targets"
-      ]
-    },
-    {
-      "id": "REQ-69",
-      "text": "Fix the PublicProfile page mobile layout: ensure the profile header (avatar, name, verified badge, rating, location) is properly centered and spaced, the 'Message This Seller' CTA is full-width and sticky at the bottom on mobile, and the reviews list uses consistent card padding without horizontal overflow.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "the app is not that well organize and i want u to work on that to look perfect on mobile devices"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Profile header is centered with correct spacing on 320px viewport",
-        "'Message This Seller' button is full-width and visible above BottomNav",
-        "Reviews list cards have consistent padding and no horizontal overflow"
-      ]
-    },
-    {
-      "id": "REQ-70",
-      "text": "Apply global mobile typography and spacing polish across all pages: ensure base font size is at minimum 14px for body text, section headings use consistent sizing (text-lg or text-xl), all interactive elements (buttons, links, inputs) have minimum 44px height/touch targets, form inputs have consistent padding (px-3 py-2.5 minimum) and rounded corners, and remove any hardcoded pixel widths that cause overflow on narrow viewports. Fix any instances of horizontal scroll introduced by wide fixed-width elements.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "the app is not that well organize and i want u to work on that to look perfect on mobile devices"
-        ]
-      },
-      "acceptanceCriteria": [
-        "No horizontal scroll at 320px viewport on any page",
-        "Body text is minimum 14px across all pages",
-        "All interactive elements have minimum 44px touch targets",
-        "Form inputs have consistent padding and border-radius",
-        "No hardcoded pixel widths wider than the viewport on any page"
-      ]
-    },
-    {
-      "id": "REQ-71",
-      "text": "Fix modal and dialog components (ReportModal, BoostModal, GuestNamePrompt, and any confirmation dialogs) to be properly sized and positioned on mobile: modals must use a bottom-sheet style (slide up from bottom) on mobile with rounded top corners, a close/dismiss handle, and must not exceed 90vh in height, with internal content scrollable if it overflows.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "the app is not that well organize and i want u to work on that to look perfect on mobile devices"
-        ]
-      },
-      "acceptanceCriteria": [
-        "On mobile, modals appear as bottom sheets with top-rounded corners",
-        "Modal height does not exceed 90vh",
-        "Modal content is scrollable when content overflows",
-        "Dismiss/close control is visible and tappable"
+        "A new color palette is defined in index.css and tailwind.config.js, replacing the current OKLCH tokens",
+        "The new theme is applied consistently across HomeFeed, ListingDetail, Profile, Search, Chat, and all shared components",
+        "The AppHeader, BottomNav, HeroSection, and ListingCard components all reflect the new visual style",
+        "Typography (font choices, sizes, weights) is updated to match the new theme",
+        "Both light and dark mode variants are updated to reflect the new palette",
+        "The overall layout and spacing feels clean and organized on both mobile and desktop viewports"
       ]
     }
   ],
   "constraints": [
-    "Do not modify files listed in frontend.immutablePaths",
-    "All layout fixes must use Tailwind CSS utility classes — no inline styles or external CSS files unless already established in index.css",
-    "Do not alter backend logic or data models",
-    "Preserve all existing functionality while fixing layouts"
+    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui",
+    "Do not change backend data models or Motoko logic"
   ],
   "nonGoals": [
-    "Adding new features or pages not already implemented",
-    "Redesigning the visual brand/color theme",
-    "Changing backend data models or API functions",
-    "Desktop-specific layout redesigns (focus is mobile)"
+    "Adding new features or pages",
+    "Changing backend functionality",
+    "Altering navigation structure or routing logic"
   ],
   "imageRequirements": {
     "required": [],

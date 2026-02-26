@@ -1,4 +1,62 @@
 {
   "kind": "feature_evidence_report",
-  "features": []
+  "features": [
+    {
+      "featureId": "feature-redesign-the-overall-visual-theme-of-the-application-with-a-fresh-cohesive-aesthetic-including-a-new-color-palette-typography-choices-and-layout-structure-that-feels-distinct-from-the-current-dark-mode-implementation-apply-the-new-theme-consistently-across-all-pages-and-components",
+      "featureTitle": "Redesign the overall visual theme of the application with a fresh, cohesive aesthetic — including a new color palette, typography choices, and layout structure — that feels distinct from the current dark mode implementation. Apply the new theme consistently across all pages and components.",
+      "files": [
+        "frontend/src/components/AppHeader.tsx",
+        "frontend/src/components/BoostModal.tsx",
+        "frontend/src/components/BottomNav.tsx",
+        "frontend/src/components/CategoryFilter.tsx",
+        "frontend/src/components/ConversationItem.tsx",
+        "frontend/src/components/FeaturedListingsRow.tsx",
+        "frontend/src/components/GuestNamePrompt.tsx",
+        "frontend/src/components/HeroSection.tsx",
+        "frontend/src/components/InlineEditField.tsx",
+        "frontend/src/components/InstallBanner.tsx",
+        "frontend/src/components/ListingCard.tsx",
+        "frontend/src/components/LoginPrompt.tsx",
+        "frontend/src/components/MessageBubble.tsx",
+        "frontend/src/components/MyListingCard.tsx",
+        "frontend/src/components/PhotoCarousel.tsx",
+        "frontend/src/components/PhotoUpload.tsx",
+        "frontend/src/components/ProfileSetup.tsx",
+        "frontend/src/components/ProfileStatsRow.tsx",
+        "frontend/src/components/RecentSearchChips.tsx",
+        "frontend/src/components/ReportModal.tsx",
+        "frontend/src/components/ReviewForm.tsx",
+        "frontend/src/components/ReviewsList.tsx",
+        "frontend/src/components/SearchBar.tsx",
+        "frontend/src/components/SellerInfo.tsx",
+        "frontend/src/components/SkeletonListingCard.tsx",
+        "frontend/src/components/StarRating.tsx",
+        "frontend/src/components/ZeroResultsState.tsx",
+        "frontend/src/index.css",
+        "frontend/src/pages/Chat.tsx",
+        "frontend/src/pages/CreateListing.tsx",
+        "frontend/src/pages/EditListing.tsx",
+        "frontend/src/pages/HomeFeed.tsx",
+        "frontend/src/pages/ListingDetail.tsx",
+        "frontend/src/pages/MessageThread.tsx",
+        "frontend/src/pages/Profile.tsx",
+        "frontend/src/pages/PublicProfile.tsx",
+        "frontend/src/pages/Search.tsx",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    }
+  ]
 }

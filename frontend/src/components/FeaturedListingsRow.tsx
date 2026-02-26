@@ -1,75 +1,93 @@
-import { useRef } from 'react';
+import React from 'react';
 import { MapPin, Zap, ChevronRight } from 'lucide-react';
-import type { PublicListing, ListingId } from '../backend';
-
-const CATEGORY_ICONS: Record<string, string> = {
-  Electronics: '📱', Clothing: '👗', Food: '🥘', Vehicles: '🚗',
-  Services: '🔧', Furniture: '🛋️', Agriculture: '🌾', Other: '📦',
-};
+import { PublicListing, ListingCategory } from '../backend';
 
 interface FeaturedListingsRowProps {
   listings: PublicListing[];
-  onListingClick: (id: ListingId) => void;
+  onListingClick: (id: bigint) => void;
 }
 
-export default function FeaturedListingsRow({ listings, onListingClick }: FeaturedListingsRowProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
+const categoryEmoji: Record<string, string> = {
+  [ListingCategory.carsAndTrucks]: '🚗',
+  [ListingCategory.motorcycles]: '🏍️',
+  [ListingCategory.bicycles]: '🚲',
+  [ListingCategory.spareParts]: '🔧',
+  [ListingCategory.electronics]: '💻',
+  [ListingCategory.phones]: '📱',
+  [ListingCategory.laptops]: '💻',
+  [ListingCategory.furniture]: '🛋️',
+  [ListingCategory.appliances]: '🏠',
+  [ListingCategory.clothing]: '👕',
+  [ListingCategory.shoes]: '👟',
+  [ListingCategory.fashion]: '👗',
+  [ListingCategory.beauty]: '💄',
+  [ListingCategory.health]: '💊',
+  [ListingCategory.services]: '🛠️',
+  [ListingCategory.pets]: '🐾',
+  [ListingCategory.realEstate]: '🏡',
+  [ListingCategory.other]: '📦',
+};
 
+export default function FeaturedListingsRow({ listings, onListingClick }: FeaturedListingsRowProps) {
   if (!listings || listings.length === 0) return null;
 
   return (
-    <div className="mb-4">
-      <div className="flex items-center justify-between px-4 mb-2">
+    <section className="px-4">
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Zap className="w-4 h-4 text-accent" />
-          <h2 className="font-heading font-bold text-sm text-foreground">Featured Listings</h2>
+          <div className="w-1 h-5 rounded-full" style={{ background: 'var(--accent)' }} />
+          <h2 className="font-display font-bold text-base text-foreground">Featured</h2>
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold font-body text-accent-foreground"
+            style={{ background: 'var(--accent)' }}>
+            <Zap className="w-2.5 h-2.5" />
+            Boosted
+          </span>
         </div>
-        <span className="text-xs text-muted-foreground font-body flex items-center gap-0.5">
-          Scroll <ChevronRight className="w-3 h-3" />
-        </span>
+        <button className="flex items-center gap-1 text-xs font-body font-medium text-primary hover:text-primary/80 transition-colors">
+          See all <ChevronRight className="w-3.5 h-3.5" />
+        </button>
       </div>
 
-      <div
-        ref={scrollRef}
-        className="flex gap-3 px-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-1"
-      >
+      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
         {listings.map((listing) => {
-          const photoUrl = listing.photos.length > 0 ? listing.photos[0].getDirectURL() : null;
-          const categoryIcon = CATEGORY_ICONS[listing.category] || '📦';
+          const emoji = categoryEmoji[listing.category as string] || '📦';
+          const hasPhoto = listing.photos && listing.photos.length > 0;
 
           return (
             <button
               key={listing.id.toString()}
               onClick={() => onListingClick(listing.id)}
-              className="flex-shrink-0 w-48 snap-start flex flex-col bg-card rounded-xl overflow-hidden border-2 border-accent shadow-card hover:shadow-card-hover active:scale-[0.98] transition-all text-left"
+              className="shrink-0 w-44 text-left bg-card rounded-2xl border border-border overflow-hidden card-hover shadow-card group"
             >
-              <div className="relative h-32 w-full bg-muted overflow-hidden">
-                {photoUrl ? (
+              <div className="relative h-28 bg-muted overflow-hidden">
+                {hasPhoto ? (
                   <img
-                    src={photoUrl}
+                    src={listing.photos[0].getDirectURL()}
                     alt={listing.title}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-4xl">{categoryIcon}</span>
+                    <span className="text-3xl opacity-40">{emoji}</span>
                   </div>
                 )}
-                <div className="absolute top-2 left-2 flex items-center gap-1 bg-accent text-accent-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">
-                  <Zap className="w-2.5 h-2.5" />
-                  Featured
+                <div className="absolute top-1.5 left-1.5">
+                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[9px] font-bold font-body text-accent-foreground"
+                    style={{ background: 'var(--accent)' }}>
+                    <Zap className="w-2 h-2" />
+                    Featured
+                  </span>
                 </div>
               </div>
               <div className="p-2.5">
-                <p className="font-heading font-semibold text-xs text-foreground line-clamp-2 leading-tight mb-1">
+                <p className="font-body font-semibold text-xs text-foreground line-clamp-1 mb-1 group-hover:text-primary transition-colors">
                   {listing.title}
                 </p>
-                <p className="font-heading font-bold text-sm text-primary">
+                <p className="font-display font-bold text-sm" style={{ color: 'var(--brand-coral)' }}>
                   D {Number(listing.price).toLocaleString()}
                 </p>
-                <div className="flex items-center gap-1 text-muted-foreground mt-0.5">
-                  <MapPin className="w-3 h-3 flex-shrink-0" />
+                <div className="flex items-center gap-1 mt-1 text-muted-foreground">
+                  <MapPin className="w-2.5 h-2.5 shrink-0" />
                   <span className="text-[10px] font-body truncate">{listing.location}</span>
                 </div>
               </div>
@@ -77,6 +95,6 @@ export default function FeaturedListingsRow({ listings, onListingClick }: Featur
           );
         })}
       </div>
-    </div>
+    </section>
   );
 }

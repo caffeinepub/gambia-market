@@ -1,103 +1,90 @@
-import { useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from './ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from './ui/select';
-import { Button } from './ui/button';
+import React, { useState } from 'react';
+import { Flag, X } from 'lucide-react';
+import { Principal } from '@dfinity/principal';
 import { useCreateReport } from '../hooks/useQueries';
-import { toast } from 'sonner';
-import type { Principal } from '@icp-sdk/core/principal';
 
-const REPORT_REASONS = [
-  'Spam',
-  'Fraud',
-  'Inappropriate Content',
-  'Fake Listing',
+interface ReportModalProps {
+  reportedId: Principal;
+  onClose: () => void;
+}
+
+const reasons = [
+  'Spam or misleading',
+  'Inappropriate content',
+  'Fraudulent listing',
+  'Wrong category',
+  'Duplicate listing',
   'Other',
 ];
 
-interface ReportModalProps {
-  open: boolean;
-  onClose: () => void;
-  reportedId: Principal;
-}
-
-export default function ReportModal({ open, onClose, reportedId }: ReportModalProps) {
-  const [reason, setReason] = useState('');
+export default function ReportModal({ reportedId, onClose }: ReportModalProps) {
+  const [selectedReason, setSelectedReason] = useState('');
   const createReport = useCreateReport();
 
   const handleSubmit = async () => {
-    if (!reason) {
-      toast.error('Please select a reason');
-      return;
-    }
-    try {
-      await createReport.mutateAsync({ reportedId, reason });
-      toast.success('Report submitted. Thank you for keeping Gambia Market safe.');
-      setReason('');
-      onClose();
-    } catch {
-      toast.error('Failed to submit report. Please try again.');
-    }
+    if (!selectedReason) return;
+    await createReport.mutateAsync({ reportedId, reason: selectedReason });
+    onClose();
   };
 
   return (
-    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-sm mx-4">
-        <DialogHeader>
-          <DialogTitle className="font-heading">Report User</DialogTitle>
-          <DialogDescription className="font-body">
-            Help us keep Gambia Market safe by reporting suspicious activity.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="py-2">
-          <Select value={reason} onValueChange={setReason}>
-            <SelectTrigger className="h-11 text-base">
-              <SelectValue placeholder="Select a reason..." />
-            </SelectTrigger>
-            <SelectContent>
-              {REPORT_REASONS.map((r) => (
-                <SelectItem key={r} value={r}>
-                  {r}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <div className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+      <div className="w-full max-w-sm bg-card rounded-3xl border border-border shadow-modal p-6 animate-slide-up">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-destructive/10 text-destructive">
+              <Flag className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-display font-bold text-base text-foreground">Report Listing</h3>
+              <p className="text-xs font-body text-muted-foreground">Help keep the marketplace safe</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        <DialogFooter className="flex gap-2">
-          <Button variant="outline" onClick={onClose} className="flex-1 h-11">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={createReport.isPending || !reason}
-            variant="destructive"
-            className="flex-1 h-11"
+        {/* Reasons */}
+        <div className="space-y-2 mb-5">
+          {reasons.map((reason) => (
+            <button
+              key={reason}
+              onClick={() => setSelectedReason(reason)}
+              className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 text-left transition-all duration-200 ${
+                selectedReason === reason
+                  ? 'border-primary bg-primary/5'
+                  : 'border-border bg-muted/30 hover:border-primary/30'
+              }`}
+            >
+              <div className={`w-4 h-4 rounded-full border-2 shrink-0 transition-all ${
+                selectedReason === reason ? 'border-primary bg-primary' : 'border-border'
+              }`} />
+              <span className="font-body text-sm text-foreground">{reason}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            onClick={onClose}
+            className="flex-1 py-3 rounded-xl border border-border bg-muted text-foreground font-body font-medium text-sm hover:bg-muted/80 transition-all"
           >
-            {createReport.isPending ? (
-              <span className="flex items-center gap-2">
-                <span className="w-4 h-4 border-2 border-destructive-foreground border-t-transparent rounded-full animate-spin" />
-                Reporting...
-              </span>
-            ) : (
-              'Submit Report'
-            )}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={!selectedReason || createReport.isPending}
+            className="flex-1 py-3 rounded-xl font-body font-semibold text-sm text-destructive-foreground bg-destructive hover:bg-destructive/90 transition-all disabled:opacity-50"
+          >
+            {createReport.isPending ? 'Reporting…' : 'Submit Report'}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

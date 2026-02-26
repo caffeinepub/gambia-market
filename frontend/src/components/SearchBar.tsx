@@ -1,40 +1,33 @@
+import React from 'react';
 import { Search, X } from 'lucide-react';
-import { useRef, useEffect } from 'react';
 
 interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
+  onSubmit?: () => void;
   placeholder?: string;
   autoFocus?: boolean;
 }
 
-export default function SearchBar({ value, onChange, placeholder = 'Search listings...', autoFocus }: SearchBarProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (autoFocus && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [autoFocus]);
-
+export default function SearchBar({ value, onChange, onSubmit, placeholder = 'Search listings…', autoFocus }: SearchBarProps) {
   return (
-    <div className="relative flex items-center mx-4 my-2">
-      <Search className="absolute left-3 w-4 h-4 text-muted-foreground pointer-events-none" />
+    <div className="relative">
+      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
       <input
-        ref={inputRef}
-        type="search"
+        type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && onSubmit?.()}
         placeholder={placeholder}
-        className="w-full h-11 pl-9 pr-9 rounded-xl bg-muted border border-border text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all font-body"
+        autoFocus={autoFocus}
+        className="w-full pl-11 pr-10 py-3 rounded-xl border border-border bg-muted text-foreground font-body text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
       />
       {value && (
         <button
           onClick={() => onChange('')}
-          className="absolute right-3 w-5 h-5 flex items-center justify-center rounded-full bg-muted-foreground/20 hover:bg-muted-foreground/30 transition-colors"
-          aria-label="Clear search"
+          className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-border transition-all"
         >
-          <X className="w-3 h-3 text-muted-foreground" />
+          <X className="w-3.5 h-3.5" />
         </button>
       )}
     </div>

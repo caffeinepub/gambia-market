@@ -1,68 +1,81 @@
-import { Badge } from '@/components/ui/badge';
+import React from 'react';
+import { MapPin, TrendingUp, Users, ShoppingBag } from 'lucide-react';
 
-const audiences = [
-  'Everyday Gambians',
-  'Small Businesses',
-  'Market Sellers',
-  'Youth Entrepreneurs',
-];
+interface HeroSectionProps {
+  onSellClick?: () => void;
+  onBrowseClick?: () => void;
+}
 
-export default function HeroSection() {
+export default function HeroSection({ onSellClick, onBrowseClick }: HeroSectionProps) {
   return (
-    <section className="relative w-full overflow-hidden" style={{ minHeight: '340px' }}>
+    <section className="relative overflow-hidden rounded-2xl mx-4 mt-4 mb-2">
       {/* Background image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/assets/generated/hero-banner.dim_1400x500.png')" }}
-      />
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/85 via-brand-dark/70 to-brand-green/60" />
+      <div className="absolute inset-0">
+        <img
+          src="/assets/generated/hero-banner.dim_1400x500.png"
+          alt="Gambia Market"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0" style={{
+          background: 'linear-gradient(135deg, oklch(0.18 0.12 270 / 0.88) 0%, oklch(0.28 0.1 280 / 0.75) 50%, oklch(0.38 0.08 295 / 0.55) 100%)'
+        }} />
+      </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-start justify-center px-6 py-14 md:px-12 md:py-20 max-w-4xl mx-auto">
-        {/* App name */}
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-brand-gold flex items-center justify-center shadow-lg flex-shrink-0">
-            <span className="text-brand-dark font-heading font-black text-lg">G</span>
-          </div>
-          <h1 className="font-heading font-black text-3xl md:text-5xl text-white tracking-tight leading-none">
-            Gambia Market
-          </h1>
+      <div className="relative z-10 px-6 py-8 sm:px-10 sm:py-12">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold font-body"
+            style={{ background: 'oklch(0.78 0.16 75 / 0.25)', color: 'oklch(0.92 0.12 75)', border: '1px solid oklch(0.78 0.16 75 / 0.4)' }}>
+            <MapPin className="w-3 h-3" />
+            The Gambia
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold font-body"
+            style={{ background: 'oklch(0.62 0.19 38 / 0.25)', color: 'oklch(0.92 0.1 38)', border: '1px solid oklch(0.62 0.19 38 / 0.4)' }}>
+            <TrendingUp className="w-3 h-3" />
+            #1 Marketplace
+          </span>
         </div>
 
-        {/* Kente accent line */}
-        <div className="kente-pattern w-32 mb-4 rounded-full" />
+        <h1 className="font-display font-bold text-3xl sm:text-4xl text-white leading-tight mb-3">
+          Buy & Sell Anything<br />
+          <span style={{ color: 'oklch(0.88 0.14 75)' }}>Across The Gambia</span>
+        </h1>
 
-        {/* Tagline */}
-        <p className="text-white/90 text-lg md:text-2xl font-heading font-semibold mb-2 leading-snug max-w-xl">
-          Buy & Sell Locally in The Gambia
-        </p>
-        <p className="text-brand-gold text-base md:text-lg font-body font-medium mb-6">
-          Simple. Safe. Fast.
+        <p className="text-white/75 font-body text-sm sm:text-base mb-6 max-w-md">
+          The trusted marketplace for Gambians. Find great deals on electronics, vehicles, real estate, and more.
         </p>
 
-        {/* Audience badges */}
-        <div className="flex flex-wrap gap-2">
-          {audiences.map((audience) => (
-            <span
-              key={audience}
-              className="inline-flex items-center px-3 py-1 rounded-full text-xs md:text-sm font-body font-semibold bg-white/15 text-white border border-white/30 backdrop-blur-sm"
-            >
-              {audience}
-            </span>
-          ))}
+        <div className="flex flex-wrap gap-3 mb-8">
+          <button
+            onClick={onBrowseClick}
+            className="px-6 py-2.5 rounded-xl font-body font-semibold text-sm text-white border border-white/30 hover:bg-white/15 transition-all duration-200 backdrop-blur-sm"
+          >
+            Browse Listings
+          </button>
+          <button
+            onClick={onSellClick}
+            className="px-6 py-2.5 rounded-xl font-body font-semibold text-sm transition-all duration-200 shadow-button-accent"
+            style={{ background: 'var(--accent)', color: 'var(--accent-foreground)' }}
+          >
+            Start Selling
+          </button>
         </div>
 
-        {/* Stats row */}
-        <div className="flex flex-wrap gap-6 mt-8">
+        {/* Stats */}
+        <div className="flex flex-wrap gap-4 sm:gap-6">
           {[
-            { label: 'Target Users', value: '2M+' },
-            { label: 'Gambian Cities', value: '7' },
-            { label: 'Categories', value: '6+' },
+            { icon: <ShoppingBag className="w-4 h-4" />, value: '10K+', label: 'Listings' },
+            { icon: <Users className="w-4 h-4" />, value: '5K+', label: 'Sellers' },
+            { icon: <MapPin className="w-4 h-4" />, value: '7', label: 'Regions' },
           ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div className="font-heading font-black text-2xl text-brand-gold">{stat.value}</div>
-              <div className="text-white/70 text-xs font-body">{stat.label}</div>
+            <div key={stat.label} className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'oklch(1 0 0 / 0.15)' }}>
+                <span style={{ color: 'oklch(0.88 0.14 75)' }}>{stat.icon}</span>
+              </div>
+              <div>
+                <div className="font-display font-bold text-white text-sm leading-none">{stat.value}</div>
+                <div className="text-white/60 text-xs font-body leading-none mt-0.5">{stat.label}</div>
+              </div>
             </div>
           ))}
         </div>

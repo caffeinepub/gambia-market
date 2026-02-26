@@ -13,12 +13,13 @@ import PublicProfile from './pages/PublicProfile';
 import EditListing from './pages/EditListing';
 import InstallBanner from './components/InstallBanner';
 import { Toaster } from './components/ui/sonner';
+import { ThemeProvider } from './contexts/ThemeContext';
 import type { ListingId } from './backend';
 import type { Principal } from '@icp-sdk/core/principal';
 
+// Internal navigation state — keeps all routing in App without a router library
 export type AppPage =
   | { name: 'home' }
-  | { name: 'search' }
   | { name: 'sell' }
   | { name: 'chat' }
   | { name: 'profile' }
@@ -29,7 +30,7 @@ export type AppPage =
 
 export type NavTab = 'home' | 'search' | 'sell' | 'chat' | 'profile';
 
-function App() {
+function AppContent() {
   const [currentPage, setCurrentPage] = useState<AppPage>({ name: 'home' });
   const [activeTab, setActiveTab] = useState<NavTab>('home');
   const { identity, clear } = useInternetIdentity();
@@ -37,7 +38,7 @@ function App() {
 
   const navigate = (page: AppPage) => {
     setCurrentPage(page);
-    if (page.name === 'home' || page.name === 'search') setActiveTab('home');
+    if (page.name === 'home') setActiveTab('home');
     else if (page.name === 'sell' || page.name === 'edit-listing') setActiveTab('sell');
     else if (page.name === 'chat' || page.name === 'message-thread') setActiveTab('chat');
     else if (page.name === 'profile' || page.name === 'public-profile') setActiveTab('profile');
@@ -62,25 +63,29 @@ function App() {
   const renderPage = () => {
     switch (currentPage.name) {
       case 'home':
-      case 'search':
         return (
           <HomeFeed
             onListingClick={(id) => navigate({ name: 'listing-detail', listingId: id })}
-            initialSearchFocus={currentPage.name === 'search'}
+            onSellClick={() => navigate({ name: 'sell' })}
           />
         );
       case 'sell':
         return (
           <CreateListing
-            onSuccess={(id) => navigate({ name: 'listing-detail', listingId: id })}
-            onCancel={() => navigate({ name: 'home' })}
+            onBack={() => navigate({ name: 'home' })}
+            onSuccess={() => navigate({ name: 'home' })}
           />
         );
       case 'chat':
         return (
           <Chat
-            onConversationClick={(listingId, otherUserId, otherUserName) =>
-              navigate({ name: 'message-thread', listingId, otherUserId, otherUserName })
+            onConversationClick={(otherUserId, listingId) =>
+              navigate({
+                name: 'message-thread',
+                listingId,
+                otherUserId,
+                otherUserName: '',
+              })
             }
           />
         );
@@ -97,8 +102,13 @@ function App() {
           <ListingDetail
             listingId={currentPage.listingId}
             onBack={() => navigate({ name: 'home' })}
-            onMessageSeller={(listingId, sellerId, sellerName) =>
-              navigate({ name: 'message-thread', listingId, otherUserId: sellerId, otherUserName: sellerName })
+            onMessageSeller={(sellerId, listingId) =>
+              navigate({
+                name: 'message-thread',
+                listingId,
+                otherUserId: sellerId,
+                otherUserName: '',
+              })
             }
             onSellerClick={(userId) => navigate({ name: 'public-profile', userId })}
           />
@@ -117,6 +127,7 @@ function App() {
           <PublicProfile
             userId={currentPage.userId}
             onBack={() => navigate({ name: 'home' })}
+            onListingClick={(id) => navigate({ name: 'listing-detail', listingId: id })}
           />
         );
       case 'edit-listing':
@@ -128,19 +139,24 @@ function App() {
           />
         );
       default:
-        return <HomeFeed onListingClick={(id) => navigate({ name: 'listing-detail', listingId: id })} />;
+        return (
+          <HomeFeed
+            onListingClick={(id) => navigate({ name: 'listing-detail', listingId: id })}
+            onSellClick={() => navigate({ name: 'sell' })}
+          />
+        );
     }
   };
 
-  const showBottomNav = !['message-thread'].includes(currentPage.name);
+  const showBottomNav = currentPage.name !== 'message-thread';
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <AppHeader
         onLogoClick={() => navigate({ name: 'home' })}
-        onSearchClick={() => handleTabChange('search')}
+        onSearchClick={() => handleTabChange('home')}
         onProfileClick={() => handleTabChange('profile')}
-        isAuthenticated={!!identity}
+        onSellClick={() => navigate({ name: 'sell' })}
       />
 
       <main className="flex-1 overflow-y-auto pb-20">
@@ -151,11 +167,17 @@ function App() {
         <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
       )}
 
-      {/* PWA Install Banner — renders above BottomNav via z-50 */}
       <InstallBanner />
-
       <Toaster richColors position="top-center" />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
 
