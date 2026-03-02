@@ -1,6 +1,6 @@
-import SectionContainer from './SectionContainer';
-import EntityCard from './EntityCard';
-import { databaseEntities } from '../data/database';
+import { databaseEntities } from "../data/database";
+import EntityCard from "./EntityCard";
+import SectionContainer from "./SectionContainer";
 
 export default function DatabaseStructureSection() {
   return (

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Flag, X } from 'lucide-react';
-import { Principal } from '@dfinity/principal';
-import { useCreateReport } from '../hooks/useQueries';
+import type { Principal } from "@dfinity/principal";
+import { Flag, X } from "lucide-react";
+import React, { useState } from "react";
+import { useCreateReport } from "../hooks/useQueries";
 
 interface ReportModalProps {
   reportedId: Principal;
@@ -9,16 +9,16 @@ interface ReportModalProps {
 }
 
 const reasons = [
-  'Spam or misleading',
-  'Inappropriate content',
-  'Fraudulent listing',
-  'Wrong category',
-  'Duplicate listing',
-  'Other',
+  "Spam or misleading",
+  "Inappropriate content",
+  "Fraudulent listing",
+  "Wrong category",
+  "Duplicate listing",
+  "Other",
 ];
 
 export default function ReportModal({ reportedId, onClose }: ReportModalProps) {
-  const [selectedReason, setSelectedReason] = useState('');
+  const [selectedReason, setSelectedReason] = useState("");
   const createReport = useCreateReport();
 
   const handleSubmit = async () => {
@@ -37,11 +37,16 @@ export default function ReportModal({ reportedId, onClose }: ReportModalProps) {
               <Flag className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-display font-bold text-base text-foreground">Report Listing</h3>
-              <p className="text-xs font-body text-muted-foreground">Help keep the marketplace safe</p>
+              <h3 className="font-display font-bold text-base text-foreground">
+                Report Listing
+              </h3>
+              <p className="text-xs font-body text-muted-foreground">
+                Help keep the marketplace safe
+              </p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="w-8 h-8 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
           >
@@ -53,35 +58,44 @@ export default function ReportModal({ reportedId, onClose }: ReportModalProps) {
         <div className="space-y-2 mb-5">
           {reasons.map((reason) => (
             <button
+              type="button"
               key={reason}
               onClick={() => setSelectedReason(reason)}
               className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 text-left transition-all duration-200 ${
                 selectedReason === reason
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border bg-muted/30 hover:border-primary/30'
+                  ? "border-primary bg-primary/5"
+                  : "border-border bg-muted/30 hover:border-primary/30"
               }`}
             >
-              <div className={`w-4 h-4 rounded-full border-2 shrink-0 transition-all ${
-                selectedReason === reason ? 'border-primary bg-primary' : 'border-border'
-              }`} />
-              <span className="font-body text-sm text-foreground">{reason}</span>
+              <div
+                className={`w-4 h-4 rounded-full border-2 shrink-0 transition-all ${
+                  selectedReason === reason
+                    ? "border-primary bg-primary"
+                    : "border-border"
+                }`}
+              />
+              <span className="font-body text-sm text-foreground">
+                {reason}
+              </span>
             </button>
           ))}
         </div>
 
         <div className="flex gap-2">
           <button
+            type="button"
             onClick={onClose}
             className="flex-1 py-3 rounded-xl border border-border bg-muted text-foreground font-body font-medium text-sm hover:bg-muted/80 transition-all"
           >
             Cancel
           </button>
           <button
+            type="button"
             onClick={handleSubmit}
             disabled={!selectedReason || createReport.isPending}
             className="flex-1 py-3 rounded-xl font-body font-semibold text-sm text-destructive-foreground bg-destructive hover:bg-destructive/90 transition-all disabled:opacity-50"
           >
-            {createReport.isPending ? 'Reporting…' : 'Submit Report'}
+            {createReport.isPending ? "Reporting…" : "Submit Report"}
           </button>
         </div>
       </div>

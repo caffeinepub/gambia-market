@@ -1,10 +1,10 @@
-import SectionContainer from './SectionContainer';
-import FutureFeatureCard from './FutureFeatureCard';
-import { futureFeatures } from '../data/futureFeatures';
+import { futureFeatures } from "../data/futureFeatures";
+import FutureFeatureCard from "./FutureFeatureCard";
+import SectionContainer from "./SectionContainer";
 
 export default function FutureFeaturesSection() {
-  const phase2 = futureFeatures.filter((f) => f.phase === 'Phase 2');
-  const phase3 = futureFeatures.filter((f) => f.phase === 'Phase 3');
+  const phase2 = futureFeatures.filter((f) => f.phase === "Phase 2");
+  const phase3 = futureFeatures.filter((f) => f.phase === "Phase 3");
 
   return (
     <SectionContainer

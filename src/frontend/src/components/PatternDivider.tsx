@@ -3,11 +3,13 @@ interface PatternDividerProps {
   thin?: boolean;
 }
 
-export default function PatternDivider({ className = '', thin = false }: PatternDividerProps) {
+export default function PatternDivider({
+  className = "",
+  thin = false,
+}: PatternDividerProps) {
   return (
     <div
-      className={`w-full ${thin ? 'kente-pattern-thin' : 'kente-pattern'} ${className}`}
-      role="separator"
+      className={`w-full ${thin ? "kente-pattern-thin" : "kente-pattern"} ${className}`}
       aria-hidden="true"
     />
   );

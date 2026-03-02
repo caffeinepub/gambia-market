@@ -1,8 +1,8 @@
-import React from 'react';
-import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useGetCallerUserProfile } from '../hooks/useQueries';
-import LoginPrompt from './LoginPrompt';
-import ProfileSetup from './ProfileSetup';
+import type React from "react";
+import { useInternetIdentity } from "../hooks/useInternetIdentity";
+import { useGetCallerUserProfile } from "../hooks/useQueries";
+import LoginPrompt from "./LoginPrompt";
+import ProfileSetup from "./ProfileSetup";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -13,7 +13,11 @@ export default function AuthGuard({ children, onCancel }: AuthGuardProps) {
   const { identity, isInitializing } = useInternetIdentity();
   const isAuthenticated = !!identity;
 
-  const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
+  const {
+    data: userProfile,
+    isLoading: profileLoading,
+    isFetched,
+  } = useGetCallerUserProfile();
 
   if (isInitializing) {
     return (
@@ -36,7 +40,9 @@ export default function AuthGuard({ children, onCancel }: AuthGuardProps) {
         <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
           <span className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
-        <p className="font-body text-sm text-muted-foreground">Setting up your account…</p>
+        <p className="font-body text-sm text-muted-foreground">
+          Setting up your account…
+        </p>
       </div>
     );
   }

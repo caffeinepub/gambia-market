@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { X, Download, Smartphone } from 'lucide-react';
+import { Download, Smartphone, X } from "lucide-react";
+import React, { useState, useEffect } from "react";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
 export default function InstallBanner() {
   const [showBanner, setShowBanner] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
-    const dismissed = localStorage.getItem('install-banner-dismissed');
+    const dismissed = localStorage.getItem("install-banner-dismissed");
     if (dismissed) return;
 
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    const isStandalone = window.matchMedia(
+      "(display-mode: standalone)",
+    ).matches;
     if (isStandalone) return;
 
     const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -32,15 +35,15 @@ export default function InstallBanner() {
       setShowBanner(true);
     };
 
-    window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
   const handleInstall = async () => {
     if (deferredPrompt) {
       await deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
+      if (outcome === "accepted") {
         setShowBanner(false);
       }
     }
@@ -48,7 +51,7 @@ export default function InstallBanner() {
 
   const handleDismiss = () => {
     setShowBanner(false);
-    localStorage.setItem('install-banner-dismissed', 'true');
+    localStorage.setItem("install-banner-dismissed", "true");
   };
 
   if (!showBanner) return null;
@@ -60,23 +63,29 @@ export default function InstallBanner() {
           <Smartphone className="w-5 h-5 text-primary-foreground" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-body font-semibold text-sm text-foreground">Install Gambia Market</p>
+          <p className="font-body font-semibold text-sm text-foreground">
+            Install Gambia Market
+          </p>
           <p className="text-xs font-body text-muted-foreground">
-            {isIOS ? 'Tap Share → Add to Home Screen' : 'Add to your home screen for quick access'}
+            {isIOS
+              ? "Tap Share → Add to Home Screen"
+              : "Add to your home screen for quick access"}
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {!isIOS && (
             <button
+              type="button"
               onClick={handleInstall}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-body font-semibold text-primary-foreground shadow-button transition-all duration-200"
-              style={{ background: 'var(--primary)' }}
+              style={{ background: "var(--primary)" }}
             >
               <Download className="w-3.5 h-3.5" />
               Install
             </button>
           )}
           <button
+            type="button"
             onClick={handleDismiss}
             className="w-7 h-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
           >

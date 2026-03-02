@@ -1,15 +1,15 @@
-import SectionContainer from './SectionContainer';
-import FeatureCard from './FeatureCard';
-import RegistrationFlowCard from './RegistrationFlowCard';
-import ListingCreationCard from './ListingCreationCard';
-import HomeFeedMockup from './HomeFeedMockup';
-import SearchFilterMockup from './SearchFilterMockup';
-import ChatMockup from './ChatMockup';
-import VerifiedBadgeMockup from './VerifiedBadgeMockup';
-import FulfillmentOptionsCard from './FulfillmentOptionsCard';
-import PaymentMethodsMockup from './PaymentMethodsMockup';
-import TrustSafetyMockup from './TrustSafetyMockup';
-import { features } from '../data/features';
+import { features } from "../data/features";
+import ChatMockup from "./ChatMockup";
+import FeatureCard from "./FeatureCard";
+import FulfillmentOptionsCard from "./FulfillmentOptionsCard";
+import HomeFeedMockup from "./HomeFeedMockup";
+import ListingCreationCard from "./ListingCreationCard";
+import PaymentMethodsMockup from "./PaymentMethodsMockup";
+import RegistrationFlowCard from "./RegistrationFlowCard";
+import SearchFilterMockup from "./SearchFilterMockup";
+import SectionContainer from "./SectionContainer";
+import TrustSafetyMockup from "./TrustSafetyMockup";
+import VerifiedBadgeMockup from "./VerifiedBadgeMockup";
 
 export default function FeatureBreakdownSection() {
   return (
@@ -19,7 +19,10 @@ export default function FeatureBreakdownSection() {
     >
       <div className="space-y-8">
         {features.map((feature) => (
-          <div key={feature.id} className="bg-card/50 border border-border rounded-3xl p-5 shadow-card">
+          <div
+            key={feature.id}
+            className="bg-card/50 border border-border rounded-3xl p-5 shadow-card"
+          >
             {/* Feature card header */}
             <FeatureCard feature={feature} />
 
@@ -44,9 +47,7 @@ export default function FeatureBreakdownSection() {
             )}
 
             {/* REQ-17: In-app chat */}
-            {feature.chatDemo && (
-              <ChatMockup chatDemo={feature.chatDemo} />
-            )}
+            {feature.chatDemo && <ChatMockup chatDemo={feature.chatDemo} />}
 
             {/* REQ-18: Verified seller badge */}
             {feature.verificationProcess && feature.sampleProfile && (
@@ -58,7 +59,9 @@ export default function FeatureBreakdownSection() {
 
             {/* REQ-19: Delivery & meet-up */}
             {feature.fulfillmentOptions && (
-              <FulfillmentOptionsCard fulfillmentOptions={feature.fulfillmentOptions} />
+              <FulfillmentOptionsCard
+                fulfillmentOptions={feature.fulfillmentOptions}
+              />
             )}
 
             {/* REQ-20: Mobile money payments */}

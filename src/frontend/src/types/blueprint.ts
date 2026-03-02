@@ -38,14 +38,14 @@ export interface FlowField {
   fieldName: string;
   fieldType: string;
   placeholder: string;
-  validationState: 'neutral' | 'valid' | 'invalid';
+  validationState: "neutral" | "valid" | "invalid";
 }
 
 // REQ-14
 export interface CreationStep {
   stepNumber: number;
   stepTitle: string;
-  fieldType: 'upload' | 'dropdown' | 'number' | 'radio' | 'location' | 'text';
+  fieldType: "upload" | "dropdown" | "number" | "radio" | "location" | "text";
   options?: string[];
   hint: string;
   iconName: string;
@@ -76,7 +76,7 @@ export interface FilterOptions {
 export interface ChatMessage {
   id: string;
   sender: string;
-  role: 'buyer' | 'seller';
+  role: "buyer" | "seller";
   text: string;
   timestamp: string;
 }
@@ -90,7 +90,7 @@ export interface ChatDemo {
 // REQ-18
 export interface VerificationStep {
   stepNumber: number;
-  status: 'complete' | 'in-progress' | 'pending';
+  status: "complete" | "in-progress" | "pending";
   title: string;
   description: string;
 }
@@ -106,7 +106,7 @@ export interface SellerProfile {
 
 // REQ-19
 export interface FulfillmentOption {
-  type: 'delivery' | 'meetup';
+  type: "delivery" | "meetup";
   iconName: string;
   title: string;
   description: string;
@@ -123,14 +123,14 @@ export interface PaymentMethod {
 }
 
 export interface TransactionState {
-  status: 'pending' | 'completed' | 'failed';
+  status: "pending" | "completed" | "failed";
   label: string;
   color: string;
 }
 
 // REQ-21
 export interface TrustMechanism {
-  mechanismType: 'rating' | 'review' | 'report' | 'block';
+  mechanismType: "rating" | "review" | "report" | "block";
   title: string;
   description: string;
   ratingValue?: number;
@@ -149,7 +149,7 @@ export interface UserFlowStep {
 export interface UserFlow {
   id: string;
   title: string;
-  color: 'green' | 'terra';
+  color: "green" | "terra";
   steps: UserFlowStep[];
 }
 
@@ -172,13 +172,13 @@ export interface TechStackItem {
   category: string;
   technology: string;
   rationale: string;
-  categoryColor: 'green' | 'gold' | 'terra';
+  categoryColor: "green" | "gold" | "terra";
 }
 
 export interface MVPFeature {
   id: string;
   title: string;
-  priority: 'must-have' | 'nice-to-have';
+  priority: "must-have" | "nice-to-have";
   featureRef?: string;
 }
 
@@ -192,13 +192,18 @@ export interface FutureFeature {
   id: string;
   title: string;
   description: string;
-  phase: 'Phase 2' | 'Phase 3';
+  phase: "Phase 2" | "Phase 3";
 }
 
 export interface RevenueStream {
   id: string;
   title: string;
-  revenueType: 'Subscription' | 'Pay-per-use' | 'Commission' | 'Sponsorship' | 'Partnership';
+  revenueType:
+    | "Subscription"
+    | "Pay-per-use"
+    | "Commission"
+    | "Sponsorship"
+    | "Partnership";
   description: string;
   projectedImpact: string;
   isPrimary: boolean;
@@ -209,7 +214,12 @@ export interface RevenueStream {
 
 // REQ-22
 export interface ListingComparison {
-  standard: { title: string; price: number; location: string; category: string };
+  standard: {
+    title: string;
+    price: number;
+    location: string;
+    category: string;
+  };
   boosted: { title: string; price: number; location: string; category: string };
 }
 

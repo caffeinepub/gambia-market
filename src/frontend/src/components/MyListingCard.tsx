@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Edit2, Trash2, Zap, Eye } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { PublicListing, ListingCategory } from '../backend';
-import BoostModal from './BoostModal';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Edit2, Eye, Trash2, Zap } from "lucide-react";
+import React, { useState } from "react";
+import { ListingCategory, type PublicListing } from "../backend";
+import BoostModal from "./BoostModal";
 
 interface MyListingCardProps {
   listing: PublicListing;
@@ -13,48 +13,54 @@ interface MyListingCardProps {
 }
 
 const CATEGORY_EMOJI: Record<string, string> = {
-  [ListingCategory.carsAndTrucks]: '🚗',
-  [ListingCategory.motorcycles]: '🏍️',
-  [ListingCategory.bicycles]: '🚲',
-  [ListingCategory.spareParts]: '🔧',
-  [ListingCategory.electronics]: '💻',
-  [ListingCategory.phones]: '📱',
-  [ListingCategory.laptops]: '💻',
-  [ListingCategory.furniture]: '🛋️',
-  [ListingCategory.appliances]: '🏠',
-  [ListingCategory.clothing]: '👕',
-  [ListingCategory.shoes]: '👟',
-  [ListingCategory.fashion]: '👗',
-  [ListingCategory.beauty]: '💄',
-  [ListingCategory.health]: '💊',
-  [ListingCategory.services]: '🛠️',
-  [ListingCategory.pets]: '🐾',
-  [ListingCategory.realEstate]: '🏡',
-  [ListingCategory.other]: '📦',
+  [ListingCategory.carsAndTrucks]: "🚗",
+  [ListingCategory.motorcycles]: "🏍️",
+  [ListingCategory.bicycles]: "🚲",
+  [ListingCategory.spareParts]: "🔧",
+  [ListingCategory.electronics]: "💻",
+  [ListingCategory.phones]: "📱",
+  [ListingCategory.laptops]: "💻",
+  [ListingCategory.furniture]: "🛋️",
+  [ListingCategory.appliances]: "🏠",
+  [ListingCategory.clothing]: "👕",
+  [ListingCategory.shoes]: "👟",
+  [ListingCategory.fashion]: "👗",
+  [ListingCategory.beauty]: "💄",
+  [ListingCategory.health]: "💊",
+  [ListingCategory.services]: "🛠️",
+  [ListingCategory.pets]: "🐾",
+  [ListingCategory.realEstate]: "🏡",
+  [ListingCategory.other]: "📦",
 };
 
-export default function MyListingCard({ listing, onEdit, onClick, onDelete }: MyListingCardProps) {
+export default function MyListingCard({
+  listing,
+  onEdit,
+  onClick,
+  onDelete,
+}: MyListingCardProps) {
   const [boostOpen, setBoostOpen] = useState(false);
 
-  const thumbnailUrl = listing.photos.length > 0
-    ? listing.photos[0].getDirectURL()
-    : null;
+  const thumbnailUrl =
+    listing.photos.length > 0 ? listing.photos[0].getDirectURL() : null;
 
-  const emoji = CATEGORY_EMOJI[listing.category as string] || '📦';
+  const emoji = CATEGORY_EMOJI[listing.category as string] || "📦";
 
-  const statusColor = listing.status === 'Active'
-    ? 'bg-green-100 text-green-700 border-green-200'
-    : listing.status === 'Sold'
-    ? 'bg-gray-100 text-gray-600 border-gray-200'
-    : 'bg-yellow-100 text-yellow-700 border-yellow-200';
+  const statusColor =
+    listing.status === "Active"
+      ? "bg-green-100 text-green-700 border-green-200"
+      : listing.status === "Sold"
+        ? "bg-gray-100 text-gray-600 border-gray-200"
+        : "bg-yellow-100 text-yellow-700 border-yellow-200";
 
   return (
     <>
       <div className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-md transition-shadow">
         <div className="flex gap-3 p-3">
           {/* Thumbnail */}
-          <div
-            className="w-20 h-20 rounded-lg overflow-hidden bg-muted shrink-0 cursor-pointer"
+          <button
+            type="button"
+            className="w-20 h-20 rounded-lg overflow-hidden bg-muted shrink-0 cursor-pointer p-0 border-0"
             onClick={() => onClick(listing.id)}
           >
             {thumbnailUrl ? (
@@ -68,18 +74,21 @@ export default function MyListingCard({ listing, onEdit, onClick, onDelete }: My
                 {emoji}
               </div>
             )}
-          </div>
+          </button>
 
           {/* Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
-              <h3
-                className="font-semibold text-foreground text-sm leading-tight line-clamp-2 cursor-pointer hover:text-brand-green transition-colors"
+              <button
+                type="button"
+                className="font-semibold text-foreground text-sm leading-tight line-clamp-2 cursor-pointer hover:text-brand-green transition-colors text-left p-0 border-0 bg-transparent"
                 onClick={() => onClick(listing.id)}
               >
                 {listing.title}
-              </h3>
-              <span className={`text-xs px-2 py-0.5 rounded-full border shrink-0 font-medium ${statusColor}`}>
+              </button>
+              <span
+                className={`text-xs px-2 py-0.5 rounded-full border shrink-0 font-medium ${statusColor}`}
+              >
                 {listing.status}
               </span>
             </div>
@@ -104,6 +113,7 @@ export default function MyListingCard({ listing, onEdit, onClick, onDelete }: My
         {/* Action buttons */}
         <div className="flex border-t border-border">
           <button
+            type="button"
             onClick={() => onClick(listing.id)}
             className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
           >
@@ -112,6 +122,7 @@ export default function MyListingCard({ listing, onEdit, onClick, onDelete }: My
           </button>
           <div className="w-px bg-border" />
           <button
+            type="button"
             onClick={onEdit}
             className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-muted-foreground hover:text-brand-green hover:bg-brand-green/5 transition-colors"
           >
@@ -120,6 +131,7 @@ export default function MyListingCard({ listing, onEdit, onClick, onDelete }: My
           </button>
           <div className="w-px bg-border" />
           <button
+            type="button"
             onClick={() => setBoostOpen(true)}
             className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-muted-foreground hover:text-brand-gold hover:bg-brand-gold/5 transition-colors"
           >
@@ -128,6 +140,7 @@ export default function MyListingCard({ listing, onEdit, onClick, onDelete }: My
           </button>
           <div className="w-px bg-border" />
           <button
+            type="button"
             onClick={onDelete}
             className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors"
           >

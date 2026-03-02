@@ -1,12 +1,12 @@
-import { useMemo } from 'react';
-import { useMyConversations } from './useQueries';
-import { useInternetIdentity } from './useInternetIdentity';
+import { useMemo } from "react";
+import { useInternetIdentity } from "./useInternetIdentity";
+import { useMyConversations } from "./useQueries";
 
-const LAST_VIEWED_KEY = 'lastViewedMessageTimestamps';
+const LAST_VIEWED_KEY = "lastViewedMessageTimestamps";
 
 function getLastViewed(): Record<string, number> {
   try {
-    return JSON.parse(localStorage.getItem(LAST_VIEWED_KEY) || '{}');
+    return JSON.parse(localStorage.getItem(LAST_VIEWED_KEY) || "{}");
   } catch {
     return {};
   }

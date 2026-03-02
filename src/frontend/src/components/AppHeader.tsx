@@ -1,10 +1,10 @@
-import React from 'react';
-import { Search, Plus, LogIn } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useGetCallerUserProfile } from '../hooks/useQueries';
-import { useQueryClient } from '@tanstack/react-query';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { useQueryClient } from "@tanstack/react-query";
+import { LogIn, Plus, Search } from "lucide-react";
+import React from "react";
+import { useInternetIdentity } from "../hooks/useInternetIdentity";
+import { useGetCallerUserProfile } from "../hooks/useQueries";
 
 interface AppHeaderProps {
   onSearch?: () => void;
@@ -13,7 +13,12 @@ interface AppHeaderProps {
   onLogin?: () => void;
 }
 
-export default function AppHeader({ onSearch, onSell, onProfile, onLogin }: AppHeaderProps) {
+export default function AppHeader({
+  onSearch,
+  onSell,
+  onProfile,
+  onLogin,
+}: AppHeaderProps) {
   const { identity, login, clear, loginStatus } = useInternetIdentity();
   const isAuthenticated = !!identity;
   const queryClient = useQueryClient();
@@ -32,7 +37,7 @@ export default function AppHeader({ onSearch, onSell, onProfile, onLogin }: AppH
           await login();
         } catch (error: unknown) {
           const err = error as Error;
-          if (err?.message === 'User is already authenticated') {
+          if (err?.message === "User is already authenticated") {
             await clear();
             setTimeout(() => login(), 300);
           }
@@ -41,10 +46,17 @@ export default function AppHeader({ onSearch, onSell, onProfile, onLogin }: AppH
     }
   };
 
-  const profilePicUrl = userProfile?.profilePic ? userProfile.profilePic.getDirectURL() : null;
+  const profilePicUrl = userProfile?.profilePic
+    ? userProfile.profilePic.getDirectURL()
+    : null;
   const initials = userProfile?.name
-    ? userProfile.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
-    : '?';
+    ? userProfile.name
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "?";
 
   return (
     <header className="sticky top-0 z-50 bg-card border-b border-border shadow-md">
@@ -54,7 +66,9 @@ export default function AppHeader({ onSearch, onSell, onProfile, onLogin }: AppH
           <div className="w-8 h-8 bg-brand-green rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">GM</span>
           </div>
-          <span className="font-bold text-foreground text-base hidden sm:block">Gambia Market</span>
+          <span className="font-bold text-foreground text-base hidden sm:block">
+            Gambia Market
+          </span>
         </div>
 
         {/* Search bar */}
@@ -89,7 +103,10 @@ export default function AppHeader({ onSearch, onSell, onProfile, onLogin }: AppH
             >
               <Avatar className="w-full h-full">
                 {profilePicUrl ? (
-                  <AvatarImage src={profilePicUrl} alt={userProfile?.name || 'Profile'} />
+                  <AvatarImage
+                    src={profilePicUrl}
+                    alt={userProfile?.name || "Profile"}
+                  />
                 ) : null}
                 <AvatarFallback className="bg-brand-green text-white text-xs font-bold">
                   {initials}
@@ -101,12 +118,12 @@ export default function AppHeader({ onSearch, onSell, onProfile, onLogin }: AppH
               onClick={handleAuth}
               variant="outline"
               size="sm"
-              disabled={loginStatus === 'logging-in'}
+              disabled={loginStatus === "logging-in"}
               className="gap-1.5"
             >
               <LogIn className="w-4 h-4" />
               <span className="hidden sm:inline">
-                {loginStatus === 'logging-in' ? 'Logging in...' : 'Login'}
+                {loginStatus === "logging-in" ? "Logging in..." : "Login"}
               </span>
             </Button>
           )}

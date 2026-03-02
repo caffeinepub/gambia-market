@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import SectionContainer from './SectionContainer';
-import JourneyFlow from './JourneyFlow';
-import { userFlows } from '../data/userFlows';
+import { useState } from "react";
+import { userFlows } from "../data/userFlows";
+import JourneyFlow from "./JourneyFlow";
+import SectionContainer from "./SectionContainer";
 
 export default function UserFlowsSection() {
-  const [activeFlow, setActiveFlow] = useState<'buyer' | 'seller'>('buyer');
+  const [activeFlow, setActiveFlow] = useState<"buyer" | "seller">("buyer");
 
   return (
     <SectionContainer
@@ -15,14 +15,15 @@ export default function UserFlowsSection() {
       <div className="flex md:hidden gap-2 mb-6">
         {userFlows.map((flow) => (
           <button
+            type="button"
             key={flow.id}
-            onClick={() => setActiveFlow(flow.id as 'buyer' | 'seller')}
+            onClick={() => setActiveFlow(flow.id as "buyer" | "seller")}
             className={`flex-1 py-2 px-4 rounded-xl text-sm font-heading font-bold transition-all ${
               activeFlow === flow.id
-                ? flow.color === 'green'
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary text-secondary-foreground'
-                : 'bg-muted text-muted-foreground'
+                ? flow.color === "green"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary text-secondary-foreground"
+                : "bg-muted text-muted-foreground"
             }`}
           >
             {flow.title}

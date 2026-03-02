@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
-import { Camera, X } from 'lucide-react';
-import { ExternalBlob } from '../backend';
+import { Camera, X } from "lucide-react";
+import React, { useRef } from "react";
+import { ExternalBlob } from "../backend";
 
 interface PhotoUploadProps {
   photos: ExternalBlob[];
@@ -8,7 +8,11 @@ interface PhotoUploadProps {
   maxPhotos?: number;
 }
 
-export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: PhotoUploadProps) {
+export default function PhotoUpload({
+  photos,
+  onPhotosChange,
+  maxPhotos = 5,
+}: PhotoUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = React.useState(false);
 
@@ -22,12 +26,12 @@ export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: P
         files.slice(0, maxPhotos - photos.length).map(async (file) => {
           const buffer = await file.arrayBuffer();
           return ExternalBlob.fromBytes(new Uint8Array(buffer));
-        })
+        }),
       );
       onPhotosChange([...photos, ...newBlobs]);
     } finally {
       setUploading(false);
-      if (inputRef.current) inputRef.current.value = '';
+      if (inputRef.current) inputRef.current.value = "";
     }
   };
 
@@ -39,10 +43,14 @@ export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: P
     <div>
       <div className="flex flex-wrap gap-2">
         {photos.map((photo, index) => (
-          <div key={index} className="relative w-20 h-20 rounded-xl overflow-hidden border border-border bg-muted">
+          <div
+            // biome-ignore lint/suspicious/noArrayIndexKey: photo order is position-based
+            key={index}
+            className="relative w-20 h-20 rounded-xl overflow-hidden border border-border bg-muted"
+          >
             <img
               src={photo.getDirectURL()}
-              alt={`Photo ${index + 1}`}
+              alt={`Listing ${index + 1}`}
               className="w-full h-full object-cover"
             />
             <button
@@ -67,7 +75,9 @@ export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: P
             ) : (
               <>
                 <Camera className="w-5 h-5" />
-                <span className="text-[10px] font-body font-medium">Add Photo</span>
+                <span className="text-[10px] font-body font-medium">
+                  Add Photo
+                </span>
               </>
             )}
           </button>

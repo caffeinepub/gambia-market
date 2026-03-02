@@ -1,7 +1,7 @@
-import React from 'react';
-import { Home, Search, PlusCircle, MessageCircle, User } from 'lucide-react';
-import { useMyConversations } from '../hooks/useQueries';
-import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { Home, MessageCircle, PlusCircle, User } from "lucide-react";
+import React from "react";
+import { useInternetIdentity } from "../hooks/useInternetIdentity";
+import { useMyConversations } from "../hooks/useQueries";
 
 interface BottomNavProps {
   activeTab: string;
@@ -30,11 +30,10 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   }, [conversations, identity]);
 
   const tabs = [
-    { id: 'home', label: 'Home', icon: Home },
-    { id: 'search', label: 'Search', icon: Search },
-    { id: 'sell', label: 'Sell', icon: PlusCircle },
-    { id: 'chat', label: 'Chat', icon: MessageCircle },
-    { id: 'profile', label: 'Profile', icon: User },
+    { id: "home", label: "Home", icon: Home },
+    { id: "sell", label: "Sell", icon: PlusCircle },
+    { id: "chat", label: "Chat", icon: MessageCircle },
+    { id: "profile", label: "Profile", icon: User },
   ];
 
   return (
@@ -49,19 +48,24 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
               type="button"
               onClick={() => onTabChange(tab.id)}
               className={`flex-1 flex flex-col items-center justify-center py-2 gap-0.5 transition-colors relative
-                ${isActive
-                  ? 'text-primary'
-                  : 'text-muted-foreground hover:text-foreground'
+                ${
+                  isActive
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
                 }
               `}
             >
               <div className="relative">
-                <Icon className={`w-5 h-5 ${tab.id === 'sell' ? 'w-6 h-6' : ''}`} />
-                {tab.id === 'chat' && unreadCount > 0 && (
+                <Icon
+                  className={`w-5 h-5 ${tab.id === "sell" ? "w-6 h-6" : ""}`}
+                />
+                {tab.id === "chat" && unreadCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 bg-destructive rounded-full w-2.5 h-2.5 border border-background" />
                 )}
               </div>
-              <span className={`text-xs font-medium ${tab.id === 'sell' ? 'text-primary font-bold' : ''}`}>
+              <span
+                className={`text-xs font-medium ${tab.id === "sell" ? "text-primary font-bold" : ""}`}
+              >
                 {tab.label}
               </span>
               {isActive && (

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Package, Star, MessageSquare, Users } from 'lucide-react';
+import { MessageSquare, Package, Star, Users } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface ProfileStatsRowProps {
   listingCount: number;
@@ -8,7 +8,10 @@ interface ProfileStatsRowProps {
   followerCount: number;
 }
 
-function AnimatedCount({ value, decimals = 0 }: { value: number; decimals?: number }) {
+function AnimatedCount({
+  value,
+  decimals = 0,
+}: { value: number; decimals?: number }) {
   const [display, setDisplay] = useState(0);
   const rafRef = useRef<number | null>(null);
   const startRef = useRef<number | null>(null);
@@ -22,8 +25,8 @@ function AnimatedCount({ value, decimals = 0 }: { value: number; decimals?: numb
       if (!startRef.current) startRef.current = timestamp;
       const elapsed = timestamp - startRef.current;
       const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplay(parseFloat((eased * value).toFixed(decimals)));
+      const eased = 1 - (1 - progress) ** 3;
+      setDisplay(Number.parseFloat((eased * value).toFixed(decimals)));
       if (progress < 1) {
         rafRef.current = requestAnimationFrame(animate);
       }
@@ -35,7 +38,11 @@ function AnimatedCount({ value, decimals = 0 }: { value: number; decimals?: numb
     };
   }, [value, decimals]);
 
-  return <span>{decimals > 0 ? display.toFixed(decimals) : Math.round(display)}</span>;
+  return (
+    <span>
+      {decimals > 0 ? display.toFixed(decimals) : Math.round(display)}
+    </span>
+  );
 }
 
 export default function ProfileStatsRow({
@@ -45,10 +52,10 @@ export default function ProfileStatsRow({
   followerCount,
 }: ProfileStatsRowProps) {
   const stats = [
-    { icon: Package, label: 'Listings', value: listingCount, decimals: 0 },
-    { icon: Star, label: 'Rating', value: avgRating, decimals: 1 },
-    { icon: MessageSquare, label: 'Reviews', value: reviewCount, decimals: 0 },
-    { icon: Users, label: 'Followers', value: followerCount, decimals: 0 },
+    { icon: Package, label: "Listings", value: listingCount, decimals: 0 },
+    { icon: Star, label: "Rating", value: avgRating, decimals: 1 },
+    { icon: MessageSquare, label: "Reviews", value: reviewCount, decimals: 0 },
+    { icon: Users, label: "Followers", value: followerCount, decimals: 0 },
   ];
 
   return (

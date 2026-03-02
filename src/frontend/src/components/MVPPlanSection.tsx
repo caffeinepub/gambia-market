@@ -1,11 +1,11 @@
-import SectionContainer from './SectionContainer';
-import MVPTimeline from './MVPTimeline';
-import { mvpFeatures, mvpTimeline } from '../data/mvpPlan';
-import { CheckCircle2, Circle } from 'lucide-react';
+import { CheckCircle2, Circle } from "lucide-react";
+import { mvpFeatures, mvpTimeline } from "../data/mvpPlan";
+import MVPTimeline from "./MVPTimeline";
+import SectionContainer from "./SectionContainer";
 
 export default function MVPPlanSection() {
-  const mustHave = mvpFeatures.filter((f) => f.priority === 'must-have');
-  const niceToHave = mvpFeatures.filter((f) => f.priority === 'nice-to-have');
+  const mustHave = mvpFeatures.filter((f) => f.priority === "must-have");
+  const niceToHave = mvpFeatures.filter((f) => f.priority === "nice-to-have");
 
   return (
     <SectionContainer
@@ -20,16 +20,22 @@ export default function MVPPlanSection() {
             <span className="bg-primary text-primary-foreground text-xs font-heading font-bold px-3 py-1 rounded-full">
               ✅ Must Have
             </span>
-            <span className="text-xs text-muted-foreground font-body">Launch blockers</span>
+            <span className="text-xs text-muted-foreground font-body">
+              Launch blockers
+            </span>
           </div>
           <ul className="space-y-2.5">
             {mustHave.map((feature) => (
               <li key={feature.id} className="flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-sm font-body text-foreground">{feature.title}</span>
+                  <span className="text-sm font-body text-foreground">
+                    {feature.title}
+                  </span>
                   {feature.featureRef && (
-                    <span className="ml-1.5 text-xs text-muted-foreground font-body">({feature.featureRef})</span>
+                    <span className="ml-1.5 text-xs text-muted-foreground font-body">
+                      ({feature.featureRef})
+                    </span>
                   )}
                 </div>
               </li>
@@ -43,16 +49,22 @@ export default function MVPPlanSection() {
             <span className="bg-accent/20 text-accent-foreground text-xs font-heading font-bold px-3 py-1 rounded-full border border-accent/30">
               ⭐ Nice to Have
             </span>
-            <span className="text-xs text-muted-foreground font-body">V1 stretch goals</span>
+            <span className="text-xs text-muted-foreground font-body">
+              V1 stretch goals
+            </span>
           </div>
           <ul className="space-y-2.5">
             {niceToHave.map((feature) => (
               <li key={feature.id} className="flex items-start gap-2.5">
                 <Circle className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-sm font-body text-foreground">{feature.title}</span>
+                  <span className="text-sm font-body text-foreground">
+                    {feature.title}
+                  </span>
                   {feature.featureRef && (
-                    <span className="ml-1.5 text-xs text-muted-foreground font-body">({feature.featureRef})</span>
+                    <span className="ml-1.5 text-xs text-muted-foreground font-body">
+                      ({feature.featureRef})
+                    </span>
                   )}
                 </div>
               </li>
@@ -63,7 +75,9 @@ export default function MVPPlanSection() {
 
       {/* Timeline */}
       <div>
-        <h3 className="font-heading font-bold text-lg text-foreground mb-4">8-Week Development Timeline</h3>
+        <h3 className="font-heading font-bold text-lg text-foreground mb-4">
+          8-Week Development Timeline
+        </h3>
         <MVPTimeline weeks={mvpTimeline} />
       </div>
     </SectionContainer>

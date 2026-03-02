@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useUpdateProfile } from '../hooks/useQueries';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import { useUpdateProfile } from "../hooks/useQueries";
 
 interface EditProfileFormProps {
   currentName: string;
@@ -12,7 +13,12 @@ interface EditProfileFormProps {
   onSaved?: () => void;
 }
 
-export default function EditProfileForm({ currentName, currentLocation, currentPhone = '', onSaved }: EditProfileFormProps) {
+export default function EditProfileForm({
+  currentName,
+  currentLocation,
+  currentPhone = "",
+  onSaved,
+}: EditProfileFormProps) {
   const [name, setName] = useState(currentName);
   const [location, setLocation] = useState(currentLocation);
   const [phone, setPhone] = useState(currentPhone);
@@ -22,8 +28,8 @@ export default function EditProfileForm({ currentName, currentLocation, currentP
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    if (!name.trim()) newErrors.name = 'Name is required';
-    if (!location.trim()) newErrors.location = 'Location is required';
+    if (!name.trim()) newErrors.name = "Name is required";
+    if (!location.trim()) newErrors.location = "Location is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -53,11 +59,16 @@ export default function EditProfileForm({ currentName, currentLocation, currentP
         <Input
           id="edit-name"
           value={name}
-          onChange={(e) => { setName(e.target.value); setErrors(p => ({ ...p, name: '' })); }}
+          onChange={(e) => {
+            setName(e.target.value);
+            setErrors((p) => ({ ...p, name: "" }));
+          }}
           placeholder="Your name"
-          className={errors.name ? 'border-destructive' : ''}
+          className={errors.name ? "border-destructive" : ""}
         />
-        {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
+        {errors.name && (
+          <p className="text-xs text-destructive">{errors.name}</p>
+        )}
       </div>
 
       <div className="space-y-1.5">
@@ -80,11 +91,16 @@ export default function EditProfileForm({ currentName, currentLocation, currentP
         <Input
           id="edit-location"
           value={location}
-          onChange={(e) => { setLocation(e.target.value); setErrors(p => ({ ...p, location: '' })); }}
+          onChange={(e) => {
+            setLocation(e.target.value);
+            setErrors((p) => ({ ...p, location: "" }));
+          }}
           placeholder="e.g. Banjul, Gambia"
-          className={errors.location ? 'border-destructive' : ''}
+          className={errors.location ? "border-destructive" : ""}
         />
-        {errors.location && <p className="text-xs text-destructive">{errors.location}</p>}
+        {errors.location && (
+          <p className="text-xs text-destructive">{errors.location}</p>
+        )}
       </div>
 
       <div className="flex gap-2 pt-1">
@@ -99,7 +115,7 @@ export default function EditProfileForm({ currentName, currentLocation, currentP
               Saving...
             </>
           ) : (
-            'Save Changes'
+            "Save Changes"
           )}
         </Button>
       </div>

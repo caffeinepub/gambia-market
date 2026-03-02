@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 interface SectionContainerProps {
   title: string;
@@ -7,13 +7,24 @@ interface SectionContainerProps {
   className?: string;
 }
 
-export default function SectionContainer({ title, subtitle, children, className = '' }: SectionContainerProps) {
+export default function SectionContainer({
+  title,
+  subtitle,
+  children,
+  className = "",
+}: SectionContainerProps) {
   return (
-    <section className={`py-10 px-4 md:px-8 max-w-6xl mx-auto section-fade-in ${className}`}>
+    <section
+      className={`py-10 px-4 md:px-8 max-w-6xl mx-auto section-fade-in ${className}`}
+    >
       <div className="mb-8">
-        <h2 className="font-heading font-black text-2xl md:text-3xl text-foreground mb-2">{title}</h2>
+        <h2 className="font-heading font-black text-2xl md:text-3xl text-foreground mb-2">
+          {title}
+        </h2>
         {subtitle && (
-          <p className="text-muted-foreground font-body text-base max-w-2xl">{subtitle}</p>
+          <p className="text-muted-foreground font-body text-base max-w-2xl">
+            {subtitle}
+          </p>
         )}
         <div className="kente-pattern-thin w-24 mt-3 rounded-full" />
       </div>

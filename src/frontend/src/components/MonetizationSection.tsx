@@ -1,7 +1,7 @@
-import SectionContainer from './SectionContainer';
-import RevenueCard from './RevenueCard';
-import BoostedListingMockup from './BoostedListingMockup';
-import { revenueStreams } from '../data/monetization';
+import { revenueStreams } from "../data/monetization";
+import BoostedListingMockup from "./BoostedListingMockup";
+import RevenueCard from "./RevenueCard";
+import SectionContainer from "./SectionContainer";
 
 export default function MonetizationSection() {
   const primary = revenueStreams.filter((s) => s.isPrimary);
@@ -18,7 +18,10 @@ export default function MonetizationSection() {
           Primary Revenue Driver
         </h3>
         {primary.map((stream) => (
-          <div key={stream.id} className="bg-card border-2 border-accent rounded-3xl p-5 shadow-card ring-2 ring-accent/20">
+          <div
+            key={stream.id}
+            className="bg-card border-2 border-accent rounded-3xl p-5 shadow-card ring-2 ring-accent/20"
+          >
             <RevenueCard stream={stream} />
             {stream.comparisonDemo && stream.pricingTiers && (
               <BoostedListingMockup

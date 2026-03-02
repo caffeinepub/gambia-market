@@ -1,22 +1,28 @@
-import React from 'react';
-import { MapPin, Star, ShieldCheck, Users } from 'lucide-react';
-import { Principal } from '@dfinity/principal';
-import { useGetUserProfile, useGetReviewsForUser } from '../hooks/useQueries';
+import type { Principal } from "@dfinity/principal";
+import { MapPin, ShieldCheck, Star, Users } from "lucide-react";
+import React from "react";
+import { useGetReviewsForUser, useGetUserProfile } from "../hooks/useQueries";
 
 interface SellerInfoProps {
   sellerId: Principal;
   onSellerClick?: (userId: Principal) => void;
 }
 
-export default function SellerInfo({ sellerId, onSellerClick }: SellerInfoProps) {
+export default function SellerInfo({
+  sellerId,
+  onSellerClick,
+}: SellerInfoProps) {
   const { data: profile, isLoading } = useGetUserProfile(sellerId);
   const { data: reviews } = useGetReviewsForUser(sellerId);
 
-  const avgRating = reviews && reviews.length > 0
-    ? reviews.reduce((sum, r) => sum + Number(r.stars), 0) / reviews.length
-    : 0;
+  const avgRating =
+    reviews && reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + Number(r.stars), 0) / reviews.length
+      : 0;
 
-  const profilePicUrl = profile?.profilePic ? profile.profilePic.getDirectURL() : null;
+  const profilePicUrl = profile?.profilePic
+    ? profile.profilePic.getDirectURL()
+    : null;
 
   if (isLoading) {
     return (
@@ -36,6 +42,7 @@ export default function SellerInfo({ sellerId, onSellerClick }: SellerInfoProps)
 
   return (
     <button
+      type="button"
       onClick={() => onSellerClick?.(sellerId)}
       className="w-full text-left bg-card rounded-2xl border border-border p-4 shadow-card hover:shadow-md transition-shadow group"
     >
@@ -43,7 +50,12 @@ export default function SellerInfo({ sellerId, onSellerClick }: SellerInfoProps)
         {/* Avatar */}
         <div className="w-12 h-12 rounded-2xl shrink-0 overflow-hidden border-2 border-border">
           {profilePicUrl ? (
-            <img src={profilePicUrl} alt={profile.name} className="w-full h-full object-cover" />
+            <img
+              src={profilePicUrl}
+              alt={profile.name}
+              loading="lazy"
+              className="w-full h-full object-cover"
+            />
           ) : (
             <div className="w-full h-full bg-primary/10 flex items-center justify-center">
               <span className="font-display font-bold text-lg text-primary">
@@ -87,8 +99,19 @@ export default function SellerInfo({ sellerId, onSellerClick }: SellerInfoProps)
         </div>
 
         <div className="text-muted-foreground group-hover:text-primary transition-colors">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          <svg
+            aria-hidden="true"
+            className="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
           </svg>
         </div>
       </div>

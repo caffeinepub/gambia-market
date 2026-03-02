@@ -1,12 +1,3 @@
-import React, { useState } from 'react';
-import { Plus, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useGetMyListings, useGetReviewsForUser, useDeleteListing } from '../hooks/useQueries';
-import MyListingCard from './MyListingCard';
-import ReviewsList from './ReviewsList';
-import { Principal } from '@dfinity/principal';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +7,20 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Principal } from "@dfinity/principal";
+import { Loader2, Plus } from "lucide-react";
+import React, { useState } from "react";
+import {
+  useDeleteListing,
+  useGetMyListings,
+  useGetReviewsForUser,
+} from "../hooks/useQueries";
+import MyListingCard from "./MyListingCard";
+import ReviewsList from "./ReviewsList";
 
 interface ProfileTabsProps {
   userId: Principal;
@@ -25,9 +29,16 @@ interface ProfileTabsProps {
   onListingClick?: (listingId: bigint) => void;
 }
 
-export default function ProfileTabs({ userId, onCreateListing, onEditListing, onListingClick }: ProfileTabsProps) {
-  const { data: myListings = [], isLoading: listingsLoading } = useGetMyListings();
-  const { data: reviews = [], isLoading: reviewsLoading } = useGetReviewsForUser(userId);
+export default function ProfileTabs({
+  userId,
+  onCreateListing,
+  onEditListing,
+  onListingClick,
+}: ProfileTabsProps) {
+  const { data: myListings = [], isLoading: listingsLoading } =
+    useGetMyListings();
+  const { data: reviews = [], isLoading: reviewsLoading } =
+    useGetReviewsForUser(userId);
   const deleteListing = useDeleteListing();
 
   const [deleteTarget, setDeleteTarget] = useState<bigint | null>(null);
@@ -48,9 +59,7 @@ export default function ProfileTabs({ userId, onCreateListing, onEditListing, on
           <TabsTrigger value="listings">
             My Listings ({myListings.length})
           </TabsTrigger>
-          <TabsTrigger value="reviews">
-            Reviews ({reviews.length})
-          </TabsTrigger>
+          <TabsTrigger value="reviews">Reviews ({reviews.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="listings" className="space-y-4">
@@ -72,7 +81,9 @@ export default function ProfileTabs({ userId, onCreateListing, onEditListing, on
           ) : myListings.length === 0 ? (
             <div className="text-center py-12 space-y-3">
               <div className="text-4xl">📦</div>
-              <p className="text-muted-foreground font-medium">No listings yet</p>
+              <p className="text-muted-foreground font-medium">
+                No listings yet
+              </p>
               <p className="text-sm text-muted-foreground">
                 Create your first listing to start selling!
               </p>
@@ -106,16 +117,22 @@ export default function ProfileTabs({ userId, onCreateListing, onEditListing, on
       </Tabs>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteTarget !== null} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+      <AlertDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Listing</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this listing? This action cannot be undone.
+              Are you sure you want to delete this listing? This action cannot
+              be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleteListing.isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleteListing.isPending}>
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
               disabled={deleteListing.isPending}
@@ -127,7 +144,7 @@ export default function ProfileTabs({ userId, onCreateListing, onEditListing, on
                   Deleting...
                 </>
               ) : (
-                'Delete'
+                "Delete"
               )}
             </AlertDialogAction>
           </AlertDialogFooter>

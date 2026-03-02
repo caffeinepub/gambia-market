@@ -1,27 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft } from 'lucide-react';
-import { useSearchListings } from '../hooks/useQueries';
-import { ListingId } from '../backend';
-import SearchBar from '../components/SearchBar';
-import ListingCard from '../components/ListingCard';
-import SkeletonListingCard from '../components/SkeletonListingCard';
-import RecentSearchChips from '../components/RecentSearchChips';
-import ZeroResultsState from '../components/ZeroResultsState';
+import type { Principal } from "@dfinity/principal";
+import { ArrowLeft } from "lucide-react";
+import React, { useState } from "react";
+import type { ListingId } from "../backend";
+import ListingCard from "../components/ListingCard";
+import RecentSearchChips from "../components/RecentSearchChips";
+import SearchBar from "../components/SearchBar";
+import SkeletonListingCard from "../components/SkeletonListingCard";
+import ZeroResultsState from "../components/ZeroResultsState";
+import { useSearchListings } from "../hooks/useQueries";
 
 interface SearchProps {
   onListingClick?: (id: ListingId) => void;
   onBack?: () => void;
+  onMessageSeller?: (sellerId: Principal, listingId: bigint) => void;
 }
 
-const POPULAR_CATEGORIES = ['Cars', 'Phones', 'Electronics', 'Real Estate', 'Furniture', 'Clothing'];
-const STORAGE_KEY = 'gm-recent-searches';
+const POPULAR_CATEGORIES = [
+  "Cars",
+  "Phones",
+  "Electronics",
+  "Real Estate",
+  "Furniture",
+  "Clothing",
+];
+const STORAGE_KEY = "gm-recent-searches";
 
-export default function Search({ onListingClick, onBack }: SearchProps) {
-  const [query, setQuery] = useState('');
-  const [submittedQuery, setSubmittedQuery] = useState('');
+export default function Search({
+  onListingClick,
+  onBack,
+  onMessageSeller,
+}: SearchProps) {
+  const [query, setQuery] = useState("");
+  const [submittedQuery, setSubmittedQuery] = useState("");
   const [recentSearches, setRecentSearches] = useState<string[]>(() => {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]');
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]");
     } catch {
       return [];
     }
@@ -34,7 +47,10 @@ export default function Search({ onListingClick, onBack }: SearchProps) {
     if (!trimmed) return;
     setSubmittedQuery(trimmed);
     setRecentSearches((prev) => {
-      const updated = [trimmed, ...prev.filter((s) => s !== trimmed)].slice(0, 8);
+      const updated = [trimmed, ...prev.filter((s) => s !== trimmed)].slice(
+        0,
+        8,
+      );
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       return updated;
     });
@@ -45,8 +61,8 @@ export default function Search({ onListingClick, onBack }: SearchProps) {
   };
 
   const handleClearSearch = () => {
-    setQuery('');
-    setSubmittedQuery('');
+    setQuery("");
+    setSubmittedQuery("");
   };
 
   const handleRemoveRecent = (search: string) => {
@@ -96,7 +112,10 @@ export default function Search({ onListingClick, onBack }: SearchProps) {
         {!hasSearched && (
           <RecentSearchChips
             searches={recentSearches}
-            onSearchClick={(s) => { setQuery(s); setSubmittedQuery(s); }}
+            onSearchClick={(s) => {
+              setQuery(s);
+              setSubmittedQuery(s);
+            }}
             onRemove={handleRemoveRecent}
             onClearAll={handleClearAllRecent}
           />
@@ -113,7 +132,10 @@ export default function Search({ onListingClick, onBack }: SearchProps) {
                 <button
                   type="button"
                   key={cat}
-                  onClick={() => { setQuery(cat); setSubmittedQuery(cat); }}
+                  onClick={() => {
+                    setQuery(cat);
+                    setSubmittedQuery(cat);
+                  }}
                   className="px-3.5 py-2 rounded-xl border border-border bg-card text-foreground font-body text-sm hover:border-primary/40 hover:bg-muted/50 transition-all duration-200"
                 >
                   {cat}
@@ -128,7 +150,7 @@ export default function Search({ onListingClick, onBack }: SearchProps) {
           <div>
             {isLoading ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {['s1','s2','s3','s4','s5','s6'].map((k) => (
+                {["s1", "s2", "s3", "s4", "s5", "s6"].map((k) => (
                   <SkeletonListingCard key={k} />
                 ))}
               </div>
@@ -136,7 +158,10 @@ export default function Search({ onListingClick, onBack }: SearchProps) {
               <>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-1 h-5 rounded-full" style={{ background: 'var(--primary)' }} />
+                    <div
+                      className="w-1 h-5 rounded-full"
+                      style={{ background: "var(--primary)" }}
+                    />
                     <h2 className="font-display font-bold text-base text-foreground">
                       Results for "{submittedQuery}"
                     </h2>
@@ -151,6 +176,7 @@ export default function Search({ onListingClick, onBack }: SearchProps) {
                       key={listing.id.toString()}
                       listing={listing}
                       onClick={handleListingClick}
+                      onMessageSeller={onMessageSeller}
                     />
                   ))}
                 </div>
@@ -160,7 +186,10 @@ export default function Search({ onListingClick, onBack }: SearchProps) {
                 query={submittedQuery}
                 onClearSearch={handleClearSearch}
                 suggestedCategories={POPULAR_CATEGORIES}
-                onCategoryClick={(cat) => { setQuery(cat); setSubmittedQuery(cat); }}
+                onCategoryClick={(cat) => {
+                  setQuery(cat);
+                  setSubmittedQuery(cat);
+                }}
               />
             )}
           </div>

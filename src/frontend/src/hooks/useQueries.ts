@@ -1,9 +1,16 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useActor } from './useActor';
-import { useInternetIdentity } from './useInternetIdentity';
-import { ListingCategory, PublicListing, UserProfile, Review, ListingId, ExternalBlob } from '../backend';
-import { Principal } from '@dfinity/principal';
-import { toast } from 'sonner';
+import type { Principal } from "@dfinity/principal";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import type {
+  ExternalBlob,
+  ListingCategory,
+  ListingId,
+  PublicListing,
+  Review,
+  UserProfile,
+} from "../backend";
+import { useActor } from "./useActor";
+import { useInternetIdentity } from "./useInternetIdentity";
 
 // ─── User Profile ─────────────────────────────────────────────────────────────
 
@@ -13,9 +20,9 @@ export function useGetCallerUserProfile() {
   const isAuthenticated = !!identity;
 
   const query = useQuery<UserProfile | null>({
-    queryKey: ['currentUserProfile'],
+    queryKey: ["currentUserProfile"],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) throw new Error("Actor not available");
       return actor.getCallerUserProfile();
     },
     enabled: !!actor && !actorFetching && isAuthenticated,
@@ -24,8 +31,10 @@ export function useGetCallerUserProfile() {
 
   // Consider loading true only while identity is still initializing or actor is fetching
   // Once the actor is ready and the query has settled (success or error), show the result
-  const isLoading = isInitializing || actorFetching || (!!actor && query.isLoading);
-  const isFetched = !isInitializing && !actorFetching && (query.isFetched || !isAuthenticated);
+  const isLoading =
+    isInitializing || actorFetching || (!!actor && query.isLoading);
+  const isFetched =
+    !isInitializing && !actorFetching && (query.isFetched || !isAuthenticated);
 
   return {
     ...query,
@@ -38,7 +47,7 @@ export function useGetUserProfile(userId: Principal | null | undefined) {
   const { actor, isFetching: actorFetching } = useActor();
 
   return useQuery<UserProfile | null>({
-    queryKey: ['userProfile', userId?.toString()],
+    queryKey: ["userProfile", userId?.toString()],
     queryFn: async () => {
       if (!actor || !userId) return null;
       return actor.getUserProfile(userId);
@@ -52,13 +61,17 @@ export function useUpdateProfile() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ name, phone, location }: { name: string; phone: string; location: string }) => {
-      if (!actor) throw new Error('Actor not available');
+    mutationFn: async ({
+      name,
+      phone,
+      location,
+    }: { name: string; phone: string; location: string }) => {
+      if (!actor) throw new Error("Actor not available");
       await actor.saveCallerUserProfile(name, phone, location);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
-      toast.success('Profile updated successfully!');
+      queryClient.invalidateQueries({ queryKey: ["currentUserProfile"] });
+      toast.success("Profile updated successfully!");
     },
     onError: (error: Error) => {
       toast.error(`Failed to update profile: ${error.message}`);
@@ -74,12 +87,16 @@ export function useSaveCallerUserProfile() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ name, phone, location }: { name: string; phone: string; location: string }) => {
-      if (!actor) throw new Error('Actor not available');
+    mutationFn: async ({
+      name,
+      phone,
+      location,
+    }: { name: string; phone: string; location: string }) => {
+      if (!actor) throw new Error("Actor not available");
       await actor.saveCallerUserProfile(name, phone, location);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
+      queryClient.invalidateQueries({ queryKey: ["currentUserProfile"] });
     },
   });
 }
@@ -90,12 +107,12 @@ export function useUpdateProfilePicture() {
 
   return useMutation({
     mutationFn: async (profilePic: ExternalBlob | null) => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) throw new Error("Actor not available");
       await actor.updateProfilePicture(profilePic);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
-      toast.success('Profile picture updated!');
+      queryClient.invalidateQueries({ queryKey: ["currentUserProfile"] });
+      toast.success("Profile picture updated!");
     },
     onError: (error: Error) => {
       toast.error(`Failed to update profile picture: ${error.message}`);
@@ -109,7 +126,7 @@ export function useListings() {
   const { actor, isFetching } = useActor();
 
   return useQuery<PublicListing[]>({
-    queryKey: ['allListings'],
+    queryKey: ["allListings"],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getAllListings();
@@ -127,7 +144,7 @@ export function useGetMyListings() {
   const isAuthenticated = !!identity;
 
   return useQuery<PublicListing[]>({
-    queryKey: ['myListings'],
+    queryKey: ["myListings"],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getMyListings();
@@ -143,7 +160,7 @@ export function useListing(listingId: bigint | null) {
   const { actor, isFetching } = useActor();
 
   return useQuery<PublicListing | null>({
-    queryKey: ['listing', listingId?.toString()],
+    queryKey: ["listing", listingId?.toString()],
     queryFn: async () => {
       if (!actor || listingId === null) return null;
       return actor.getListing(listingId);
@@ -159,7 +176,7 @@ export function useGetListingsByCategory(category: ListingCategory | null) {
   const { actor, isFetching } = useActor();
 
   return useQuery<PublicListing[]>({
-    queryKey: ['listingsByCategory', category],
+    queryKey: ["listingsByCategory", category],
     queryFn: async () => {
       if (!actor || !category) return [];
       return actor.getListingsByCategory(category);
@@ -172,7 +189,7 @@ export function useSearchListings(searchText: string) {
   const { actor, isFetching } = useActor();
 
   return useQuery<PublicListing[]>({
-    queryKey: ['searchListings', searchText],
+    queryKey: ["searchListings", searchText],
     queryFn: async () => {
       if (!actor || !searchText.trim()) return [];
       return actor.searchListings(searchText);
@@ -199,11 +216,9 @@ export function useCreateListing() {
       numBedrooms: bigint | null;
       isFurnished: boolean | null;
     }) => {
-      if (!actor) throw new Error('Actor not available');
-      const { RealEstateSubCategory } = await import('../backend');
-      const subCat = params.subCategory
-        ? (params.subCategory as unknown as import('../backend').RealEstateSubCategory)
-        : null;
+      if (!actor) throw new Error("Actor not available");
+      // biome-ignore format: inline import type must stay on one line
+      const subCat = params.subCategory ? (params.subCategory as unknown as import("../backend").RealEstateSubCategory) : null;
       const listingId = await actor.createListing(
         params.title,
         params.description,
@@ -220,9 +235,9 @@ export function useCreateListing() {
       return listingId;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['myListings'] });
-      queryClient.invalidateQueries({ queryKey: ['allListings'] });
-      toast.success('Listing created successfully!');
+      queryClient.invalidateQueries({ queryKey: ["myListings"] });
+      queryClient.invalidateQueries({ queryKey: ["allListings"] });
+      toast.success("Listing created successfully!");
     },
     onError: (error: Error) => {
       toast.error(`Failed to create listing: ${error.message}`);
@@ -249,10 +264,9 @@ export function useUpdateListing() {
       numBedrooms: bigint | null;
       isFurnished: boolean | null;
     }) => {
-      if (!actor) throw new Error('Actor not available');
-      const subCat = params.subCategory
-        ? (params.subCategory as unknown as import('../backend').RealEstateSubCategory)
-        : null;
+      if (!actor) throw new Error("Actor not available");
+      // biome-ignore format: inline import type must stay on one line
+      const subCat = params.subCategory ? (params.subCategory as unknown as import("../backend").RealEstateSubCategory) : null;
       await actor.updateListing(
         params.listingId,
         params.title,
@@ -269,10 +283,12 @@ export function useUpdateListing() {
       );
     },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['myListings'] });
-      queryClient.invalidateQueries({ queryKey: ['allListings'] });
-      queryClient.invalidateQueries({ queryKey: ['listing', variables.listingId.toString()] });
-      toast.success('Listing updated successfully!');
+      queryClient.invalidateQueries({ queryKey: ["myListings"] });
+      queryClient.invalidateQueries({ queryKey: ["allListings"] });
+      queryClient.invalidateQueries({
+        queryKey: ["listing", variables.listingId.toString()],
+      });
+      toast.success("Listing updated successfully!");
     },
     onError: (error: Error) => {
       toast.error(`Failed to update listing: ${error.message}`);
@@ -286,13 +302,13 @@ export function useDeleteListing() {
 
   return useMutation({
     mutationFn: async (listingId: bigint) => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) throw new Error("Actor not available");
       await actor.deleteListing(listingId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['myListings'] });
-      queryClient.invalidateQueries({ queryKey: ['allListings'] });
-      toast.success('Listing deleted successfully!');
+      queryClient.invalidateQueries({ queryKey: ["myListings"] });
+      queryClient.invalidateQueries({ queryKey: ["allListings"] });
+      toast.success("Listing deleted successfully!");
     },
     onError: (error: Error) => {
       toast.error(`Failed to delete listing: ${error.message}`);
@@ -305,15 +321,18 @@ export function useBoostListing() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ listingId, durationDays }: { listingId: bigint; durationDays: bigint }) => {
-      if (!actor) throw new Error('Actor not available');
+    mutationFn: async ({
+      listingId,
+      durationDays,
+    }: { listingId: bigint; durationDays: bigint }) => {
+      if (!actor) throw new Error("Actor not available");
       await actor.setListingBoosted(listingId, true, durationDays);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['myListings'] });
-      queryClient.invalidateQueries({ queryKey: ['allListings'] });
-      queryClient.invalidateQueries({ queryKey: ['boostedListings'] });
-      toast.success('Listing boosted successfully!');
+      queryClient.invalidateQueries({ queryKey: ["myListings"] });
+      queryClient.invalidateQueries({ queryKey: ["allListings"] });
+      queryClient.invalidateQueries({ queryKey: ["boostedListings"] });
+      toast.success("Listing boosted successfully!");
     },
     onError: (error: Error) => {
       toast.error(`Failed to boost listing: ${error.message}`);
@@ -326,13 +345,16 @@ export function useUpdateListingStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ listingId, status }: { listingId: bigint; status: string }) => {
-      if (!actor) throw new Error('Actor not available');
+    mutationFn: async ({
+      listingId,
+      status,
+    }: { listingId: bigint; status: string }) => {
+      if (!actor) throw new Error("Actor not available");
       await actor.updateListingStatus(listingId, status);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['myListings'] });
-      queryClient.invalidateQueries({ queryKey: ['allListings'] });
+      queryClient.invalidateQueries({ queryKey: ["myListings"] });
+      queryClient.invalidateQueries({ queryKey: ["allListings"] });
     },
     onError: (error: Error) => {
       toast.error(`Failed to update listing status: ${error.message}`);
@@ -346,7 +368,7 @@ export function useBoostedListings() {
   const { actor, isFetching } = useActor();
 
   return useQuery<PublicListing[]>({
-    queryKey: ['boostedListings'],
+    queryKey: ["boostedListings"],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getBoostedListings();
@@ -359,7 +381,7 @@ export function useBoostOptions() {
   const { actor, isFetching } = useActor();
 
   return useQuery({
-    queryKey: ['boostOptions'],
+    queryKey: ["boostOptions"],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getBoostOptions();
@@ -377,7 +399,7 @@ export function useGetReviewsForUser(userId: Principal | null | undefined) {
   const { actor, isFetching } = useActor();
 
   return useQuery<Review[]>({
-    queryKey: ['reviewsForUser', userId?.toString()],
+    queryKey: ["reviewsForUser", userId?.toString()],
     queryFn: async () => {
       if (!actor || !userId) return [];
       return actor.getReviewsForUser(userId);
@@ -405,12 +427,14 @@ export function useCreateReview() {
       stars: number;
       comment: string;
     }) => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) throw new Error("Actor not available");
       return actor.createReview(revieweeId, listingId, BigInt(stars), comment);
     },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['reviewsForUser', variables.revieweeId.toString()] });
-      toast.success('Review submitted!');
+      queryClient.invalidateQueries({
+        queryKey: ["reviewsForUser", variables.revieweeId.toString()],
+      });
+      toast.success("Review submitted!");
     },
     onError: (error: Error) => {
       toast.error(`Failed to submit review: ${error.message}`);
@@ -426,7 +450,7 @@ export function useMessages(listingId: bigint | null) {
   const isAuthenticated = !!identity;
 
   return useQuery({
-    queryKey: ['messages', listingId?.toString()],
+    queryKey: ["messages", listingId?.toString()],
     queryFn: async () => {
       if (!actor || listingId === null) return [];
       return actor.getMessagesForListing(listingId);
@@ -442,7 +466,7 @@ export function useMyConversations() {
   const isAuthenticated = !!identity;
 
   return useQuery({
-    queryKey: ['conversations'],
+    queryKey: ["conversations"],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getMyConversations();
@@ -469,12 +493,14 @@ export function useSendMessage() {
       receiverId: Principal;
       content: string;
     }) => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) throw new Error("Actor not available");
       return actor.sendMessage(listingId, receiverId, content);
     },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['messages', variables.listingId.toString()] });
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.invalidateQueries({
+        queryKey: ["messages", variables.listingId.toString()],
+      });
+      queryClient.invalidateQueries({ queryKey: ["conversations"] });
     },
     onError: (error: Error) => {
       toast.error(`Failed to send message: ${error.message}`);
@@ -497,8 +523,13 @@ export function useSendMessageAnon() {
       listingId: bigint;
       receiverId: Principal;
     }) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.sendMessageAnon(senderName, messageText, listingId, receiverId);
+      if (!actor) throw new Error("Actor not available");
+      return actor.sendMessageAnon(
+        senderName,
+        messageText,
+        listingId,
+        receiverId,
+      );
     },
     onError: (error: Error) => {
       toast.error(`Failed to send message: ${error.message}`);
@@ -514,17 +545,18 @@ export function useEditMessage() {
     mutationFn: async ({
       messageId,
       newContent,
-      listingId,
     }: {
       messageId: bigint;
       newContent: string;
       listingId: bigint;
     }) => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) throw new Error("Actor not available");
       return actor.editMessage(messageId, newContent);
     },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['messages', variables.listingId.toString()] });
+      queryClient.invalidateQueries({
+        queryKey: ["messages", variables.listingId.toString()],
+      });
     },
     onError: (error: Error) => {
       toast.error(`Failed to edit message: ${error.message}`);
@@ -539,16 +571,17 @@ export function useDeleteMessage() {
   return useMutation({
     mutationFn: async ({
       messageId,
-      listingId,
     }: {
       messageId: bigint;
       listingId: bigint;
     }) => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) throw new Error("Actor not available");
       return actor.deleteMessage(messageId);
     },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['messages', variables.listingId.toString()] });
+      queryClient.invalidateQueries({
+        queryKey: ["messages", variables.listingId.toString()],
+      });
     },
     onError: (error: Error) => {
       toast.error(`Failed to delete message: ${error.message}`);
@@ -564,11 +597,11 @@ export function useFollowSeller() {
 
   return useMutation({
     mutationFn: async (sellerId: Principal) => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) throw new Error("Actor not available");
       await actor.followSeller(sellerId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['following'] });
+      queryClient.invalidateQueries({ queryKey: ["following"] });
     },
     onError: (error: Error) => {
       toast.error(`Failed to follow seller: ${error.message}`);
@@ -582,11 +615,11 @@ export function useUnfollowSeller() {
 
   return useMutation({
     mutationFn: async (sellerId: Principal) => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) throw new Error("Actor not available");
       await actor.unfollowSeller(sellerId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['following'] });
+      queryClient.invalidateQueries({ queryKey: ["following"] });
     },
     onError: (error: Error) => {
       toast.error(`Failed to unfollow seller: ${error.message}`);
@@ -600,7 +633,7 @@ export function useGetFollowing() {
   const isAuthenticated = !!identity;
 
   return useQuery<Principal[]>({
-    queryKey: ['following'],
+    queryKey: ["following"],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getFollowing();
@@ -613,7 +646,7 @@ export function useGetFollowers(sellerId: Principal | null | undefined) {
   const { actor, isFetching: actorFetching } = useActor();
 
   return useQuery<Principal[]>({
-    queryKey: ['followers', sellerId?.toString()],
+    queryKey: ["followers", sellerId?.toString()],
     queryFn: async () => {
       if (!actor || !sellerId) return [];
       return actor.getFollowers(sellerId);
@@ -630,11 +663,11 @@ export function useLikeListing() {
 
   return useMutation({
     mutationFn: async (listingId: bigint) => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) throw new Error("Actor not available");
       return actor.likeListing(listingId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['likedListings'] });
+      queryClient.invalidateQueries({ queryKey: ["likedListings"] });
     },
     onError: (error: Error) => {
       toast.error(`Failed to like listing: ${error.message}`);
@@ -647,7 +680,7 @@ export function useLikeListingAnon() {
 
   return useMutation({
     mutationFn: async (listingId: bigint) => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) throw new Error("Actor not available");
       return actor.likeListingAnon(listingId);
     },
     onError: (error: Error) => {
@@ -662,7 +695,7 @@ export function useGetLikedListings() {
   const isAuthenticated = !!identity;
 
   return useQuery<ListingId[]>({
-    queryKey: ['likedListings'],
+    queryKey: ["likedListings"],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getLikedListings();
@@ -677,12 +710,17 @@ export function useCreateReport() {
   const { actor } = useActor();
 
   return useMutation({
-    mutationFn: async ({ reportedId, reason }: { reportedId: Principal; reason: string }) => {
-      if (!actor) throw new Error('Actor not available');
+    mutationFn: async ({
+      reportedId,
+      reason,
+    }: { reportedId: Principal; reason: string }) => {
+      if (!actor) throw new Error("Actor not available");
       return actor.createReport(reportedId, reason);
     },
     onSuccess: () => {
-      toast.success('Report submitted. Thank you for keeping the marketplace safe.');
+      toast.success(
+        "Report submitted. Thank you for keeping the marketplace safe.",
+      );
     },
     onError: (error: Error) => {
       toast.error(`Failed to submit report: ${error.message}`);
@@ -693,7 +731,7 @@ export function useCreateReport() {
 export function useGetAllReports() {
   const { actor, isFetching } = useActor();
   return useQuery({
-    queryKey: ['allReports'],
+    queryKey: ["allReports"],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getAllReports();
@@ -706,13 +744,16 @@ export function useUpdateReportStatus() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ reportId, status }: { reportId: bigint; status: string }) => {
-      if (!actor) throw new Error('Actor not available');
+    mutationFn: async ({
+      reportId,
+      status,
+    }: { reportId: bigint; status: string }) => {
+      if (!actor) throw new Error("Actor not available");
       await actor.updateReportStatus(reportId, status);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['allReports'] });
-      toast.success('Report status updated');
+      queryClient.invalidateQueries({ queryKey: ["allReports"] });
+      toast.success("Report status updated");
     },
     onError: (error: Error) => {
       toast.error(`Failed: ${error.message}`);
@@ -723,7 +764,7 @@ export function useUpdateReportStatus() {
 export function useGetAllCategories() {
   const { actor, isFetching } = useActor();
   return useQuery<string[]>({
-    queryKey: ['allCategories'],
+    queryKey: ["allCategories"],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getAllCategories();
@@ -737,12 +778,12 @@ export function useAddAllowedCategory() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (category: string) => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) throw new Error("Actor not available");
       await actor.addAllowedCategory(category);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['allCategories'] });
-      toast.success('Category added');
+      queryClient.invalidateQueries({ queryKey: ["allCategories"] });
+      toast.success("Category added");
     },
     onError: (error: Error) => {
       toast.error(`Failed: ${error.message}`);
@@ -755,12 +796,12 @@ export function useRemoveAllowedCategory() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (category: string) => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) throw new Error("Actor not available");
       await actor.removeAllowedCategory(category);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['allCategories'] });
-      toast.success('Category removed');
+      queryClient.invalidateQueries({ queryKey: ["allCategories"] });
+      toast.success("Category removed");
     },
     onError: (error: Error) => {
       toast.error(`Failed: ${error.message}`);

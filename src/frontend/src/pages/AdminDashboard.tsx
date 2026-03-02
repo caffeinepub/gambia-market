@@ -1,66 +1,69 @@
-import React, { useState } from 'react';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
-  ShieldCheck,
-  LogOut,
-  Package,
-  Users,
-  BarChart2,
   AlertCircle,
-  Settings,
-  Trash2,
+  BarChart2,
   Check,
-  X,
-  PlusCircle,
-  Tag,
-  MapPin,
   Loader2,
+  LogOut,
+  MapPin,
+  Package,
+  PlusCircle,
   RefreshCw,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+  Settings,
+  ShieldCheck,
+  Tag,
+  Trash2,
+  Users,
+  X,
+} from "lucide-react";
+import React, { useState } from "react";
 import {
-  useListings,
-  useDeleteListing,
-  useUpdateListingStatus,
-  useGetAllReports,
-  useUpdateReportStatus,
-  useGetAllCategories,
   useAddAllowedCategory,
+  useDeleteListing,
+  useGetAllCategories,
+  useGetAllReports,
+  useListings,
   useRemoveAllowedCategory,
-} from '../hooks/useQueries';
+  useUpdateListingStatus,
+  useUpdateReportStatus,
+} from "../hooks/useQueries";
 
 interface AdminDashboardProps {
   onLogout: () => void;
 }
 
-type AdminTab = 'overview' | 'listings' | 'reports' | 'users' | 'settings';
+type AdminTab = "overview" | "listings" | "reports" | "users" | "settings";
 
 const TAB_CONFIG: { id: AdminTab; label: string; icon: React.ElementType }[] = [
-  { id: 'overview', label: 'Overview', icon: BarChart2 },
-  { id: 'listings', label: 'Listings', icon: Package },
-  { id: 'reports', label: 'Reports', icon: AlertCircle },
-  { id: 'users', label: 'Users', icon: Users },
-  { id: 'settings', label: 'Settings', icon: Settings },
+  { id: "overview", label: "Overview", icon: BarChart2 },
+  { id: "listings", label: "Listings", icon: Package },
+  { id: "reports", label: "Reports", icon: AlertCircle },
+  { id: "users", label: "Users", icon: Users },
+  { id: "settings", label: "Settings", icon: Settings },
 ];
 
 function StatusBadge({ status }: { status: string }) {
   const s = status.toLowerCase();
-  if (s === 'active') return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-      Active
-    </span>
-  );
-  if (s === 'sold') return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
-      Sold
-    </span>
-  );
-  if (s === 'flagged') return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
-      Flagged
-    </span>
-  );
+  if (s === "active")
+    return (
+      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+        Active
+      </span>
+    );
+  if (s === "sold")
+    return (
+      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+        Sold
+      </span>
+    );
+  if (s === "flagged")
+    return (
+      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+        Flagged
+      </span>
+    );
   return (
     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-muted text-muted-foreground">
       {status}
@@ -70,16 +73,18 @@ function StatusBadge({ status }: { status: string }) {
 
 function ReportStatusBadge({ status }: { status: string }) {
   const s = status.toLowerCase();
-  if (s === 'resolved') return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-      Resolved
-    </span>
-  );
-  if (s === 'dismissed') return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400">
-      Dismissed
-    </span>
-  );
+  if (s === "resolved")
+    return (
+      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+        Resolved
+      </span>
+    );
+  if (s === "dismissed")
+    return (
+      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+        Dismissed
+      </span>
+    );
   return (
     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
       Pending
@@ -91,41 +96,43 @@ function ReportStatusBadge({ status }: { status: string }) {
 function OverviewTab() {
   const { data: listings = [], isLoading: listingsLoading } = useListings();
   const { data: reports = [], isLoading: reportsLoading } = useGetAllReports();
-  const { data: categories = [], isLoading: categoriesLoading } = useGetAllCategories();
+  const { data: categories = [], isLoading: categoriesLoading } =
+    useGetAllCategories();
 
-  const uniqueSellers = new Set(listings.map((l) => l.sellerId.toString())).size;
+  const uniqueSellers = new Set(listings.map((l) => l.sellerId.toString()))
+    .size;
   const recentListings = [...listings]
     .sort((a, b) => Number(b.createdAt) - Number(a.createdAt))
     .slice(0, 5);
 
   const stats = [
     {
-      label: 'Total Listings',
-      value: listingsLoading ? '…' : listings.length.toString(),
+      label: "Total Listings",
+      value: listingsLoading ? "…" : listings.length.toString(),
       icon: Package,
-      color: 'text-green-600',
-      bg: 'bg-green-100 dark:bg-green-900/30',
+      color: "text-green-600",
+      bg: "bg-green-100 dark:bg-green-900/30",
     },
     {
-      label: 'Unique Sellers',
-      value: listingsLoading ? '…' : uniqueSellers.toString(),
+      label: "Unique Sellers",
+      value: listingsLoading ? "…" : uniqueSellers.toString(),
       icon: Users,
-      color: 'text-teal-600',
-      bg: 'bg-teal-100 dark:bg-teal-900/30',
+      color: "text-teal-600",
+      bg: "bg-teal-100 dark:bg-teal-900/30",
     },
     {
-      label: 'Total Reports',
-      value: reportsLoading ? '…' : reports.length.toString(),
+      label: "Total Reports",
+      value: reportsLoading ? "…" : reports.length.toString(),
       icon: AlertCircle,
-      color: 'text-orange-600',
-      bg: 'bg-orange-100 dark:bg-orange-900/30',
+      color: "text-orange-600",
+      bg: "bg-orange-100 dark:bg-orange-900/30",
     },
     {
-      label: 'Categories',
-      value: categoriesLoading ? '…' : categories.length.toString(),
+      label: "Categories",
+      value: categoriesLoading ? "…" : categories.length.toString(),
       icon: Tag,
-      color: 'text-purple-600',
-      bg: 'bg-purple-100 dark:bg-purple-900/30',
+      color: "text-purple-600",
+      bg: "bg-purple-100 dark:bg-purple-900/30",
     },
   ];
 
@@ -145,14 +152,18 @@ function OverviewTab() {
                 className="rounded-2xl border border-border bg-card p-4 shadow-sm"
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${stat.bg}`}>
+                  <div
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center ${stat.bg}`}
+                  >
                     <Icon className={`w-4 h-4 ${stat.color}`} />
                   </div>
                   <span className="text-xs font-medium text-muted-foreground leading-tight">
                     {stat.label}
                   </span>
                 </div>
-                <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {stat.value}
+                </p>
               </div>
             );
           })}
@@ -178,16 +189,25 @@ function OverviewTab() {
           ) : (
             <ul className="divide-y divide-border">
               {recentListings.map((listing, idx) => (
-                <li key={listing.id.toString()} className="flex items-center gap-3 px-4 py-3">
+                <li
+                  key={listing.id.toString()}
+                  className="flex items-center gap-3 px-4 py-3"
+                >
                   <span className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground shrink-0">
                     {idx + 1}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground truncate">{listing.title}</p>
+                    <p className="text-sm font-semibold text-foreground truncate">
+                      {listing.title}
+                    </p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs text-muted-foreground">D {Number(listing.price).toLocaleString()}</span>
+                      <span className="text-xs text-muted-foreground">
+                        D {Number(listing.price).toLocaleString()}
+                      </span>
                       <span className="text-xs text-muted-foreground">·</span>
-                      <span className="text-xs text-muted-foreground">{listing.category}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {listing.category}
+                      </span>
                     </div>
                   </div>
                   <StatusBadge status={listing.status} />
@@ -207,7 +227,9 @@ function ListingsTab() {
   const deleteListing = useDeleteListing();
   const updateStatus = useUpdateListingStatus();
 
-  const sorted = [...listings].sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
+  const sorted = [...listings].sort(
+    (a, b) => Number(b.createdAt) - Number(a.createdAt),
+  );
 
   const handleDelete = (listingId: bigint, title: string) => {
     if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) return;
@@ -256,7 +278,9 @@ function ListingsTab() {
                     <span className="text-xs font-medium text-primary">
                       D {Number(listing.price).toLocaleString()}
                     </span>
-                    <span className="text-xs text-muted-foreground">{listing.category}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {listing.category}
+                    </span>
                     {listing.location && (
                       <span className="flex items-center gap-0.5 text-xs text-muted-foreground">
                         <MapPin className="w-3 h-3 shrink-0" />
@@ -272,7 +296,9 @@ function ListingsTab() {
               <div className="flex items-center gap-2 pl-9">
                 <select
                   value={listing.status}
-                  onChange={(e) => handleStatusChange(listing.id, e.target.value)}
+                  onChange={(e) =>
+                    handleStatusChange(listing.id, e.target.value)
+                  }
                   disabled={updateStatus.isPending}
                   className="flex-1 text-xs rounded-lg border border-border bg-background text-foreground px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary/50"
                 >
@@ -305,12 +331,19 @@ function ReportsTab() {
   const updateReport = useUpdateReportStatus();
 
   const sorted = [...reports].sort((a, b) => {
-    const order: Record<string, number> = { pending: 0, resolved: 1, dismissed: 2 };
-    return (order[a.status.toLowerCase()] ?? 3) - (order[b.status.toLowerCase()] ?? 3);
+    const order: Record<string, number> = {
+      pending: 0,
+      resolved: 1,
+      dismissed: 2,
+    };
+    return (
+      (order[a.status.toLowerCase()] ?? 3) -
+      (order[b.status.toLowerCase()] ?? 3)
+    );
   });
 
   const truncate = (str: string, n: number) =>
-    str.length > n ? str.slice(0, n) + '…' : str;
+    str.length > n ? `${str.slice(0, n)}…` : str;
 
   return (
     <div>
@@ -328,12 +361,14 @@ function ReportsTab() {
       ) : sorted.length === 0 ? (
         <div className="py-16 text-center">
           <AlertCircle className="w-10 h-10 text-muted-foreground/30 mx-auto mb-2" />
-          <p className="text-sm text-muted-foreground">No reports yet. The marketplace is clean!</p>
+          <p className="text-sm text-muted-foreground">
+            No reports yet. The marketplace is clean!
+          </p>
         </div>
       ) : (
         <div className="space-y-2">
           {sorted.map((report) => {
-            const isPending = report.status.toLowerCase() === 'pending';
+            const isPending = report.status.toLowerCase() === "pending";
             return (
               <div
                 key={report.id.toString()}
@@ -358,7 +393,12 @@ function ReportsTab() {
                   <div className="flex items-center gap-2 mt-2">
                     <button
                       type="button"
-                      onClick={() => updateReport.mutate({ reportId: report.id, status: 'resolved' })}
+                      onClick={() =>
+                        updateReport.mutate({
+                          reportId: report.id,
+                          status: "resolved",
+                        })
+                      }
                       disabled={updateReport.isPending}
                       className="flex items-center gap-1.5 flex-1 justify-center px-3 py-1.5 rounded-lg bg-green-50 hover:bg-green-100 text-green-700 dark:bg-green-900/20 dark:hover:bg-green-900/30 dark:text-green-400 transition-colors text-xs font-medium disabled:opacity-60"
                     >
@@ -367,7 +407,12 @@ function ReportsTab() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => updateReport.mutate({ reportId: report.id, status: 'dismissed' })}
+                      onClick={() =>
+                        updateReport.mutate({
+                          reportId: report.id,
+                          status: "dismissed",
+                        })
+                      }
                       disabled={updateReport.isPending}
                       className="flex items-center gap-1.5 flex-1 justify-center px-3 py-1.5 rounded-lg bg-muted hover:bg-muted/80 text-muted-foreground transition-colors text-xs font-medium disabled:opacity-60"
                     >
@@ -401,7 +446,11 @@ function UsersTab() {
       const id = listing.sellerId.toString();
       const existing = map.get(id);
       if (!existing) {
-        map.set(id, { sellerId: id, listingCount: 1, joinedAt: listing.createdAt });
+        map.set(id, {
+          sellerId: id,
+          listingCount: 1,
+          joinedAt: listing.createdAt,
+        });
       } else {
         existing.listingCount += 1;
         if (Number(listing.createdAt) < Number(existing.joinedAt)) {
@@ -409,12 +458,18 @@ function UsersTab() {
         }
       }
     }
-    return Array.from(map.values()).sort((a, b) => b.listingCount - a.listingCount);
+    return Array.from(map.values()).sort(
+      (a, b) => b.listingCount - a.listingCount,
+    );
   }, [listings]);
 
   const formatDate = (ts: bigint) => {
     const ms = Number(ts) / 1_000_000;
-    return new Date(ms).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' });
+    return new Date(ms).toLocaleDateString("en-GB", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
   };
 
   return (
@@ -472,13 +527,13 @@ function SettingsTab() {
   const { data: categories = [], isLoading } = useGetAllCategories();
   const addCategory = useAddAllowedCategory();
   const removeCategory = useRemoveAllowedCategory();
-  const [newCategory, setNewCategory] = useState('');
+  const [newCategory, setNewCategory] = useState("");
 
   const handleAdd = () => {
     const trimmed = newCategory.trim();
     if (!trimmed) return;
     addCategory.mutate(trimmed, {
-      onSuccess: () => setNewCategory(''),
+      onSuccess: () => setNewCategory(""),
     });
   };
 
@@ -498,15 +553,22 @@ function SettingsTab() {
           ) : categories.length === 0 ? (
             <div className="p-6 text-center">
               <Tag className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">No categories found.</p>
+              <p className="text-sm text-muted-foreground">
+                No categories found.
+              </p>
             </div>
           ) : (
             <ul className="divide-y divide-border">
               {categories.map((cat) => (
-                <li key={cat} className="flex items-center justify-between px-4 py-3">
+                <li
+                  key={cat}
+                  className="flex items-center justify-between px-4 py-3"
+                >
                   <div className="flex items-center gap-2">
                     <Tag className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm font-medium text-foreground capitalize">{cat}</span>
+                    <span className="text-sm font-medium text-foreground capitalize">
+                      {cat}
+                    </span>
                   </div>
                   <button
                     type="button"
@@ -524,14 +586,18 @@ function SettingsTab() {
 
           {/* Add new category */}
           <div className="p-4 border-t border-border bg-muted/30">
-            <p className="text-xs font-semibold text-muted-foreground mb-2">Add new category</p>
+            <p className="text-xs font-semibold text-muted-foreground mb-2">
+              Add new category
+            </p>
             <div className="flex items-center gap-2">
               <Input
                 value={newCategory}
                 onChange={(e) => setNewCategory(e.target.value)}
                 placeholder="e.g. sporting-goods"
                 className="flex-1 text-sm h-9"
-                onKeyDown={(e) => { if (e.key === 'Enter') handleAdd(); }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleAdd();
+                }}
               />
               <Button
                 size="sm"
@@ -559,12 +625,14 @@ function SettingsTab() {
           </div>
           <div>
             <p className="text-sm font-bold text-foreground">Admin Account</p>
-            <p className="text-xs text-muted-foreground">Bigalfu · Full Access</p>
+            <p className="text-xs text-muted-foreground">
+              Bigalfu · Full Access
+            </p>
           </div>
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          This admin panel controls the entire Gambia Market platform. Changes take effect immediately.
-          Handle with care — deletions are permanent.
+          This admin panel controls the entire Gambia Market platform. Changes
+          take effect immediately. Handle with care — deletions are permanent.
         </p>
       </div>
     </div>
@@ -573,14 +641,16 @@ function SettingsTab() {
 
 // ─── Main AdminDashboard ─────────────────────────────────────────────────────
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<AdminTab>('overview');
+  const [activeTab, setActiveTab] = useState<AdminTab>("overview");
 
   return (
-    <div className="flex flex-col bg-background" style={{ height: '100dvh' }}>
+    <div className="flex flex-col bg-background" style={{ height: "100dvh" }}>
       {/* Fixed Admin Header */}
       <div
         className="fixed top-0 left-0 right-0 z-50 px-4"
-        style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)' }}
+        style={{
+          background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)",
+        }}
       >
         <div className="max-w-2xl mx-auto h-[52px] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -588,8 +658,12 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               <ShieldCheck className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h1 className="text-sm font-bold text-white leading-tight">Admin Dashboard</h1>
-              <p className="text-[10px] text-white/50 leading-tight">Gambia Market</p>
+              <h1 className="text-sm font-bold text-white leading-tight">
+                Admin Dashboard
+              </h1>
+              <p className="text-[10px] text-white/50 leading-tight">
+                Gambia Market
+              </p>
             </div>
           </div>
           <button
@@ -617,8 +691,8 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-1.5 px-4 py-3 text-xs font-semibold border-b-2 transition-colors whitespace-nowrap ${
                     isActive
-                      ? 'border-primary text-primary'
-                      : 'border-transparent text-muted-foreground hover:text-foreground'
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -633,11 +707,11 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       {/* Scrollable Content — offset by header (52px) + tab bar (~44px) = 96px */}
       <div className="flex-1 overflow-y-auto pt-[96px] pb-8">
         <div className="max-w-2xl mx-auto px-4 pt-4">
-          {activeTab === 'overview' && <OverviewTab />}
-          {activeTab === 'listings' && <ListingsTab />}
-          {activeTab === 'reports' && <ReportsTab />}
-          {activeTab === 'users' && <UsersTab />}
-          {activeTab === 'settings' && <SettingsTab />}
+          {activeTab === "overview" && <OverviewTab />}
+          {activeTab === "listings" && <ListingsTab />}
+          {activeTab === "reports" && <ReportsTab />}
+          {activeTab === "users" && <UsersTab />}
+          {activeTab === "settings" && <SettingsTab />}
         </div>
       </div>
     </div>

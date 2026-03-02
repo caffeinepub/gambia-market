@@ -1,6 +1,6 @@
-import SectionContainer from './SectionContainer';
-import TechStackCard from './TechStackCard';
-import { techStackItems } from '../data/techStack';
+import { techStackItems } from "../data/techStack";
+import SectionContainer from "./SectionContainer";
+import TechStackCard from "./TechStackCard";
 
 export default function TechStackSection() {
   return (

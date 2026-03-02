@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { Send } from 'lucide-react';
-import { Principal } from '@dfinity/principal';
-import { ListingId } from '../backend';
-import { useCreateReview } from '../hooks/useQueries';
-import StarRating from './StarRating';
+import type { Principal } from "@dfinity/principal";
+import { Send } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import type { ListingId } from "../backend";
+import { useCreateReview } from "../hooks/useQueries";
+import StarRating from "./StarRating";
 
 interface ReviewFormProps {
   revieweeId: Principal;
@@ -11,9 +12,13 @@ interface ReviewFormProps {
   onSuccess?: () => void;
 }
 
-export default function ReviewForm({ revieweeId, listingId, onSuccess }: ReviewFormProps) {
+export default function ReviewForm({
+  revieweeId,
+  listingId,
+  onSuccess,
+}: ReviewFormProps) {
   const [stars, setStars] = useState(0);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
   const createReview = useCreateReview();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,26 +27,35 @@ export default function ReviewForm({ revieweeId, listingId, onSuccess }: ReviewF
     // stars is a number, useCreateReview expects number
     await createReview.mutateAsync({ revieweeId, listingId, stars, comment });
     setStars(0);
-    setComment('');
+    setComment("");
     onSuccess?.();
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-card rounded-2xl border border-border p-4 shadow-card space-y-4">
-      <h3 className="font-display font-bold text-base text-foreground">Leave a Review</h3>
+    <form
+      onSubmit={handleSubmit}
+      className="bg-card rounded-2xl border border-border p-4 shadow-card space-y-4"
+    >
+      <h3 className="font-display font-bold text-base text-foreground">
+        Leave a Review
+      </h3>
 
       <div>
-        <label className="block text-xs font-body font-semibold text-foreground mb-2 uppercase tracking-wide">
+        <span className="block text-xs font-body font-semibold text-foreground mb-2 uppercase tracking-wide">
           Rating *
-        </label>
+        </span>
         <StarRating value={stars} onChange={setStars} size="lg" />
       </div>
 
       <div>
-        <label className="block text-xs font-body font-semibold text-foreground mb-1.5 uppercase tracking-wide">
+        <label
+          htmlFor="review-comment"
+          className="block text-xs font-body font-semibold text-foreground mb-1.5 uppercase tracking-wide"
+        >
           Comment
         </label>
         <textarea
+          id="review-comment"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           placeholder="Share your experience…"
@@ -54,10 +68,10 @@ export default function ReviewForm({ revieweeId, listingId, onSuccess }: ReviewF
         type="submit"
         disabled={stars === 0 || createReview.isPending}
         className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-body font-semibold text-sm text-primary-foreground transition-all duration-200 disabled:opacity-60"
-        style={{ background: 'var(--primary)' }}
+        style={{ background: "var(--primary)" }}
       >
         <Send className="w-4 h-4" />
-        {createReview.isPending ? 'Submitting…' : 'Submit Review'}
+        {createReview.isPending ? "Submitting…" : "Submit Review"}
       </button>
     </form>
   );

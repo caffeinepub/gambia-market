@@ -1,5 +1,5 @@
-import React from 'react';
-import { Clock, X } from 'lucide-react';
+import { Clock, X } from "lucide-react";
+import React from "react";
 
 interface RecentSearchChipsProps {
   searches: string[];
@@ -8,7 +8,12 @@ interface RecentSearchChipsProps {
   onClearAll: () => void;
 }
 
-export default function RecentSearchChips({ searches, onSearchClick, onRemove, onClearAll }: RecentSearchChipsProps) {
+export default function RecentSearchChips({
+  searches,
+  onSearchClick,
+  onRemove,
+  onClearAll,
+}: RecentSearchChipsProps) {
   if (searches.length === 0) return null;
 
   return (
@@ -19,6 +24,7 @@ export default function RecentSearchChips({ searches, onSearchClick, onRemove, o
           Recent Searches
         </span>
         <button
+          type="button"
           onClick={onClearAll}
           className="text-xs font-body font-medium text-primary hover:text-primary/80 transition-colors"
         >
@@ -32,12 +38,14 @@ export default function RecentSearchChips({ searches, onSearchClick, onRemove, o
             className="flex items-center gap-1.5 pl-3 pr-2 py-1.5 rounded-xl border border-border bg-card text-foreground font-body text-sm hover:border-primary/30 transition-all group"
           >
             <button
+              type="button"
               onClick={() => onSearchClick(search)}
               className="hover:text-primary transition-colors"
             >
               {search}
             </button>
             <button
+              type="button"
               onClick={() => onRemove(search)}
               className="w-4 h-4 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
             >

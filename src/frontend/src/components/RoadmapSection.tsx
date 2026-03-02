@@ -1,6 +1,6 @@
-import SectionContainer from './SectionContainer';
-import RoadmapPhaseCard from './RoadmapPhaseCard';
-import { roadmapPhases } from '../data/roadmap';
+import { roadmapPhases } from "../data/roadmap";
+import RoadmapPhaseCard from "./RoadmapPhaseCard";
+import SectionContainer from "./SectionContainer";
 
 export default function RoadmapSection() {
   return (

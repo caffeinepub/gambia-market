@@ -1,7 +1,17 @@
-import { Phone, KeyRound, UserCircle, CheckCircle, AlertCircle, Minus } from 'lucide-react';
-import { FlowStep } from '../types/blueprint';
+import {
+  AlertCircle,
+  CheckCircle,
+  KeyRound,
+  Minus,
+  Phone,
+  UserCircle,
+} from "lucide-react";
+import type { FlowStep } from "../types/blueprint";
 
-const stepIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+const stepIconMap: Record<
+  string,
+  React.ComponentType<{ className?: string }>
+> = {
   Phone,
   KeyRound,
   UserCircle,
@@ -17,7 +27,9 @@ interface RegistrationFlowCardProps {
   flowSteps: FlowStep[];
 }
 
-export default function RegistrationFlowCard({ flowSteps }: RegistrationFlowCardProps) {
+export default function RegistrationFlowCard({
+  flowSteps,
+}: RegistrationFlowCardProps) {
   return (
     <div className="mt-5 space-y-3">
       {flowSteps.map((step, idx) => {
@@ -37,17 +49,28 @@ export default function RegistrationFlowCard({ flowSteps }: RegistrationFlowCard
                   <span className="text-xs font-body font-semibold text-muted-foreground uppercase tracking-wide">
                     Step {step.stepNumber}
                   </span>
-                  <h4 className="font-heading font-bold text-sm text-foreground leading-tight">{step.stepTitle}</h4>
+                  <h4 className="font-heading font-bold text-sm text-foreground leading-tight">
+                    {step.stepTitle}
+                  </h4>
                 </div>
               </div>
               <div className="space-y-2">
                 {step.fields.map((field) => (
-                  <div key={field.fieldName} className="flex items-center gap-2 bg-muted/50 rounded-xl px-3 py-2">
+                  <div
+                    key={field.fieldName}
+                    className="flex items-center gap-2 bg-muted/50 rounded-xl px-3 py-2"
+                  >
                     <div className="flex-1">
-                      <span className="text-xs font-body text-muted-foreground block leading-none mb-0.5">{field.fieldName}</span>
-                      <span className="text-sm font-body text-foreground/70">{field.placeholder}</span>
+                      <span className="text-xs font-body text-muted-foreground block leading-none mb-0.5">
+                        {field.fieldName}
+                      </span>
+                      <span className="text-sm font-body text-foreground/70">
+                        {field.placeholder}
+                      </span>
                     </div>
-                    <div className="flex-shrink-0">{validationIcon[field.validationState]}</div>
+                    <div className="flex-shrink-0">
+                      {validationIcon[field.validationState]}
+                    </div>
                   </div>
                 ))}
               </div>

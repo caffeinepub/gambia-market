@@ -1,27 +1,31 @@
-import React, { useState } from 'react';
-import { Lock, X, Eye, EyeOff, ShieldCheck } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Eye, EyeOff, Lock, ShieldCheck, X } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
 
-const ADMIN_USERNAME = 'Bigalfu';
-const ADMIN_PASSWORD = '*2FF01d6140@07118559454';
+const ADMIN_USERNAME = "Bigalfu";
+const ADMIN_PASSWORD = "*2FF01d6140@07118559454";
 
 interface AdminLoginModalProps {
   onLoginSuccess: () => void;
   onClose: () => void;
 }
 
-export default function AdminLoginModal({ onLoginSuccess, onClose }: AdminLoginModalProps) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+export default function AdminLoginModal({
+  onLoginSuccess,
+  onClose,
+}: AdminLoginModalProps) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsSubmitting(true);
 
     // Simulate slight delay for UX
@@ -30,7 +34,7 @@ export default function AdminLoginModal({ onLoginSuccess, onClose }: AdminLoginM
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
       onLoginSuccess();
     } else {
-      setError('Invalid credentials. Please try again.');
+      setError("Invalid credentials. Please try again.");
     }
 
     setIsSubmitting(false);
@@ -39,19 +43,21 @@ export default function AdminLoginModal({ onLoginSuccess, onClose }: AdminLoginM
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+      style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)" }}
     >
-      <div
-        className="relative w-full max-w-sm rounded-2xl border border-border shadow-2xl overflow-hidden animate-fade-in"
-        style={{ background: 'var(--card)' }}
-        role="dialog"
+      <dialog
+        open
+        className="relative w-full max-w-sm rounded-2xl border border-border shadow-2xl overflow-hidden animate-fade-in m-0 p-0"
+        style={{ background: "var(--card)" }}
         aria-modal="true"
         aria-labelledby="admin-login-title"
       >
         {/* Header gradient strip */}
         <div
           className="px-6 pt-6 pb-5"
-          style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' }}
+          style={{
+            background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
+          }}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -77,7 +83,10 @@ export default function AdminLoginModal({ onLoginSuccess, onClose }: AdminLoginM
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           {/* Username */}
           <div className="space-y-1.5">
-            <Label htmlFor="admin-username" className="text-sm font-medium text-foreground">
+            <Label
+              htmlFor="admin-username"
+              className="text-sm font-medium text-foreground"
+            >
               Username
             </Label>
             <Input
@@ -86,7 +95,7 @@ export default function AdminLoginModal({ onLoginSuccess, onClose }: AdminLoginM
               value={username}
               onChange={(e) => {
                 setUsername(e.target.value);
-                setError('');
+                setError("");
               }}
               placeholder="Enter admin username"
               autoComplete="username"
@@ -97,17 +106,20 @@ export default function AdminLoginModal({ onLoginSuccess, onClose }: AdminLoginM
 
           {/* Password */}
           <div className="space-y-1.5">
-            <Label htmlFor="admin-password" className="text-sm font-medium text-foreground">
+            <Label
+              htmlFor="admin-password"
+              className="text-sm font-medium text-foreground"
+            >
               Password
             </Label>
             <div className="relative">
               <Input
                 id="admin-password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
-                  setError('');
+                  setError("");
                 }}
                 placeholder="Enter admin password"
                 autoComplete="current-password"
@@ -119,7 +131,11 @@ export default function AdminLoginModal({ onLoginSuccess, onClose }: AdminLoginM
                 onClick={() => setShowPassword((v) => !v)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
               >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
               </button>
             </div>
           </div>
@@ -128,7 +144,9 @@ export default function AdminLoginModal({ onLoginSuccess, onClose }: AdminLoginM
           {error && (
             <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-destructive/10 border border-destructive/20">
               <Lock className="w-4 h-4 text-destructive shrink-0" />
-              <span className="text-sm text-destructive font-medium">{error}</span>
+              <span className="text-sm text-destructive font-medium">
+                {error}
+              </span>
             </div>
           )}
 
@@ -138,9 +156,10 @@ export default function AdminLoginModal({ onLoginSuccess, onClose }: AdminLoginM
             disabled={isSubmitting || !username || !password}
             className="w-full h-11 rounded-xl font-bold text-white"
             style={{
-              background: isSubmitting || !username || !password
-                ? undefined
-                : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+              background:
+                isSubmitting || !username || !password
+                  ? undefined
+                  : "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
             }}
           >
             {isSubmitting ? (
@@ -156,7 +175,7 @@ export default function AdminLoginModal({ onLoginSuccess, onClose }: AdminLoginM
             )}
           </Button>
         </form>
-      </div>
+      </dialog>
     </div>
   );
 }

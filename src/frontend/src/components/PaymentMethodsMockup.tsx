@@ -1,5 +1,5 @@
-import { Smartphone, CreditCard, Banknote, CheckCircle } from 'lucide-react';
-import { PaymentMethod, TransactionState } from '../types/blueprint';
+import { Banknote, CheckCircle, CreditCard, Smartphone } from "lucide-react";
+import type { PaymentMethod, TransactionState } from "../types/blueprint";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Smartphone,
@@ -12,7 +12,10 @@ interface PaymentMethodsMockupProps {
   transactionStates: TransactionState[];
 }
 
-export default function PaymentMethodsMockup({ paymentMethods, transactionStates }: PaymentMethodsMockupProps) {
+export default function PaymentMethodsMockup({
+  paymentMethods,
+  transactionStates,
+}: PaymentMethodsMockupProps) {
   return (
     <div className="mt-5 space-y-4">
       {/* Illustration */}
@@ -26,7 +29,9 @@ export default function PaymentMethodsMockup({ paymentMethods, transactionStates
 
       {/* Payment method cards */}
       <div className="space-y-2">
-        <h4 className="font-heading font-bold text-sm text-foreground">Select Payment Method</h4>
+        <h4 className="font-heading font-bold text-sm text-foreground">
+          Select Payment Method
+        </h4>
         {paymentMethods.map((method, idx) => {
           const MethodIcon = iconMap[method.iconName] || Smartphone;
           const isSelected = idx === 0;
@@ -34,29 +39,45 @@ export default function PaymentMethodsMockup({ paymentMethods, transactionStates
             <div
               key={method.methodName}
               className={`flex items-center gap-3 bg-card border rounded-xl p-3 transition-all ${
-                isSelected ? 'border-primary/40 shadow-card' : 'border-border'
+                isSelected ? "border-primary/40 shadow-card" : "border-border"
               }`}
             >
               {/* Radio */}
-              <div className={`w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${isSelected ? 'border-primary' : 'border-muted-foreground'}`}>
-                {isSelected && <div className="w-2 h-2 rounded-full bg-primary" />}
+              <div
+                className={`w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${isSelected ? "border-primary" : "border-muted-foreground"}`}
+              >
+                {isSelected && (
+                  <div className="w-2 h-2 rounded-full bg-primary" />
+                )}
               </div>
 
-              <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${method.badgeColor.split(' ')[0]}`}>
-                <MethodIcon className={`w-5 h-5 ${method.badgeColor.split(' ')[1]}`} />
+              <div
+                className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${method.badgeColor.split(" ")[0]}`}
+              >
+                <MethodIcon
+                  className={`w-5 h-5 ${method.badgeColor.split(" ")[1]}`}
+                />
               </div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-heading font-bold text-sm text-foreground">{method.methodName}</span>
-                  <span className={`text-xs font-body px-2 py-0.5 rounded-full border ${method.badgeColor}`}>
-                    {method.available ? 'Available' : 'Unavailable'}
+                  <span className="font-heading font-bold text-sm text-foreground">
+                    {method.methodName}
+                  </span>
+                  <span
+                    className={`text-xs font-body px-2 py-0.5 rounded-full border ${method.badgeColor}`}
+                  >
+                    {method.available ? "Available" : "Unavailable"}
                   </span>
                 </div>
-                <p className="text-xs font-body text-muted-foreground leading-tight">{method.description}</p>
+                <p className="text-xs font-body text-muted-foreground leading-tight">
+                  {method.description}
+                </p>
               </div>
 
-              {isSelected && <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />}
+              {isSelected && (
+                <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+              )}
             </div>
           );
         })}
@@ -64,7 +85,9 @@ export default function PaymentMethodsMockup({ paymentMethods, transactionStates
 
       {/* Transaction status badges */}
       <div>
-        <h4 className="font-heading font-bold text-sm text-foreground mb-2">Transaction Status</h4>
+        <h4 className="font-heading font-bold text-sm text-foreground mb-2">
+          Transaction Status
+        </h4>
         <div className="flex flex-wrap gap-2">
           {transactionStates.map((state) => (
             <span

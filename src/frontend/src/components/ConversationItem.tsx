@@ -1,7 +1,7 @@
-import React from 'react';
-import { Clock } from 'lucide-react';
-import { Principal } from '@dfinity/principal';
-import { useGetUserProfile } from '../hooks/useQueries';
+import type { Principal } from "@dfinity/principal";
+import { Clock } from "lucide-react";
+import React from "react";
+import { useGetUserProfile } from "../hooks/useQueries";
 
 interface ConversationItemProps {
   otherUserId: Principal;
@@ -14,7 +14,6 @@ interface ConversationItemProps {
 
 export default function ConversationItem({
   otherUserId,
-  listingId,
   lastMessage,
   timestamp,
   isUnread,
@@ -26,30 +25,37 @@ export default function ConversationItem({
     const ms = Number(ts) / 1_000_000;
     const diff = Date.now() - ms;
     const mins = Math.floor(diff / 60000);
-    if (mins < 1) return 'now';
+    if (mins < 1) return "now";
     if (mins < 60) return `${mins}m`;
     const hrs = Math.floor(mins / 60);
     if (hrs < 24) return `${hrs}h`;
     return `${Math.floor(hrs / 24)}d`;
   };
 
-  const profilePicUrl = profile?.profilePic ? profile.profilePic.getDirectURL() : null;
+  const profilePicUrl = profile?.profilePic
+    ? profile.profilePic.getDirectURL()
+    : null;
 
   return (
     <button
+      type="button"
       onClick={onClick}
       className={`w-full text-left flex items-center gap-3 px-4 py-3.5 border-b border-border transition-all duration-200 hover:bg-muted/50 ${
-        isUnread ? 'bg-primary/5' : 'bg-card'
+        isUnread ? "bg-primary/5" : "bg-card"
       }`}
     >
       {/* Avatar */}
       <div className="w-11 h-11 rounded-2xl shrink-0 overflow-hidden border border-border">
         {profilePicUrl ? (
-          <img src={profilePicUrl} alt={profile?.name} className="w-full h-full object-cover" />
+          <img
+            src={profilePicUrl}
+            alt={profile?.name}
+            className="w-full h-full object-cover"
+          />
         ) : (
           <div className="w-full h-full bg-primary/10 flex items-center justify-center">
             <span className="font-display font-bold text-base text-primary">
-              {profile?.name?.charAt(0)?.toUpperCase() ?? '?'}
+              {profile?.name?.charAt(0)?.toUpperCase() ?? "?"}
             </span>
           </div>
         )}
@@ -58,22 +64,24 @@ export default function ConversationItem({
       {/* Content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-0.5">
-          <span className={`font-body text-sm truncate ${isUnread ? 'font-bold text-foreground' : 'font-semibold text-foreground'}`}>
-            {profile?.name ?? otherUserId.toString().slice(0, 8) + '…'}
+          <span
+            className={`font-body text-sm truncate ${isUnread ? "font-bold text-foreground" : "font-semibold text-foreground"}`}
+          >
+            {profile?.name ?? `${otherUserId.toString().slice(0, 8)}…`}
           </span>
           <span className="text-[10px] font-body text-muted-foreground shrink-0 ml-2 flex items-center gap-1">
             <Clock className="w-2.5 h-2.5" />
             {timeAgo(timestamp)}
           </span>
         </div>
-        <p className={`text-xs font-body truncate ${isUnread ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
+        <p
+          className={`text-xs font-body truncate ${isUnread ? "text-foreground font-medium" : "text-muted-foreground"}`}
+        >
           {lastMessage}
         </p>
       </div>
 
-      {isUnread && (
-        <div className="w-2 h-2 rounded-full shrink-0 bg-primary" />
-      )}
+      {isUnread && <div className="w-2 h-2 rounded-full shrink-0 bg-primary" />}
     </button>
   );
 }
