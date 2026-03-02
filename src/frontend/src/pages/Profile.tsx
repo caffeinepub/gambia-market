@@ -17,7 +17,7 @@ import {
   X,
 } from "lucide-react";
 import type React from "react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ExternalBlob, type UserProfile } from "../backend";
 import EditProfileForm from "../components/EditProfileForm";
 import LoginPrompt from "../components/LoginPrompt";
@@ -67,6 +67,15 @@ export default function Profile({
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
+  // Ensure profile is always attempted when navigating to this page.
+  // Handles the case where cache is stale or the query was never triggered.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally runs only when auth state changes
+  useEffect(() => {
+    if (isAuthenticated && !profileLoading && !userProfile && !isError) {
+      queryClient.invalidateQueries({ queryKey: ["currentUserProfile"] });
+    }
+  }, [isAuthenticated]);
+
   // Not authenticated — show login prompt
   if (!isAuthenticated) {
     return <LoginPrompt />;
@@ -88,17 +97,41 @@ export default function Profile({
   // Error fallback
   if (isError) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-6">
-        <div className="text-center space-y-3">
-          <p className="text-muted-foreground">
-            Failed to load profile. Please try again.
-          </p>
+      <div
+        className="min-h-screen bg-background flex items-center justify-center p-6"
+        data-ocid="profile.error_state"
+      >
+        <div className="text-center space-y-4">
+          <div
+            className="w-16 h-16 mx-auto rounded-full flex items-center justify-center"
+            style={{ background: "oklch(0.95 0.03 25)" }}
+          >
+            <X className="w-8 h-8" style={{ color: "oklch(0.55 0.18 25)" }} />
+          </div>
+          <div className="space-y-1">
+            <p className="font-semibold text-foreground">
+              Could not load profile
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Check your connection and try again.
+            </p>
+          </div>
           <button
             type="button"
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium"
+            data-ocid="profile.retry_button"
+            onClick={() =>
+              queryClient.invalidateQueries({
+                queryKey: ["currentUserProfile"],
+              })
+            }
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-95"
+            style={{
+              background:
+                "linear-gradient(135deg, oklch(0.52 0.18 155), oklch(0.44 0.16 185))",
+              color: "white",
+            }}
           >
-            Retry
+            Try Again
           </button>
         </div>
       </div>

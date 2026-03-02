@@ -26,15 +26,25 @@ export function useGetCallerUserProfile() {
       return actor.getCallerUserProfile();
     },
     enabled: !!actor && !actorFetching && isAuthenticated,
-    retry: 1,
+    retry: 3,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 10000),
+    refetchOnWindowFocus: true,
   });
 
-  // Consider loading true only while identity is still initializing or actor is fetching
-  // Once the actor is ready and the query has settled (success or error), show the result
+  // Consider loading if: identity is initializing, actor is fetching, actor not yet resolved
+  // for an authenticated user, or the query itself is still in flight.
   const isLoading =
-    isInitializing || actorFetching || (!!actor && query.isLoading);
+    isInitializing ||
+    actorFetching ||
+    (isAuthenticated && !actor) || // actor not yet resolved
+    (!!actor && query.isLoading);
+
+  // Only mark as fetched when: not initializing, actor fully ready (or not needed),
+  // and the query has settled (or user is not authenticated so no query needed).
   const isFetched =
-    !isInitializing && !actorFetching && (query.isFetched || !isAuthenticated);
+    !isInitializing &&
+    !actorFetching &&
+    (!isAuthenticated || (!!actor && query.isFetched));
 
   return {
     ...query,
